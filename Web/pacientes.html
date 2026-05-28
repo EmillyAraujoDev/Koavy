@@ -175,9 +175,17 @@
 
 </main>
 
+<<<<<<< HEAD
+<script src="config.js"></script>
+<script src="auth.js"></script>
+<script>
+    const user = Auth.check();
+    if (!user) { /* Auth.check already redirects */ }
+=======
 <script>
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user) window.location.href = "login.html";
+>>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
 
     document.getElementById("user-name").innerText = user.nome;
     document.getElementById("user-email").innerText = user.email || "-";
@@ -190,7 +198,11 @@
     document.getElementById("user-blood").innerText = user.tipoSanguineo || '--';
     document.getElementById("user-weight").innerText = user.peso || '--';
     document.getElementById("user-height").innerText = user.altura || '--';
+<<<<<<< HEAD
+    document.getElementById("user-pacemaker").innerText = user.marcapasso ? 'Sim' : 'Não';
+=======
     document.getElementById("user-pacemaker").innerText = user.marcapasso || '--';
+>>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
     document.getElementById("user-cep").innerText = `CEP: ${user.cep || '--'}`;
     
     if (user.obsMed) {
@@ -199,8 +211,12 @@
     }
 
     function logout() {
+<<<<<<< HEAD
+        Auth.logout();
+=======
         localStorage.removeItem("user");
         window.location.href = "login.html";
+>>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
     }
 </script>
 

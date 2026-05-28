@@ -1,9 +1,23 @@
 document.addEventListener("DOMContentLoaded", () => {
+<<<<<<< HEAD
+=======
 
+>>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
     console.log("JS tutor carregado");
 
     const form = document.getElementById("tutor_form");
     const mensagem = document.getElementById("mensagemTutor");
+<<<<<<< HEAD
+    const pacienteIdInput = document.getElementById("pacienteId");
+
+    if (!form) return;
+
+    // Tenta pegar ID do sessionStorage para preencher automaticamente
+    const pacienteIdSalvo = sessionStorage.getItem("pacienteId");
+    if (pacienteIdSalvo && pacienteIdInput) {
+        pacienteIdInput.value = pacienteIdSalvo;
+        console.log("ID preenchido do sessionStorage:", pacienteIdSalvo);
+=======
 
     // 🔥 proteção contra página errada
     if (!form) {
@@ -19,11 +33,23 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("Paciente não encontrado. Faça o cadastro primeiro.");
         window.location.href = "cadastro.html";
         return;
+>>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
     }
 
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
+<<<<<<< HEAD
+        const nomeInput = document.getElementById("nomeTutor");
+        const dataInputEl = document.getElementById("dataVinculo");
+
+        const nome = nomeInput.value.trim();
+        const pacienteId = pacienteIdInput.value.trim();
+        const dataInput = dataInputEl ? dataInputEl.value : null;
+
+        if (!nome || !pacienteId) {
+            exibirMensagem("❌ Preencha seu nome e o ID do Paciente", true);
+=======
         console.log("Submit disparado");
 
         const nomeInput = document.getElementById("nomeTutor");
@@ -39,16 +65,64 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!nome) {
             exibirMensagem("❌ Nome obrigatório", true);
+>>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
             return;
         }
 
         const vinculo = {
             nome,
+<<<<<<< HEAD
+            pacienteId: Number(pacienteId),
+=======
             pacienteId: Number(pacienteIdSalvo),
+>>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
             dataVinculo: dataInput ? new Date(dataInput).toISOString() : null,
             principal: false
         };
 
+<<<<<<< HEAD
+        const btn = document.getElementById("btnTutor");
+        const originalText = btn.innerText;
+        btn.disabled = true;
+        btn.innerText = "Vinculando...";
+
+        try {
+            const response = await fetch(`${CONFIG.API_BASE_URL}/api/vinculos`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(vinculo)
+            });
+
+            if (response.ok) {
+                exibirMensagem("✔ Tutor vinculado com sucesso!", false);
+                setTimeout(() => {
+                    form.reset();
+                    sessionStorage.removeItem("pacienteId");
+                    window.location.href = "login.html"; // Redireciona para login após sucesso
+                }, 2000);
+            } else {
+                const texto = await response.text();
+                exibirMensagem("❌ " + (texto || "Erro ao salvar vínculo"), true);
+            }
+        } catch (err) {
+            console.error("Erro fetch:", err);
+            exibirMensagem("❌ Erro de conexão com o servidor", true);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = originalText;
+        }
+    });
+
+    function exibirMensagem(msg, erro = false) {
+        if (mensagem) {
+            mensagem.innerHTML = msg;
+            mensagem.className = `mb-6 p-4 rounded-xl text-sm font-bold text-center ${erro ? 'bg-red-500/10 text-red-500 border border-red-500/20' : 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'}`;
+        } else {
+            alert(msg);
+        }
+    }
+});
+=======
         console.log("Enviando:", vinculo);
 
         try {
@@ -101,3 +175,4 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 });
+>>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27

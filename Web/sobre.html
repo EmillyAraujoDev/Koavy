@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre - Koavy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#050505] text-gray-300 font-inter min-h-screen">
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+    <script src="components/navbar.js"></script>
+
+    <!-- Background Orbs -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-neon1/10 rounded-full blur-[120px] animate-pulse"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-neon2/10 rounded-full blur-[120px] animate-pulse" style="animation-delay: 2s"></div>
+    </div>
+
+    <main class="pt-40 pb-20 px-6 max-w-7xl mx-auto">
+        <section class="reveal reveal-up active">
+            <div class="text-center mb-20">
+                <span class="inline-block px-4 py-1.5 bg-neon1/10 border border-neon1/20 rounded-full text-neon1 text-[10px] font-bold uppercase tracking-[0.2em] mb-6">Nossa História</span>
+                <h1 class="text-4xl lg:text-6xl font-extrabold text-white mb-8 tracking-tighter">
+                    O Futuro da <span class="text-gradient">Saúde</span> Cardíaca.
+                </h1>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                    A Koavy nasceu da necessidade de transformar a maneira como cuidamos da saúde do coração. 
+                    Combinamos tecnologia de ponta, inteligência artificial e um design humano.
+                </p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-8 mb-32">
+                <div class="glass rounded-[48px] p-12 hover:border-neon1/30 transition-colors group">
+                    <div class="w-16 h-16 bg-neon1/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 text-neon1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <h2 class="text-4xl font-bold text-white mb-6">Inovação Radical</h2>
+                    <p class="text-gray-400 text-lg leading-relaxed">
+                        Diferente de monitores comuns, a Koavy é um ecossistema completo. 
+                        Integramos dados em tempo real com alertas inteligentes que podem salvar vidas.
+                    </p>
+                </div>
+                <div class="glass rounded-[48px] p-12 hover:border-neon2/30 transition-colors group">
+                    <div class="w-16 h-16 bg-neon2/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 text-neon2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </div>
+                    <h2 class="text-4xl font-bold text-white mb-6">Foco no Humano</h2>
+                    <p class="text-gray-400 text-lg leading-relaxed">
+                        Reduzir o tempo de resposta em emergências cardíacas e democratizar o 
+                        acesso ao monitoramento preventivo de alta qualidade para todos.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-12 text-center py-20 border-y border-white/5">
+                <div>
+                    <h3 class="text-5xl font-extrabold text-white mb-2">99.4%</h3>
+                    <p class="text-xs text-gray-500 font-bold uppercase tracking-widest">Precisão Clínica</p>
+                </div>
+                <div>
+                    <h3 class="text-5xl font-extrabold text-white mb-2">24/7</h3>
+                    <p class="text-xs text-gray-500 font-bold uppercase tracking-widest">Atendimento</p>
+                </div>
+                <div>
+                    <h3 class="text-5xl font-extrabold text-white mb-2">50k+</h3>
+                    <p class="text-xs text-gray-500 font-bold uppercase tracking-widest">Vidas Monitoradas</p>
+                </div>
+                <div>
+                    <h3 class="text-5xl font-extrabold text-white mb-2">150+</h3>
+                    <p class="text-xs text-gray-500 font-bold uppercase tracking-widest">Médicos Parceiros</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

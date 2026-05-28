@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inteligência Koavy - Demonstração</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#050505] text-gray-300 font-inter min-h-screen">
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+    <script src="components/demo.js"></script>
+    <script src="components/navbar.js"></script>
+
+    <main class="pt-40 pb-20 px-6 max-w-7xl mx-auto">
+        <div class="text-center mb-24">
+            <h1 class="text-4xl lg:text-6xl font-extrabold text-white mb-8 tracking-tighter">Ciência que <span class="text-gradient">Antecipa.</span></h1>
+            <p class="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                Nossos algoritmos não apenas monitoram; eles aprendem os padrões únicos do seu coração 
+                para prever anomalias antes mesmo de você sentir qualquer sintoma.
+            </p>
+        </div>
+
+        <!-- Interactive Simulation Box -->
+        <div class="glass rounded-[64px] p-12 lg:p-20 relative overflow-hidden border-neon1/20">
+            <div class="grid lg:grid-cols-2 gap-20 items-center">
+                <div>
+                    <h2 class="text-4xl font-bold text-white mb-8">Como a IA Koavy funciona?</h2>
+                    <div class="space-y-8">
+                        <div class="flex gap-6">
+                            <div class="w-12 h-12 rounded-2xl bg-neon1/10 flex items-center justify-center text-neon1 font-bold">01</div>
+                            <div>
+                                <h4 class="text-white font-bold mb-2">Captura Multimodal</h4>
+                                <p class="text-gray-500 text-sm">Leituras de ECG, Oxigenação e Variabilidade da Frequência Cardíaca (VFC).</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6">
+                            <div class="w-12 h-12 rounded-2xl bg-neon2/10 flex items-center justify-center text-neon2 font-bold">02</div>
+                            <div>
+                                <h4 class="text-white font-bold mb-2">Processamento Edge</h4>
+                                <p class="text-gray-500 text-sm">Análise instantânea no dispositivo e na nuvem simultaneamente.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6">
+                            <div class="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-400 font-bold">03</div>
+                            <div>
+                                <h4 class="text-white font-bold mb-2">Rede de Apoio</h4>
+                                <p class="text-gray-500 text-sm">Se algo estiver fora do padrão, sua rede é avisada em menos de 3 segundos.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <div class="aspect-square glass rounded-full border-neon1/30 flex items-center justify-center animate-pulse">
+                         <div class="text-center">
+                            <span class="text-[10px] font-bold text-neon1 uppercase tracking-[0.3em]">IA Analisando</span>
+                            <div class="text-7xl font-extrabold text-white my-4" id="demo-bpm">72</div>
+                            <span class="text-gray-500 font-bold tracking-widest text-xs">BPM ESTÁVEL</span>
+                         </div>
+                    </div>
+                    <!-- Floating Badge -->
+                    <div class="absolute -top-4 -right-4 bg-emerald-500 text-black px-6 py-2 rounded-full font-bold text-xs shadow-xl">Precisão de 99.4%</div>
+                </div>
+            </div>
+            
+            <div class="mt-20 pt-20 border-t border-white/5 text-center">
+                <button onclick="Demo.start()" class="px-12 py-6 bg-gradient-to-r from-neon1 to-neon2 text-black font-extrabold text-xl rounded-[24px] hover:scale-110 transition-all shadow-2xl shadow-neon1/20">
+                    Experimentar a Plataforma Agora
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        // Simple interval for the mini-demo on this page
+        setInterval(() => {
+            const bpm = Math.floor(68 + Math.random() * 8);
+            const el = document.getElementById('demo-bpm');
+            if(el) el.innerText = bpm;
+        }, 2000);
+    </script>
+</body>
+</html>

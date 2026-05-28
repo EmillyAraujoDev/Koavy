@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+
+=======
+>>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -42,11 +46,19 @@
   </div>
 </nav>
 
+<<<<<<< HEAD
+<main class="flex-1 flex items-center justify-center p-4 pt-24">
+  <div class="w-full max-w-md bg-white/5 border border-white/10 rounded-[40px] p-8 lg:p-12 backdrop-blur-md shadow-2xl relative overflow-hidden">
+    
+    <div class="absolute -top-20 -right-20 w-64 h-64 bg-neon1/10 rounded-full blur-[80px] pointer-events-none"></div>
+    <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-neon2/10 rounded-full blur-[80px] pointer-events-none"></div>
+=======
 <main class="flex-1 flex items-center justify-center p-4">
   <div class="w-full max-w-md bg-white/5 border border-white/10 rounded-[40px] p-8 lg:p-12 backdrop-blur-md shadow-2xl relative overflow-hidden reveal reveal-zoom active">
     
     <div class="absolute -top-20 -right-20 w-64 h-64 bg-neon1/10 rounded-full blur-[80px]"></div>
     <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-neon2/10 rounded-full blur-[80px]"></div>
+>>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
 
     <div class="text-center mb-10 relative z-10">
       <h1 class="text-4xl font-black text-white mb-2">Bem-vindo</h1>
@@ -56,12 +68,30 @@
     <form id="login_form" class="space-y-6 relative z-10">
       <div class="space-y-2">
         <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">E-mail de Acesso</label>
+<<<<<<< HEAD
+        <input type="email" id="name" name="nome" placeholder="seu@email.com" required
+          class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-neon1 focus:ring-4 focus:ring-neon1/10 transition-all duration-300 placeholder:text-gray-700">
+=======
         <input type="text" id="name" name="nome" placeholder="seu@email.com" class="login-input">
+>>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
       </div>
 
       <div class="space-y-2">
         <div class="flex justify-between items-center px-2">
           <label class="text-[10px] font-black uppercase tracking-widest text-gray-500">Senha</label>
+<<<<<<< HEAD
+          <button type="button" onclick="openForgotModal()" class="text-[10px] font-bold text-neon1 hover:underline focus:outline-none">Esqueci a senha</button>
+        </div>
+        <input type="password" id="password" name="senha" placeholder="••••••••" required
+          class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-neon1 focus:ring-4 focus:ring-neon1/10 transition-all duration-300 placeholder:text-gray-700">
+      </div>
+
+      <button type="submit" id="login_button" class="w-full py-5 bg-gradient-to-r from-neon1 to-neon2 text-black font-black text-lg rounded-2xl shadow-xl shadow-neon1/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300">
+        Entrar no Sistema
+      </button>
+
+      <div id="mensagemErro" class="text-center text-red-500 text-sm font-bold mt-4 min-h-[1.25rem]"></div>
+=======
           <a href="#" class="text-[10px] font-bold text-neon1 hover:underline">Esqueci a senha</a>
         </div>
         <input type="password" id="password" name="senha" placeholder="••••••••" class="login-input">
@@ -72,12 +102,17 @@
       </button>
 
       <div id="mensagemErro" class="text-center text-red-500 text-sm font-bold mt-4"></div>
+>>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
     </form>
 
     <div class="mt-12 pt-8 border-t border-white/5 text-center relative z-10">
       <p class="text-xs text-gray-600 mb-6 font-black uppercase tracking-widest">Ou entre com</p>
       <div class="flex justify-center gap-4">
+<<<<<<< HEAD
+        <button type="button" onclick="loginWithGoogle()" class="w-full py-3 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center gap-3 hover:bg-white/10 transition-all active:scale-95">
+=======
         <button class="w-full py-3 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center gap-3 hover:bg-white/10 transition">
+>>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
           <img src="imagens/google.png" alt="Google" class="w-5">
           <span class="text-sm font-bold">Google</span>
         </button>
@@ -86,12 +121,44 @@
   </div>
 </main>
 
+<<<<<<< HEAD
+<!-- MODAL ESQUECI A SENHA -->
+<div id="forgotModal" class="fixed inset-0 bg-black/90 backdrop-blur-md hidden items-center justify-center z-[100] p-4">
+  <div class="bg-[#1a1c1e] p-8 lg:p-10 rounded-[40px] w-full max-w-md border border-white/10 shadow-2xl relative overflow-hidden">
+    <div class="absolute -top-20 -right-20 w-48 h-48 bg-neon1/10 rounded-full blur-[60px]"></div>
+    
+    <div class="relative z-10 text-center">
+      <h2 class="text-3xl font-black text-white mb-2">Recuperar Acesso</h2>
+      <p class="text-gray-500 text-sm mb-8">Enviaremos um link de redefinição para o seu e-mail cadastrado.</p>
+      
+      <form id="forgot_form" class="space-y-6 text-left">
+        <div class="space-y-2">
+          <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">Seu E-mail</label>
+          <input type="email" id="forgotEmail" required placeholder="seu@email.com"
+            class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-neon1 transition-all">
+        </div>
+        <button type="submit" class="w-full py-4 bg-neon1 text-black font-black rounded-2xl hover:scale-105 transition-all">
+          Enviar Link
+        </button>
+        <button type="button" onclick="closeForgotModal()" class="w-full text-sm font-bold text-gray-500 hover:text-white transition-colors">
+          Voltar ao Login
+        </button>
+      </form>
+      <div id="forgotMessage" class="mt-4 text-sm font-bold"></div>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="auth.js"></script>
+=======
 <style>
   .login-input {
     @apply w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-neon1/50 focus:ring-1 focus:ring-neon1/20 transition-all placeholder:text-gray-700;
   }
 </style>
 
+>>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
 <script src="login.js"></script>
 </body>
 </html>

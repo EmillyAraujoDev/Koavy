@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funcionalidades - Koavy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#050505] text-gray-300 font-inter min-h-screen">
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+    <script src="components/navbar.js"></script>
+
+    <main class="pt-40 pb-20 px-6 max-w-7xl mx-auto">
+        <section class="reveal reveal-up active">
+            <div class="mb-20">
+                <span class="inline-block px-4 py-1.5 bg-neon2/10 border border-neon2/20 rounded-full text-neon2 text-[10px] font-bold uppercase tracking-[0.2em] mb-6">Tecnologia Koavy</span>
+                <h1 class="text-4xl lg:text-5xl font-extrabold text-white mb-8 tracking-tighter">Funcionalidades <span class="text-gradient">Pro</span></h1>
+                <p class="text-xl text-gray-400 max-w-2xl leading-relaxed">
+                    Nossa plataforma utiliza algoritmos avançados de rede neural para identificar 
+                    padrões cardíacos complexos em tempo recorde.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 mt-16 mb-32">
+                <div class="glass rounded-[40px] p-10 hover:border-neon1/50 transition-all group">
+                    <div class="w-16 h-16 bg-neon1/10 rounded-2xl flex items-center justify-center mb-10 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 text-neon1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-4 tracking-tight">Monitoramento 24/7</h3>
+                    <p class="text-gray-500 leading-relaxed">Acompanhamento contínuo da frequência cardíaca com precisão clínica e latência zero.</p>
+                </div>
+                
+                <div class="glass rounded-[40px] p-10 hover:border-neon2/50 transition-all group">
+                    <div class="w-16 h-16 bg-neon2/10 rounded-2xl flex items-center justify-center mb-10 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 text-neon2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-4 tracking-tight">Alertas Críticos</h3>
+                    <p class="text-gray-500 leading-relaxed">Notificações inteligentes para familiares e médicos em milissegundos após anomalias.</p>
+                </div>
+
+                <div class="glass border-neon1/10 rounded-[40px] p-10 hover:border-neon1/30 transition-all duration-500 group">
+                    <div class="w-16 h-16 bg-neon1/10 rounded-2xl flex items-center justify-center mb-10 group-hover:scale-105 transition-transform duration-500">
+                        <svg class="w-8 h-8 text-neon1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-4 tracking-tight">Relatórios IA</h3>
+                    <p class="text-gray-500 leading-relaxed">Geração automática de relatórios clínicos para facilitar diagnósticos médicos precisos.</p>
+                </div>
+            </div>
+
+            <!-- Dashboard Preview -->
+            <div class="glass rounded-[64px] p-12 lg:p-20 relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-20 opacity-10">
+                    <svg class="w-64 h-64 text-neon1" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </div>
+                <div class="relative z-10 max-w-2xl">
+                    <h2 class="text-5xl font-extrabold text-white mb-8">Interface Intuitiva.</h2>
+                    <p class="text-gray-400 text-lg mb-12">Nossa interface foi desenhada para ser simples no pulso e poderosa no navegador. Visualize métricas complexas com clareza absoluta.</p>
+                    <a href="login.html" class="inline-block px-10 py-5 bg-white text-black font-extrabold rounded-2xl hover:scale-105 transition-all">Ver Demonstração</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redefinir Senha - Koavy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#050505] text-gray-300 font-inter min-h-screen flex items-center justify-center p-6">
+    <div class="glass w-full max-w-md rounded-[48px] p-10 lg:p-12 relative overflow-hidden">
+        <div class="absolute -top-20 -right-20 w-64 h-64 bg-neon1/10 rounded-full blur-[80px] pointer-events-none"></div>
+
+        <div class="text-center mb-10">
+            <div class="w-16 h-16 bg-neon1/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <svg class="w-8 h-8 text-neon1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </div>
+            <h1 class="text-4xl font-extrabold text-white mb-2 tracking-tight">Nova Senha</h1>
+            <p class="text-gray-500 font-medium">Crie uma senha forte para proteger sua conta.</p>
+        </div>
+
+        <form id="reset_form" class="space-y-6">
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-2">Nova Senha</label>
+                <input type="password" id="new_password" required placeholder="••••••••"
+                    class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-neon1 transition-all outline-none">
+            </div>
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-2">Confirmar Senha</label>
+                <input type="password" id="confirm_password" required placeholder="••••••••"
+                    class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-neon1 transition-all outline-none">
+            </div>
+
+            <button type="submit" class="w-full py-5 bg-gradient-to-r from-neon1 to-neon2 text-black font-extrabold text-lg rounded-2xl shadow-xl shadow-neon1/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                Atualizar Senha
+            </button>
+            
+            <div id="resetMessage" class="text-center text-sm font-bold min-h-[1.25rem]"></div>
+        </form>
+
+        <div class="mt-8 text-center">
+            <a href="login.html" class="text-sm font-bold text-gray-500 hover:text-white transition-colors">Voltar ao Login</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("reset_form").addEventListener("submit", (e) => {
+            e.preventDefault();
+            const p1 = document.getElementById("new_password").value;
+            const p2 = document.getElementById("confirm_password").value;
+            const msg = document.getElementById("resetMessage");
+
+            if (p1 !== p2) {
+                msg.innerHTML = '<span class="text-red-500">As senhas não coincidem.</span>';
+                return;
+            }
+
+            msg.innerHTML = '<span class="text-emerald-500">Senha atualizada com sucesso! Redirecionando...</span>';
+            setTimeout(() => {
+                window.location.href = "login.html";
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

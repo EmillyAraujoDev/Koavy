@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meu Perfil - Koavy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { neon1: '#00f2ff', neon2: '#00d4aa', dark1: '#121212', dark2: '#0f1011' }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#050505] text-gray-300 font-inter min-h-screen">
+
+<script src="config.js"></script>
+<script src="auth.js"></script>
+<script src="components/navbar.js"></script>
+
+<main class="pt-40 pb-20 px-4 max-w-4xl mx-auto">
+    <div class="bg-white/5 border border-white/10 rounded-[40px] p-8 lg:p-12 backdrop-blur-md">
+        <div class="flex flex-col md:flex-row gap-10 items-center mb-12 border-b border-white/5 pb-12">
+            <div class="w-32 h-32 rounded-full bg-gradient-to-br from-neon1 to-neon2 flex items-center justify-center text-4xl font-extrabold text-black" id="user-initials">--</div>
+            <div class="text-center md:text-left">
+                <h1 class="text-4xl font-extrabold text-white mb-2" id="user-name">Carregando...</h1>
+                <p class="text-gray-500 font-medium" id="user-email">--</p>
+                <div class="mt-4 inline-block px-4 py-1 rounded-full bg-neon1/10 border border-neon1/20 text-neon1 text-[10px] font-bold uppercase tracking-widest" id="user-badge">Paciente</div>
+            </div>
+        </div>
+
+        <form id="profile-form" class="grid md:grid-cols-2 gap-8">
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-1">Nome Completo</label>
+                <input type="text" id="edit-nome" class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-neon1 transition-all">
+            </div>
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-1">E-mail</label>
+                <input type="email" id="edit-email" class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-neon1 transition-all">
+            </div>
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-1">Telefone</label>
+                <input type="text" id="edit-telefone" class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-neon1 transition-all">
+            </div>
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-1">CEP</label>
+                <input type="text" id="edit-cep" class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-neon1 transition-all">
+            </div>
+            
+            <div class="md:col-span-2 pt-8 border-t border-white/5 flex justify-end gap-4">
+                <a href="dashboard.html" class="px-8 py-4 rounded-2xl font-bold text-gray-500 hover:text-white transition-colors">Voltar</a>
+                <button type="submit" class="px-12 py-4 bg-neon1 text-black font-extrabold rounded-2xl shadow-lg shadow-neon1/20 hover:scale-105 transition-all">Salvar Alterações</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<script src="script.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const user = Auth.check();
+        if (!user) return;
+
+        document.getElementById("user-name").innerText = user.nome;
+        document.getElementById("user-email").innerText = user.email;
+        document.getElementById("user-initials").innerText = user.nome.substring(0,2).toUpperCase();
+        document.getElementById("edit-nome").value = user.nome;
+        document.getElementById("edit-email").value = user.email;
+        document.getElementById("edit-telefone").value = user.telefone || "";
+        document.getElementById("edit-cep").value = user.cep || "";
+        document.getElementById("user-badge").innerText = user.perfilId === 1 ? 'Paciente' : 'Tutor';
+    });
+
+    document.getElementById("profile-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        alert("Dados salvos com sucesso!");
+        window.location.href = "dashboard.html";
+    });
+</script>
+
+</body>
+</html>

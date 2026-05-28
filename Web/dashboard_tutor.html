@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Tutor - Koavy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { neon1: '#00f2ff', neon2: '#00d4aa', dark1: '#121212', dark2: '#0f1011' }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#050505] text-gray-300 font-inter min-h-screen">
+
+<nav class="fixed top-0 left-0 w-full z-50 backdrop-blur-xl bg-black/40 border-b border-white/5">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 bg-neon2 rounded-lg flex items-center justify-center">
+        <span class="text-black font-black text-xl">K</span>
+      </div>
+      <h1 class="text-2xl font-black bg-gradient-to-r from-neon1 to-neon2 bg-clip-text text-transparent logo">Koavy</h1>
+    </div>
+
+    <div class="flex items-center gap-6">
+      <div class="hidden md:flex flex-col items-end">
+        <span class="text-sm font-bold text-white" id="user-name">Carregando...</span>
+        <span class="text-[10px] uppercase tracking-widest text-neon2 font-black">Tutor Responsável</span>
+      </div>
+      <button onclick="Auth.logout()" class="p-2 hover:bg-red-500/10 text-red-500 rounded-xl transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<main class="pt-32 pb-20 px-4 max-w-7xl mx-auto">
+    
+    <div class="mb-12">
+        <h2 class="text-4xl font-black text-white mb-2">Central de Monitoramento</h2>
+        <p class="text-gray-500">Acompanhe a saúde de seus pacientes vinculados em tempo real.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="patient-list">
+        <!-- Patient Card 1 -->
+        <div class="bg-white/5 border border-white/10 rounded-[40px] p-8 hover:border-neon1/50 transition-all group relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-6">
+                 <span class="flex h-3 w-3">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon1 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-3 w-3 bg-neon1"></span>
+                </span>
+            </div>
+            
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon1 to-neon2 flex items-center justify-center text-2xl font-black text-black">JS</div>
+                <div>
+                    <h3 class="text-xl font-black text-white">João Silva</h3>
+                    <p class="text-xs text-gray-500 uppercase tracking-widest">ID: #100</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="bg-black/40 p-4 rounded-2xl border border-white/5 text-center">
+                    <p class="text-[10px] font-black text-gray-600 uppercase mb-1">BPM Atual</p>
+                    <p class="text-3xl font-black text-neon1">74</p>
+                </div>
+                <div class="bg-black/40 p-4 rounded-2xl border border-white/5 text-center">
+                    <p class="text-[10px] font-black text-gray-600 uppercase mb-1">Oxigênio</p>
+                    <p class="text-3xl font-black text-emerald-400">98%</p>
+                </div>
+            </div>
+
+            <button onclick="viewHistory(100)" class="w-full py-4 bg-white/5 border border-white/10 rounded-2xl font-black text-xs uppercase tracking-widest group-hover:bg-neon1 group-hover:text-black transition-all">Ver Histórico Completo</button>
+        </div>
+
+        <!-- Add New Patient Placeholder -->
+        <a href="cadastrotutor.html" class="border-2 border-dashed border-white/10 rounded-[40px] p-8 flex flex-col items-center justify-center text-center hover:border-neon2/50 transition-all group">
+            <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:bg-neon2/20 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-500 group-hover:text-neon2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+            </div>
+            <p class="font-black text-white">Vincular Novo Paciente</p>
+            <p class="text-xs text-gray-500 mt-2">Você precisará do ID do paciente.</p>
+        </a>
+    </div>
+
+    <!-- MODAL HISTÓRICO (SIMULAÇÃO) -->
+    <div id="history-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md hidden items-center justify-center z-[100] p-4">
+        <div class="bg-[#1a1c1e] p-8 lg:p-12 rounded-[48px] w-full max-w-4xl border border-white/10 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-10">
+                <h2 class="text-3xl font-black text-white" id="modal-title">Histórico de João Silva</h2>
+                <button onclick="closeHistory()" class="text-gray-500 hover:text-white text-2xl">✕</button>
+            </div>
+            
+            <div class="space-y-6">
+                <div class="p-6 bg-white/5 rounded-3xl border border-white/5">
+                    <h4 class="text-xs font-black uppercase tracking-widest text-neon1 mb-4">Últimos Exames Anexados</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="flex items-center gap-4 p-4 bg-black/20 rounded-2xl border border-white/5">
+                            <div class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center text-red-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-white">Eletrocardiograma_Mar.pdf</p>
+                                <p class="text-[10px] text-gray-500 uppercase">12 Mar 2026</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 bg-white/5 rounded-3xl border border-white/5">
+                    <h4 class="text-xs font-black uppercase tracking-widest text-neon1 mb-4">Relatório de Alertas</h4>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center p-4 bg-red-500/5 rounded-2xl border border-red-500/10">
+                            <div>
+                                <p class="text-sm font-bold text-red-500">Arritmia Detectada</p>
+                                <p class="text-[10px] text-gray-500 uppercase">14 Mai 2026 - 22:15</p>
+                            </div>
+                            <span class="px-3 py-1 bg-red-500 text-white text-[10px] font-black rounded-full">CRÍTICO</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-10 flex justify-end">
+                <button onclick="closeHistory()" class="px-10 py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-black text-xs uppercase tracking-widest transition-all">Fechar Visão</button>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<script src="config.js"></script>
+<script src="auth.js"></script>
+<script>
+    const user = Auth.check();
+    if (user) {
+        document.getElementById("user-name").innerText = user.nome;
+    }
+
+    function viewHistory(id) {
+        document.getElementById("history-modal").classList.remove("hidden");
+        document.getElementById("history-modal").classList.add("flex");
+    }
+
+    function closeHistory() {
+        document.getElementById("history-modal").classList.add("hidden");
+        document.getElementById("history-modal").classList.remove("flex");
+    }
+</script>
+
+</body>
+</html>

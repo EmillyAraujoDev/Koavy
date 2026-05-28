@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contato - Koavy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#050505] text-gray-300 font-inter min-h-screen">
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+    <script src="components/navbar.js"></script>
+
+    <main class="pt-40 pb-20 px-6 max-w-7xl mx-auto">
+        <section class="reveal reveal-up active grid lg:grid-cols-2 gap-20">
+            <div>
+                <h1 class="text-5xl lg:text-7xl font-extrabold text-white mb-8">Fale <span class="text-neon1">Conosco</span></h1>
+                <p class="text-xl text-gray-400 leading-relaxed mb-12">
+                    Estamos aqui para ajudar. Se você tem dúvidas sobre a plataforma, 
+                    planos para empresas ou suporte técnico, preencha o formulário ao lado.
+                </p>
+                
+                <div class="space-y-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10">
+                            <svg class="w-6 h-6 text-neon1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 font-bold uppercase tracking-widest">E-mail</p>
+                            <p class="text-white font-bold">contato@koavy.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-[40px] p-10">
+                <form class="space-y-6">
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500">Nome</label>
+                            <input type="text" placeholder="Seu nome" class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-neon1 transition-all outline-none">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500">E-mail</label>
+                            <input type="email" placeholder="seu@email.com" class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-neon1 transition-all outline-none">
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500">Assunto</label>
+                        <select class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-neon1 transition-all outline-none">
+                            <option>Dúvidas Gerais</option>
+                            <option>Suporte Técnico</option>
+                            <option>Comercial</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500">Mensagem</label>
+                        <textarea placeholder="Como podemos ajudar?" class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-neon1 transition-all outline-none h-32"></textarea>
+                    </div>
+                    <button class="w-full py-4 bg-neon1 text-black font-extrabold rounded-2xl hover:scale-[1.02] transition-all shadow-lg shadow-neon1/20">Enviar Mensagem</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

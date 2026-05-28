@@ -1,3 +1,12 @@
+<<<<<<< HEAD
+// ================= ADMIN CORE =================
+const adminUser = Auth.check();
+if (adminUser.perfilId !== 3) Auth.redirectByRole(adminUser);
+
+// ================= ESTADO GLOBAL =================
+let usuariosMemoria = [];
+let usuarioEditandoId = null;
+=======
 // ================= PROTEÇÃO E AUTH =================
 const user = JSON.parse(localStorage.getItem("user"));
 
@@ -290,10 +299,133 @@ function logout() {
     localStorage.removeItem("user");
     window.location.href = "login.html";
 }
+>>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
 
 // ================= INICIALIZAÇÃO =================
 document.addEventListener("DOMContentLoaded", () => {
     carregarUsuarios();
+<<<<<<< HEAD
+    atualizarStats();
+    
+    // Busca em tempo real
+    document.getElementById("global-search").addEventListener("input", (e) => {
+        const termo = e.target.value.toLowerCase();
+        filtrarUsuarios(termo);
+    });
+});
+
+async function carregarUsuarios() {
+    try {
+        const response = await fetch("http://localhost:8080/api/usuarios");
+        if (!response.ok) throw new Error("API Indisponível");
+        usuariosMemoria = await response.json();
+        renderizarTabela(usuariosMemoria);
+    } catch (err) {
+        console.error("Erro ao carregar:", err);
+        // Fallback para demonstração se a API falhar
+        usuariosMemoria = [
+            { id: 100, nome: "João Silva", email: "joao@email.com", perfilId: 1, ativo: true, idade: 45 },
+            { id: 200, nome: "Maria Tutor", email: "maria@email.com", perfilId: 2, ativo: true }
+        ];
+        renderizarTabela(usuariosMemoria);
+    }
+}
+
+function renderizarTabela(lista) {
+    const tabela = document.getElementById("tabelaUsuarios");
+    if (!tabela) return;
+    tabela.innerHTML = "";
+
+    lista.forEach(u => {
+        const perfilText = u.perfilId === 1 ? 'Paciente' : u.perfilId === 2 ? 'Tutor' : 'Admin';
+        const perfilClass = u.perfilId === 1 ? 'text-emerald-400 bg-emerald-500/10' : 'text-neon1 bg-neon1/10';
+        const iniciais = u.nome.substring(0, 2).toUpperCase();
+
+        tabela.innerHTML += `
+            <tr class="hover:bg-white/[0.03] transition-all">
+                <td class="px-10 py-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center font-black text-xs">${iniciais}</div>
+                        <div>
+                            <p class="font-bold text-white">${u.nome}</p>
+                            <p class="text-[10px] text-gray-500">ID: #${u.id}</p>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-10 py-6 text-sm text-gray-400">${u.email}</td>
+                <td class="px-10 py-6">
+                    <span class="px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${perfilClass}">${perfilText}</span>
+                </td>
+                <td class="px-10 py-6">
+                    <span class="flex items-center gap-2 text-[10px] font-bold text-emerald-500">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Ativo
+                    </span>
+                </td>
+                <td class="px-10 py-6 text-right">
+                    <button onclick="inspectUser(${u.id})" class="p-3 hover:bg-neon1/10 text-gray-500 hover:text-neon1 transition-all rounded-xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function filtrarUsuarios(termo) {
+    const filtrados = usuariosMemoria.filter(u => 
+        u.nome.toLowerCase().includes(termo) || 
+        u.email.toLowerCase().includes(termo) || 
+        u.id.toString().includes(termo)
+    );
+    renderizarTabela(filtrados);
+}
+
+function inspectUser(id) {
+    const user = usuariosMemoria.find(u => u.id === id);
+    if (!user) return;
+    
+    usuarioEditandoId = id;
+    document.getElementById("inspect-name").innerText = user.nome;
+    document.getElementById("inspect-id-display").innerText = `ID: #${user.id}`;
+    document.getElementById("inspect-initials").innerText = user.nome.substring(0,2).toUpperCase();
+    
+    // Preenche campos de edição
+    document.getElementById("editNome").value = user.nome;
+    document.getElementById("editEmail").value = user.email;
+    document.getElementById("editTelefone").value = user.telefone || "";
+    document.getElementById("editPeso").value = user.peso || "";
+    
+    document.getElementById("modalEditar").classList.remove("hidden");
+    document.getElementById("modalEditar").classList.add("flex");
+}
+
+function fecharModal() {
+    document.getElementById("modalEditar").classList.add("hidden");
+    document.getElementById("modalEditar").classList.remove("flex");
+}
+
+async function atualizarStats() {
+    document.getElementById("stat-usuarios").innerText = usuariosMemoria.length;
+    document.getElementById("stat-pacientes").innerText = usuariosMemoria.filter(u => u.perfilId === 1).length;
+    document.getElementById("stat-admins").innerText = usuariosMemoria.filter(u => u.perfilId === 2).length;
+}
+
+function mostrar(secaoId) {
+    const ids = ['dashboard', 'usuarios', 'dados'];
+    ids.forEach(id => {
+        document.getElementById(id).classList.toggle('hidden', id !== secaoId);
+        document.getElementById(`btn-${id}`).classList.toggle('active', id === secaoId);
+        document.getElementById(`btn-${id}`).classList.toggle('bg-neon1/10', id === secaoId);
+        document.getElementById(`btn-${id}`).classList.toggle('text-neon1', id === secaoId);
+    });
+}
+
+function salvarEdicao() {
+    alert("Simulação: Alterações salvas no banco de dados.");
+    fecharModal();
+}
+=======
     carregarTutores();
     atualizarStats();
 });
+>>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27

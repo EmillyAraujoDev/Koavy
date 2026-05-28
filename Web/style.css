@@ -1,12 +1,35 @@
+<<<<<<< HEAD
+/* ================= KOAVY GLOBAL STYLES ================= */
+
+/* RESET & BASE */
+=======
 /* ================= RESET ================= */
 
 
+>>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+<<<<<<< HEAD
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: radial-gradient(circle at 50% 50%, #0f1011 0%, #050505 100%);
+    color: #e0e0e0;
+    overflow-x: hidden;
+    line-height: 1.5;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800;900&display=swap');
+
+/* RESET & BASE */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+=======
 h1, h2, h3, th {
     font-weight: bolder !important;
      font-family: "Boldonse", system-ui;
@@ -42,10 +65,128 @@ h1, h2, h3, th {
 
 a {
  font-weight: bold;
+>>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
 }
 
 body {
     font-family: 'Inter', sans-serif;
+<<<<<<< HEAD
+    background: #050505;
+    color: #e0e0e0;
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+/* TYPOGRAPHY */
+h1, h2, h3, h4, h5, h6, .logo {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #fff;
+}
+
+.logo {
+    font-weight: 900;
+    letter-spacing: -0.05em;
+}
+
+:root {
+    --neon1: #00f2ff;
+    --neon1-glow: rgba(0, 242, 255, 0.3);
+    --neon2: #00d4aa;
+    --neon2-glow: rgba(0, 212, 170, 0.3);
+    --dark-surface: #0a0c10;
+    --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+/* REFINED UTILITIES */
+.glass {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, var(--neon1) 0%, var(--neon2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--neon1) 0%, var(--neon2) 100%);
+    color: #000;
+    font-weight: 700;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px var(--neon1-glow);
+    filter: brightness(1.05);
+}
+
+/* HIGH-PERFORMANCE ANIMATIONS */
+.reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity;
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* BACKGROUND DEPTH (CLEANER) */
+.bg-mesh {
+    background-color: #050608;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(0, 242, 255, 0.05) 0, transparent 40%),
+        radial-gradient(at 100% 100%, rgba(0, 212, 170, 0.05) 0, transparent 40%);
+}
+
+/* ANIMATIONS */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+/* VARIABLES */
+:root {
+    --neon-1: #00f2ff;
+    --neon-2: #00d4aa;
+    --dark-bg: #0a0a0a;
+}
+
+/* SCROLL ANIMATIONS */
+.reveal {
+    opacity: 0;
+    transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.reveal-up { transform: translateY(40px); }
+.reveal-left { transform: translateX(-40px); }
+.reveal-right { transform: translateX(40px); }
+.reveal-zoom { transform: scale(0.9); }
+
+.reveal.active {
+    opacity: 1;
+    transform: translate(0) scale(1);
+}
+
+.delay-100 { transition-delay: 0.1s; }
+.delay-200 { transition-delay: 0.2s; }
+.delay-300 { transition-delay: 0.3s; }
+.delay-400 { transition-delay: 0.4s; }
+
+/* EFFECTS */
+=======
     background-color: #0f1011;
     color: #e0e0e0;
     overflow-x: hidden;
@@ -109,6 +250,7 @@ body {
     background: radial-gradient(circle at 50% 50%, #1a1c1e 0%, #0a0a0a 100%);
 }
 
+>>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
 #particulas {
     position: absolute;
     width: 100%;
@@ -117,6 +259,13 @@ body {
     pointer-events: none;
 }
 
+<<<<<<< HEAD
+@keyframes flutuar {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+=======
 .conteudoHero {
     z-index: 2;
     max-width: 650px;
@@ -152,11 +301,31 @@ body {
 }
 
 /* ================= KOALA ================= */
+>>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
 .koala {
     position: relative;
     animation: flutuar 5s ease-in-out infinite;
 }
 
+<<<<<<< HEAD
+/* MODAL UTILS */
+#modalEditar, #modalTutor {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+}
+
+/* CUSTOM INPUTS (NON-TAILWIND FALLBACKS) */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+/* TABLE STYLES (ADMIN) */
+.admin-table-row:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+=======
 .brilhoPosterior {
     position: absolute;
     width: 250px;
@@ -1223,3 +1392,4 @@ body {
 .delay-300 { transition-delay: 0.3s; }
 .delay-400 { transition-delay: 0.4s; }
 .delay-500 { transition-delay: 0.5s; }
+>>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
