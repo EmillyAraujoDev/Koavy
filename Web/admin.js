@@ -1,311 +1,12 @@
-<<<<<<< HEAD
-// ================= ADMIN CORE =================
-const adminUser = Auth.check();
-if (adminUser.perfilId !== 3) Auth.redirectByRole(adminUser);
-
 // ================= ESTADO GLOBAL =================
 let usuariosMemoria = [];
 let usuarioEditandoId = null;
-=======
-// ================= PROTEÇÃO E AUTH =================
-const user = JSON.parse(localStorage.getItem("user"));
-
-if (!user || user.perfilId !== 2) {
-    window.location.href = "login.html";
-}
-
-document.getElementById("admin-name").innerText = user.nome || "Admin";
-
-// ================= ESTADO GLOBAL =================
-let usuarioEditandoId = null;
-let dadosOriginaisUsuario = null;
-let tutorEditandoId = null;
-
-// ================= UTILITÁRIOS =================
-function calcularIdade(dataNascimento) {
-    if (!dataNascimento) return "";
-    const hoje = new Date();
-    const nasc = new Date(dataNascimento);
-    let idade = hoje.getFullYear() - nasc.getFullYear();
-    const m = hoje.getMonth() - nasc.getMonth();
-    if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) {
-        idade--;
-    }
-    return idade;
-}
-
-function calcularIdadeAutomatico() {
-    const dataNasc = document.getElementById("editDataNascimento").value;
-    const idadeInput = document.getElementById("editIdade");
-    if (dataNasc) {
-        idadeInput.value = calcularIdade(dataNasc);
-    }
-}
-
-// ================= DASHBOARD CORE =================
-async function atualizarStats() {
-    try {
-        const res = await fetch("http://localhost:8080/api/usuarios");
-        const usuarios = await res.json();
-        
-        document.getElementById("stat-usuarios").innerText = usuarios.length;
-        document.getElementById("stat-pacientes").innerText = usuarios.filter(u => u.perfilId === 1).length;
-        document.getElementById("stat-admins").innerText = usuarios.filter(u => u.perfilId === 2).length;
-    } catch (err) {
-        console.error("Erro ao carregar estatísticas:", err);
-    }
-}
-
-// ================= USUÁRIOS =================
-async function carregarUsuarios() {
-    const tabela = document.getElementById("tabelaUsuarios");
-    if (!tabela) return;
-
-    try {
-        const response = await fetch("http://localhost:8080/api/usuarios");
-        const usuarios = await response.json();
-        tabela.innerHTML = "";
-
-        usuarios.forEach(u => {
-            const statusClass = u.ativo ? 'text-emerald-500 bg-emerald-500/10' : 'text-red-500 bg-red-500/10';
-            const statusText = u.ativo ? 'Ativo' : 'Inativo';
-            const tipoText = u.perfilId === 1 ? 'Paciente' : 'Admin';
-            const iniciais = u.nome ? u.nome.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : '??';
-
-            tabela.innerHTML += `
-                <tr class="hover:bg-white/[0.02] transition-colors">
-                    <td class="px-6 py-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-[10px] font-bold text-gray-400 border border-white/10">
-                                ${iniciais}
-                            </div>
-                            <div>
-                                <p class="text-sm font-bold text-white">${u.nome}</p>
-                                <p class="text-xs text-gray-500">ID: ${u.id}</p>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 text-sm text-gray-400">${u.email || "-"}</td>
-                    <td class="px-6 py-4">
-                        <span class="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded bg-white/5 border border-white/10">
-                            ${tipoText}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4">
-                        <span class="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded ${statusClass}">
-                            ${statusText}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="flex justify-center gap-2">
-                            <button onclick="editarUsuario(${u.id})" class="p-2 hover:bg-neon1/10 hover:text-neon1 rounded-lg transition-all">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                </svg>
-                            </button>
-                            <button onclick="deletarUsuario(${u.id})" class="p-2 hover:bg-red-500/10 hover:text-red-500 rounded-lg transition-all">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-        });
-    } catch (err) {
-        console.error("Erro ao carregar usuários:", err);
-    }
-}
-
-async function editarUsuario(id) {
-    usuarioEditandoId = id;
-    try {
-        const response = await fetch("http://localhost:8080/api/usuarios");
-        const lista = await response.json();
-        const usuario = lista.find(u => u.id == id);
-
-        if (!usuario) return;
-        dadosOriginaisUsuario = usuario;
-
-        document.getElementById("editNome").value = usuario.nome || "";
-        document.getElementById("editEmail").value = usuario.email || "";
-        document.getElementById("editTelefone").value = usuario.telefone || "";
-        document.getElementById("editPeso").value = usuario.peso || "";
-        document.getElementById("editAltura").value = usuario.altura || "";
-        document.getElementById("editSexo").value = usuario.sexo || "M";
-        document.getElementById("editTipoSanguineo").value = usuario.tipoSanguineo || "";
-        document.getElementById("editMarcapasso").value = usuario.marcapasso || "Não";
-        document.getElementById("editCep").value = usuario.cep || "";
-        document.getElementById("editDataNascimento").value = usuario.dataNascimento ? usuario.dataNascimento.split("T")[0] : "";
-        document.getElementById("editObs").value = usuario.obsMed || "";
-        
-        calcularIdadeAutomatico();
-
-        const modal = document.getElementById("modalEditar");
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
-    } catch (err) { console.error(err); }
-}
-
-async function salvarEdicao() {
-    if (!usuarioEditandoId || !dadosOriginaisUsuario) return;
-
-    const dataNasc = document.getElementById("editDataNascimento").value;
-
-    const usuarioAtualizado = {
-        ...dadosOriginaisUsuario,
-        nome: document.getElementById("editNome").value.trim(),
-        email: document.getElementById("editEmail").value.trim(),
-        telefone: document.getElementById("editTelefone").value.trim(),
-        idade: calcularIdade(dataNasc),
-        peso: Number(document.getElementById("editPeso").value) || null,
-        altura: Number(document.getElementById("editAltura").value) || null,
-        sexo: document.getElementById("editSexo").value,
-        tipoSanguineo: document.getElementById("editTipoSanguineo").value,
-        marcapasso: document.getElementById("editMarcapasso").value,
-        cep: document.getElementById("editCep").value,
-        dataNascimento: dataNasc,
-        obsMed: document.getElementById("editObs").value,
-    };
-
-    try {
-        const response = await fetch(`http://localhost:8080/api/usuarios/${usuarioEditandoId}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(usuarioAtualizado)
-        });
-
-        if (response.ok) {
-            fecharModal();
-            carregarUsuarios();
-            atualizarStats();
-            alert("Dados do paciente atualizados com sucesso!");
-        } else {
-            alert("Erro ao salvar alterações. Verifique os dados.");
-        }
-    } catch (err) { console.error(err); }
-}
-
-// ================= TUTORES =================
-async function carregarTutores() {
-    const tabela = document.getElementById("tabelaTutores");
-    if (!tabela) return;
-
-    try {
-        const response = await fetch("http://localhost:8080/api/vinculos");
-        const dados = await response.json();
-        tabela.innerHTML = "";
-        
-        dados.forEach(t => {
-            tabela.innerHTML += `
-                <tr class="hover:bg-white/[0.02] transition-colors">
-                    <td class="px-6 py-4 font-bold text-white">${t.nome}</td>
-                    <td class="px-6 py-4 text-sm text-gray-400">#${t.pacienteId}</td>
-                    <td class="px-6 py-4 text-sm text-gray-400">${t.dataVinculo ? t.dataVinculo.split("T")[0] : "-"}</td>
-                    <td class="px-6 py-4">
-                        <div class="flex justify-center gap-2">
-                            <button onclick="editarTutor(${t.id})" class="p-2 hover:bg-neon1/10 hover:text-neon1 rounded-lg">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                </svg>
-                            </button>
-                            <button onclick="deletarTutor(${t.id})" class="p-2 hover:bg-red-500/10 hover:text-red-500 rounded-lg">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-        });
-    } catch (err) { console.error(err); }
-}
-
-async function editarTutor(id) {
-    tutorEditandoId = id;
-    try {
-        const response = await fetch("http://localhost:8080/api/vinculos");
-        const lista = await response.json();
-        const tutor = lista.find(t => t.id === id);
-
-        document.getElementById("editTutorNome").value = tutor.nome;
-        document.getElementById("editTutorPaciente").value = tutor.pacienteId;
-        document.getElementById("editTutorData").value = tutor.dataVinculo ? tutor.dataVinculo.split("T")[0] : "";
-
-        const modal = document.getElementById("modalTutor");
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
-    } catch (err) { console.error(err); }
-}
-
-// ================= NAVEGAÇÃO =================
-function mostrar(secaoId) {
-    const secoes = ["dashboard", "usuarios", "dados"];
-    secoes.forEach(id => {
-        const el = document.getElementById(id);
-        const btn = document.getElementById(`btn-${id}`);
-        if (id === secaoId) {
-            el.classList.remove("hidden");
-            btn.classList.add("active");
-        } else {
-            el.classList.add("hidden");
-            btn.classList.remove("active");
-        }
-    });
-
-    // Atualiza título da página
-    const titles = {
-        "dashboard": "Dashboard Geral",
-        "usuarios": "Gestão de Usuários",
-        "dados": "Monitoramento Real"
-    };
-    document.getElementById("page-title").innerText = titles[secaoId];
-}
-
-// ================= MODAIS =================
-function fecharModal() {
-    const modal = document.getElementById("modalEditar");
-    modal.classList.add("hidden");
-    modal.classList.remove("flex");
-}
-
-function fecharModalTutor() {
-    const modal = document.getElementById("modalTutor");
-    modal.classList.add("hidden");
-    modal.classList.remove("flex");
-}
-
-// ================= SISTEMA =================
-async function deletarUsuario(id) {
-    if (!confirm("Tem certeza que deseja remover este usuário permanentemente?")) return;
-    try {
-        await fetch(`http://localhost:8080/api/usuarios/${id}`, { method: "DELETE" });
-        carregarUsuarios();
-        atualizarStats();
-    } catch (err) { console.error(err); }
-}
-
-async function deletarTutor(id) {
-    if (!confirm("Remover este vínculo de tutor?")) return;
-    try {
-        await fetch(`http://localhost:8080/api/vinculos/${id}`, { method: "DELETE" });
-        carregarTutores();
-    } catch (err) { console.error(err); }
-}
-
-function logout() {
-    localStorage.removeItem("user");
-    window.location.href = "login.html";
-}
->>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
+let filtroAtual = 0; // 0: Todos, 1: Pacientes, 2: Tutores
+let liveInterval = null;
 
 // ================= INICIALIZAÇÃO =================
 document.addEventListener("DOMContentLoaded", () => {
     carregarUsuarios();
-<<<<<<< HEAD
-    atualizarStats();
     
     // Busca em tempo real
     document.getElementById("global-search").addEventListener("input", (e) => {
@@ -316,30 +17,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function carregarUsuarios() {
     try {
-        const response = await fetch("http://localhost:8080/api/usuarios");
+        const response = await fetch(`${CONFIG.API_BASE_URL}/api/usuarios`);
         if (!response.ok) throw new Error("API Indisponível");
         usuariosMemoria = await response.json();
         renderizarTabela(usuariosMemoria);
+        atualizarStats();
     } catch (err) {
         console.error("Erro ao carregar:", err);
         // Fallback para demonstração se a API falhar
         usuariosMemoria = [
-            { id: 100, nome: "João Silva", email: "joao@email.com", perfilId: 1, ativo: true, idade: 45 },
+            { id: 100, nome: "João Silva", email: "joao@email.com", perfilId: 1, ativo: true, idade: 45, tipoSanguineo: "O+" },
+            { id: 101, nome: "Ana Costa", email: "ana@email.com", perfilId: 1, ativo: true, idade: 32, tipoSanguineo: "A-" },
             { id: 200, nome: "Maria Tutor", email: "maria@email.com", perfilId: 2, ativo: true }
         ];
         renderizarTabela(usuariosMemoria);
+        atualizarStats();
     }
 }
 
 function renderizarTabela(lista) {
     const tabela = document.getElementById("tabelaUsuarios");
     if (!tabela) return;
-    tabela.innerHTML = "";
+    
+    // Aplica filtro de papel
+    let filtrados = lista;
+    if (filtroAtual > 0) {
+        filtrados = lista.filter(u => u.perfilId === filtroAtual);
+    }
 
-    lista.forEach(u => {
+    tabela.innerHTML = "";
+    filtrados.forEach(u => {
         const perfilText = u.perfilId === 1 ? 'Paciente' : u.perfilId === 2 ? 'Tutor' : 'Admin';
         const perfilClass = u.perfilId === 1 ? 'text-emerald-400 bg-emerald-500/10' : 'text-neon1 bg-neon1/10';
-        const iniciais = u.nome.substring(0, 2).toUpperCase();
+        const iniciais = u.nome ? u.nome.substring(0, 2).toUpperCase() : '??';
+        const statusClass = u.ativo ? 'text-emerald-500' : 'text-gray-600';
+        const statusDot = u.ativo ? 'bg-emerald-500 animate-pulse' : 'bg-gray-600';
 
         tabela.innerHTML += `
             <tr class="hover:bg-white/[0.03] transition-all">
@@ -357,8 +69,8 @@ function renderizarTabela(lista) {
                     <span class="px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${perfilClass}">${perfilText}</span>
                 </td>
                 <td class="px-10 py-6">
-                    <span class="flex items-center gap-2 text-[10px] font-bold text-emerald-500">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Ativo
+                    <span class="flex items-center gap-2 text-[10px] font-bold ${statusClass}">
+                        <span class="w-1.5 h-1.5 rounded-full ${statusDot}"></span> ${u.ativo ? 'Ativo' : 'Inativo'}
                     </span>
                 </td>
                 <td class="px-10 py-6 text-right">
@@ -373,11 +85,27 @@ function renderizarTabela(lista) {
 
 function filtrarUsuarios(termo) {
     const filtrados = usuariosMemoria.filter(u => 
-        u.nome.toLowerCase().includes(termo) || 
-        u.email.toLowerCase().includes(termo) || 
-        u.id.toString().includes(termo)
+        (u.nome && u.nome.toLowerCase().includes(termo)) || 
+        (u.email && u.email.toLowerCase().includes(termo)) || 
+        (u.id && u.id.toString().includes(termo))
     );
     renderizarTabela(filtrados);
+}
+
+function setFilter(perfilId) {
+    filtroAtual = perfilId;
+    
+    // Update UI buttons
+    const btns = document.querySelectorAll('#filter-container button');
+    btns.forEach((btn, idx) => {
+        if (idx === perfilId) {
+            btn.className = "px-6 py-2 bg-neon1 text-black font-black rounded-lg text-[10px] uppercase";
+        } else {
+            btn.className = "px-6 py-2 text-gray-500 font-black rounded-lg text-[10px] uppercase";
+        }
+    });
+
+    renderizarTabela(usuariosMemoria);
 }
 
 function inspectUser(id) {
@@ -387,13 +115,15 @@ function inspectUser(id) {
     usuarioEditandoId = id;
     document.getElementById("inspect-name").innerText = user.nome;
     document.getElementById("inspect-id-display").innerText = `ID: #${user.id}`;
-    document.getElementById("inspect-initials").innerText = user.nome.substring(0,2).toUpperCase();
+    document.getElementById("inspect-initials").innerText = user.nome ? user.nome.substring(0,2).toUpperCase() : '??';
     
     // Preenche campos de edição
-    document.getElementById("editNome").value = user.nome;
-    document.getElementById("editEmail").value = user.email;
+    document.getElementById("editNome").value = user.nome || "";
+    document.getElementById("editEmail").value = user.email || "";
     document.getElementById("editTelefone").value = user.telefone || "";
     document.getElementById("editPeso").value = user.peso || "";
+    document.getElementById("editAltura").value = user.altura || "";
+    document.getElementById("editTipoSanguineo").value = user.tipoSanguineo || "";
     
     document.getElementById("modalEditar").classList.remove("hidden");
     document.getElementById("modalEditar").classList.add("flex");
@@ -405,27 +135,198 @@ function fecharModal() {
 }
 
 async function atualizarStats() {
-    document.getElementById("stat-usuarios").innerText = usuariosMemoria.length;
-    document.getElementById("stat-pacientes").innerText = usuariosMemoria.filter(u => u.perfilId === 1).length;
-    document.getElementById("stat-admins").innerText = usuariosMemoria.filter(u => u.perfilId === 2).length;
+    const statUsuarios = document.getElementById("stat-usuarios");
+    const statPacientes = document.getElementById("stat-pacientes");
+    const statTutors = document.getElementById("stat-tutors");
+
+    if (statUsuarios) statUsuarios.innerText = usuariosMemoria.length;
+    if (statPacientes) statPacientes.innerText = usuariosMemoria.filter(u => u.perfilId === 1).length;
+    if (statTutors) statTutors.innerText = usuariosMemoria.filter(u => u.perfilId === 2).length;
 }
 
 function mostrar(secaoId) {
     const ids = ['dashboard', 'usuarios', 'dados'];
     ids.forEach(id => {
-        document.getElementById(id).classList.toggle('hidden', id !== secaoId);
-        document.getElementById(`btn-${id}`).classList.toggle('active', id === secaoId);
-        document.getElementById(`btn-${id}`).classList.toggle('bg-neon1/10', id === secaoId);
-        document.getElementById(`btn-${id}`).classList.toggle('text-neon1', id === secaoId);
+        const el = document.getElementById(id);
+        const btn = document.getElementById(`btn-${id}`);
+        if (el) el.classList.toggle('hidden', id !== secaoId);
+        if (btn) {
+            btn.classList.toggle('active', id === secaoId);
+            btn.classList.toggle('bg-neon1/10', id === secaoId);
+            btn.classList.toggle('text-neon1', id === secaoId);
+        }
+    });
+
+    if (secaoId === 'dados') {
+        startLiveTelemetry();
+    } else {
+        stopLiveTelemetry();
+    }
+}
+
+// ================= TELEMETRIA REAL =================
+function startLiveTelemetry() {
+    stopLiveTelemetry();
+    updateLiveGrid();
+    liveInterval = setInterval(updateLiveGrid, 3000);
+}
+
+function stopLiveTelemetry() {
+    if (liveInterval) clearInterval(liveInterval);
+}
+
+async function updateLiveGrid() {
+    const grid = document.getElementById("live-telemetry-grid");
+    if (!grid) return;
+
+    const pacientes = usuariosMemoria.filter(u => u.perfilId === 1 && u.ativo);
+    
+    // Se grid está vazio, inicializa esqueletos
+    if (grid.children.length === 0) {
+        pacientes.forEach(p => {
+            grid.innerHTML += `
+                <div id="live-card-${p.id}" class="glass rounded-[40px] p-8 border-white/5 hover:border-neon1/20 transition-all">
+                    <div class="flex justify-between items-start mb-8">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center font-black text-neon1">${p.nome.substring(0,2).toUpperCase()}</div>
+                            <div>
+                                <h4 class="font-black text-white">${p.nome}</h4>
+                                <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest" id="status-${p.id}">Conectando...</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] font-black text-gray-600 uppercase mb-1">Último Batimento</p>
+                            <p class="text-3xl font-black text-white" id="bpm-${p.id}">--</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-black/20 p-4 rounded-2xl">
+                            <p class="text-[10px] font-bold text-gray-600 uppercase mb-1">Saturação</p>
+                            <p class="text-xl font-black text-emerald-400" id="sat-${p.id}">--%</p>
+                        </div>
+                        <div class="bg-black/20 p-4 rounded-2xl">
+                            <p class="text-[10px] font-bold text-gray-600 uppercase mb-1">Alerta Recente</p>
+                            <p class="text-[10px] font-black text-gray-400" id="alert-${p.id}">Nenhum</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    // Atualiza dados de cada paciente
+    pacientes.forEach(async p => {
+        try {
+            const res = await fetch(`${CONFIG.API_BASE_URL}/api/batimentos/usuario/${p.id}`);
+            if (res.ok) {
+                const history = await res.json();
+                if (history.length > 0) {
+                    const last = history[0];
+                    const bpmEl = document.getElementById(`bpm-${p.id}`);
+                    const satEl = document.getElementById(`sat-${p.id}`);
+                    const statusEl = document.getElementById(`status-${p.id}`);
+                    
+                    if (bpmEl) bpmEl.innerText = Math.round(last.frequenciaCard);
+                    if (satEl) satEl.innerText = `${Math.round(last.saturacao || 98)}%`;
+                    if (statusEl) {
+                        statusEl.innerText = "ONLINE";
+                        statusEl.className = "text-[10px] font-bold text-emerald-500 uppercase tracking-widest";
+                    }
+
+                    // Check for anomaly
+                    const card = document.getElementById(`live-card-${p.id}`);
+                    if (last.frequenciaCard > 120 || last.frequenciaCard < 50) {
+                        card.classList.add('border-red-500/50', 'bg-red-500/5');
+                        document.getElementById(`alert-${p.id}`).innerText = "RITMO IRREGULAR";
+                        document.getElementById(`alert-${p.id}`).className = "text-[10px] font-black text-red-500";
+                    } else {
+                        card.classList.remove('border-red-500/50', 'bg-red-500/5');
+                        document.getElementById(`alert-${p.id}`).innerText = "ESTÁVEL";
+                        document.getElementById(`alert-${p.id}`).className = "text-[10px] font-black text-emerald-500";
+                    }
+                }
+            }
+        } catch (e) {
+            const statusEl = document.getElementById(`status-${p.id}`);
+            if (statusEl) {
+                statusEl.innerText = "OFFLINE";
+                statusEl.className = "text-[10px] font-bold text-gray-600 uppercase tracking-widest";
+            }
+        }
     });
 }
 
-function salvarEdicao() {
-    alert("Simulação: Alterações salvas no banco de dados.");
-    fecharModal();
+async function salvarEdicao() {
+    if (!usuarioEditandoId) return;
+
+    const btn = document.querySelector('button[onclick="salvarEdicao()"]');
+    const originalText = btn.innerText;
+    btn.disabled = true;
+    btn.innerText = "Salvando...";
+
+    const dados = {
+        nome: document.getElementById("editNome").value,
+        email: document.getElementById("editEmail").value,
+        telefone: document.getElementById("editTelefone").value,
+        peso: Number(document.getElementById("editPeso").value),
+        altura: Number(document.getElementById("editAltura").value),
+        tipoSanguineo: document.getElementById("editTipoSanguineo").value,
+        cep: document.getElementById("editCep") ? document.getElementById("editCep").value : ""
+    };
+
+    try {
+        const resOrig = await fetch(`${CONFIG.API_BASE_URL}/api/usuarios/${usuarioEditandoId}`);
+        const userOrig = await resOrig.json();
+        
+        const payload = { ...userOrig, ...dados };
+
+        const response = await fetch(`${CONFIG.API_BASE_URL}/api/usuarios/${usuarioEditandoId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            alert("Cadastro atualizado com sucesso!");
+            fecharModal();
+            carregarUsuarios();
+        } else {
+            alert("Erro ao atualizar cadastro.");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Erro de conexão com o servidor.");
+    } finally {
+        btn.disabled = false;
+        btn.innerText = originalText;
+    }
 }
-=======
-    carregarTutores();
-    atualizarStats();
-});
->>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
+
+async function banirUsuario() {
+    if (!usuarioEditandoId || !confirm("Deseja realmente desativar este usuário?")) return;
+
+    try {
+        const resOrig = await fetch(`${CONFIG.API_BASE_URL}/api/usuarios/${usuarioEditandoId}`);
+        const userOrig = await resOrig.json();
+        
+        const payload = { ...userOrig, ativo: false };
+
+        const response = await fetch(`${CONFIG.API_BASE_URL}/api/usuarios/${usuarioEditandoId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            alert("Usuário desativado com sucesso.");
+            fecharModal();
+            carregarUsuarios();
+        } else {
+            alert("Erro ao desativar usuário.");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Erro de conexão.");
+    }
+}
+

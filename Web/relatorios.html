@@ -110,7 +110,7 @@
         <div class="flex justify-between items-center mb-10">
           <h2 class="text-xl font-black text-white">Tendência de Batimentos</h2>
           <div class="flex gap-2">
-            <span class="px-3 py-1 bg-neon1/10 text-neon1 text-[10px] font-black rounded-full border border-neon1/20">MÉDIA: 74 BPM</span>
+            <span class="px-3 py-1 bg-neon1/10 text-neon1 text-[10px] font-black rounded-full border border-neon1/20" id="avg-bpm">MÉDIA: -- BPM</span>
           </div>
         </div>
         <div class="h-64">
@@ -145,50 +145,81 @@
 
 </main>
 
-<<<<<<< HEAD
 <script src="config.js"></script>
 <script src="auth.js"></script>
 <script>
-    Auth.check();
+    const user = Auth.check();
+    if (!user) window.location.href = "login.html";
 
-=======
-<script>
->>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
-    const ctx = document.getElementById('healthChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-            datasets: [{
-                label: 'BPM Médio',
-                data: [72, 75, 71, 82, 74, 68, 70],
-                borderColor: '#00f2ff',
-                backgroundColor: 'rgba(0, 242, 255, 0.1)',
-                fill: true,
-                tension: 0.4,
-                borderWidth: 3,
-                pointRadius: 4,
-                pointBackgroundColor: '#00f2ff'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
-            },
-            scales: {
-                y: {
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                    ticks: { color: '#666' }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: { color: '#666' }
+    async function loadReportData() {
+        if (user.id === "DEMO") {
+            renderChart(['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'], [72, 75, 71, 82, 74, 68, 70]);
+            document.getElementById("avg-bpm").innerText = `MÉDIA: 74 BPM`;
+            return;
+        }
+
+        try {
+            const response = await fetch(`${CONFIG.API_BASE_URL}/api/batimentos/usuario/${user.id}`);
+            if (response.ok) {
+                const history = await response.json();
+                if (history.length > 0) {
+                    const data = history.slice(0, 7).reverse(); // Últimos 7 registros
+                    const labels = data.map(h => new Date(h.dataHora).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+                    const values = data.map(h => h.frequenciaCard);
+                    renderChart(labels, values);
+                    
+                    const avg = Math.round(values.reduce((a, b) => Number(a) + Number(b), 0) / values.length);
+                    document.getElementById("avg-bpm").innerText = `MÉDIA: ${avg} BPM`;
+                } else {
+                    renderChart(['Sem Dados'], [0]);
                 }
             }
+        } catch (e) {
+            console.error("Erro ao carregar relatório:", e);
         }
-    });
+    }
+
+    function renderChart(labels, values) {
+        const ctx = document.getElementById('healthChart').getContext('2d');
+        if (window.myChart) window.myChart.destroy();
+        
+        window.myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'BPM',
+                    data: values,
+                    borderColor: '#00f2ff',
+                    backgroundColor: 'rgba(0, 242, 255, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#00f2ff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#666' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#666' }
+                    }
+                }
+            }
+        });
+    }
+
+    loadReportData();
 </script>
 
 </body>

@@ -37,7 +37,7 @@
       <a href="dashboard.html" class="text-sm font-bold text-gray-400 hover:text-white transition">Voltar ao Painel</a>
       <button onclick="logout()" class="p-2 hover:bg-red-500/10 text-red-500 rounded-xl transition">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013-3v1" />
         </svg>
       </button>
     </div>
@@ -175,34 +175,24 @@
 
 </main>
 
-<<<<<<< HEAD
 <script src="config.js"></script>
 <script src="auth.js"></script>
 <script>
     const user = Auth.check();
     if (!user) { /* Auth.check already redirects */ }
-=======
-<script>
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) window.location.href = "login.html";
->>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
 
-    document.getElementById("user-name").innerText = user.nome;
+    document.getElementById("user-name").innerText = user.nome || "Usuário";
     document.getElementById("user-email").innerText = user.email || "-";
-    document.getElementById("user-id").innerText = `#${user.id}`;
+    document.getElementById("user-id").innerText = `#${user.id || '000'}`;
     document.getElementById("user-phone").innerText = user.telefone || "-";
-    document.getElementById("user-initials").innerText = user.nome.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+    document.getElementById("user-initials").innerText = user.nome ? user.nome.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase() : "--";
     
     document.getElementById("user-birth").innerText = user.dataNascimento ? user.dataNascimento.split('T')[0] : '--/--/----';
     document.getElementById("user-age").innerText = `${user.idade || '--'} anos`;
     document.getElementById("user-blood").innerText = user.tipoSanguineo || '--';
     document.getElementById("user-weight").innerText = user.peso || '--';
     document.getElementById("user-height").innerText = user.altura || '--';
-<<<<<<< HEAD
     document.getElementById("user-pacemaker").innerText = user.marcapasso ? 'Sim' : 'Não';
-=======
-    document.getElementById("user-pacemaker").innerText = user.marcapasso || '--';
->>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
     document.getElementById("user-cep").innerText = `CEP: ${user.cep || '--'}`;
     
     if (user.obsMed) {
@@ -211,12 +201,7 @@
     }
 
     function logout() {
-<<<<<<< HEAD
         Auth.logout();
-=======
-        localStorage.removeItem("user");
-        window.location.href = "login.html";
->>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
     }
 </script>
 

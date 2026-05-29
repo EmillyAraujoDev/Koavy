@@ -27,12 +27,12 @@
   </script>
 </head>
 
-<<<<<<< HEAD
 <body class="bg-[#050505] text-gray-200 selection:bg-neon1/30 selection:text-neon1">
 
 <script src="config.js"></script>
 <script src="auth.js"></script>
 <script src="components/navbar.js"></script>
+<script src="components/demo.js"></script>
 
 <!-- HERO SECTION REWORKED -->
 <section id="inicio" class="min-h-screen flex items-center justify-center relative overflow-hidden pt-32 pb-20 px-6">
@@ -46,14 +46,14 @@
     <div class="reveal reveal-left active">
       <div class="inline-flex items-center gap-2 px-4 py-1.5 mb-8 rounded-full bg-white/5 border border-white/10 text-neon1 text-[10px] font-bold uppercase tracking-widest">
         <span class="w-1.5 h-1.5 rounded-full bg-neon1 animate-ping"></span>
-        Tecnologia Cardíaca Ativa
+        Monitoramento Cardíaco 24h
       </div>
       <h1 class="text-5xl lg:text-7xl font-extrabold leading-[1.1] mb-8 text-white tracking-tighter">
-        O FUTURO <br/>
-        <span class="text-gradient italic">NO SEU PULSO.</span>
+        CUIDE DO SEU <br/>
+        <span class="text-gradient italic">CORAÇÃO.</span>
       </h1>
       <p class="text-xl text-gray-400 mb-12 max-w-xl leading-relaxed">
-        Não apenas monitore. Previna. A Koavy conecta seu coração a uma rede inteligente de médicos e familiares em tempo real.
+        Acompanhe sua saúde cardíaca de forma simples e segura. A Koavy ajuda você e sua família a monitorar sinais vitais em tempo real.
       </p>
       <div class="flex flex-col sm:flex-row gap-6">
         <button onclick="Demo.start()" class="bg-white text-black px-12 py-5 rounded-[24px] font-extrabold text-lg hover:bg-neon1 transition-all hover:scale-105 text-center shadow-2xl">Experimentar Demo</button>
@@ -61,80 +61,11 @@
           Ver Tecnologia
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-=======
-<body class="bg-dark2 text-gray-200 selection:bg-neon1/30 selection:text-neon1">
-
-<nav class="fixed top-0 left-0 w-full z-50 backdrop-blur-xl bg-black/60 border-b border-white/10 transition-all duration-300" id="main-nav">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-
-    <div class="flex items-center gap-2">
-      <div class="w-8 h-8 bg-gradient-to-br from-neon1 to-neon2 rounded-lg flex items-center justify-center shadow-lg shadow-neon1/20">
-        <span class="text-black font-black text-xl">K</span>
-      </div>
-      <h1 class="text-2xl font-black bg-gradient-to-r from-neon1 to-neon2 bg-clip-text text-transparent logo">
-        Koavy
-      </h1>
-    </div>
-
-    <div class="hidden md:flex gap-8 text-sm font-semibold tracking-wide uppercase">
-      <a href="#inicio" class="text-neon1 border-b-2 border-neon1 pb-1">Início</a>
-      <a href="#beneficios" class="hover:text-neon1 transition-colors duration-300">Benefícios</a>
-      <a href="#sobre" class="hover:text-neon1 transition-colors duration-300">Sobre</a>
-    </div>
-
-    <div class="flex items-center gap-4">
-      <a href="login.html" class="hidden md:flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 px-6 py-2 rounded-full font-bold transition-all hover:border-neon1/50">
-        Entrar
-      </a>
-      <a href="cadastro.html" class="hidden md:block bg-gradient-to-r from-neon1 to-neon2 text-black px-6 py-2 rounded-full font-bold hover:shadow-[0_0_20px_rgba(0,242,255,0.4)] hover:scale-105 transition-all">
-        Começar Agora
-      </a>
-      <button id="menu-btn" class="md:hidden text-white text-3xl focus:outline-none">
-        <span id="menu-icon">☰</span>
-      </button>
-    </div>
-
-  </div>
-
-  <div id="mobile-menu" class="hidden absolute top-full left-0 w-full flex-col items-center gap-6 py-8 bg-black/95 backdrop-blur-2xl border-b border-white/10 animate-fade-in-down">
-    <a href="#inicio" class="text-neon1 font-bold text-lg">Início</a>
-    <a href="#beneficios" class="text-gray-300 hover:text-neon1 text-lg">Benefícios</a>
-    <a href="#sobre" class="text-gray-300 hover:text-neon1 text-lg">Sobre</a>
-    <div class="flex flex-col w-full px-10 gap-4 mt-4">
-      <a href="login.html" class="w-full text-center border border-white/20 py-3 rounded-xl font-bold">Entrar</a>
-      <a href="cadastro.html" class="w-full text-center bg-gradient-to-r from-neon1 to-neon2 text-black py-3 rounded-xl font-bold shadow-lg shadow-neon1/20">Cadastrar-se</a>
-    </div>
-  </div>
-</nav>
-
-<section id="inicio" class="secaoHero overflow-hidden pt-20">
-  <div id="particulas" class="opacity-30"></div>
-
-  <div class="container mx-auto px-6 grid lg:grid-cols-2 items-center gap-12 relative z-10">
-    <div class="conteudoHero text-center lg:text-left reveal reveal-left">
-      <div class="inline-block px-4 py-1.5 mb-6 rounded-full bg-neon1/10 border border-neon1/20 text-neon1 text-sm font-bold tracking-widest uppercase animate-pulse">
-        Tecnologia que salva vidas
-      </div>
-      <h1 class="text-5xl lg:text-7xl font-extrabold leading-tight mb-6">
-        Seu coração <br/>
-        <span class="bg-gradient-to-r from-neon1 to-neon2 bg-clip-text text-transparent">em tempo real</span>
-      </h1>
-      <p class="text-lg text-gray-400 mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-        Monitoramento inteligente com alertas instantâneos, acompanhamento contínuo e tecnologia de ponta para garantir a sua segurança e a de quem você ama.
-      </p>
-      <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-        <a href="cadastro.html" class="botaoCta text-lg py-4 px-10 rounded-2xl shadow-xl shadow-neon1/20">Experimentar Gratuitamente</a>
-        <a href="#sobre" class="flex items-center justify-center gap-2 px-8 py-4 bg-white/5 border border-white/10 rounded-2xl font-bold hover:bg-white/10 transition-all">
-          <span>Saiba Mais</span>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
->>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
           </svg>
         </a>
       </div>
     </div>
 
-<<<<<<< HEAD
     <div class="reveal reveal-right active delay-300 relative">
         <div class="absolute inset-0 bg-neon1/20 blur-[100px] rounded-full scale-75 animate-pulse"></div>
         <img src="./imagens/koala1.png" alt="Koavy AI" class="w-full max-w-[500px] mx-auto drop-shadow-[0_0_50px_rgba(0,242,255,0.3)] koala relative z-10">
@@ -157,8 +88,8 @@
 <section id="beneficios" class="py-32 bg-[#080808] relative">
     <div class="max-w-7xl mx-auto px-6">
         <div class="text-center mb-24 reveal reveal-up">
-            <h2 class="text-5xl lg:text-7xl font-black text-white mb-6">INTELIGÊNCIA QUE <br/><span class="text-neon1">PROTEGE.</span></h2>
-            <p class="text-gray-500 text-xl max-w-2xl mx-auto">Não é apenas um relógio, é um ecossistema de saúde completo focado na sua longevidade.</p>
+            <h2 class="text-5xl lg:text-7xl font-black text-white mb-6">TECNOLOGIA PARA <br/><span class="text-neon1">SUA SAÚDE.</span></h2>
+            <p class="text-gray-500 text-xl max-w-2xl mx-auto">Um sistema completo para acompanhar sua saúde e garantir tranquilidade para quem você ama.</p>
         </div>
 
         <div class="grid md:grid-cols-3 gap-12">
@@ -166,30 +97,30 @@
                 <div class="w-20 h-20 bg-neon1/10 rounded-3xl flex items-center justify-center mb-10 group-hover:scale-110 transition-transform">
                     <img src="./imagens/heartKoavy.png" class="w-12">
                 </div>
-                <h3 class="text-3xl font-black text-white mb-6 leading-tight text-balance">Eletrocardiograma IA</h3>
-                <p class="text-gray-400 text-lg leading-relaxed">Nossos algoritmos detectam fibrilação atrial e anomalias com 99.4% de precisão clínica.</p>
+                <h3 class="text-3xl font-black text-white mb-6 leading-tight text-balance">Monitoramento Contínuo</h3>
+                <p class="text-gray-400 text-lg leading-relaxed">Acompanhe seus batimentos e receba alertas se houver qualquer alteração importante.</p>
             </div>
 
             <div class="p-10 bg-white/5 border border-neon1/30 rounded-[40px] hover:bg-white/[0.08] transition-all group reveal reveal-up delay-200">
                 <div class="w-20 h-20 bg-emerald-500/10 rounded-3xl flex items-center justify-center mb-10 group-hover:scale-110 transition-transform">
                     <img src="./imagens/alertKoavy.png" class="w-12">
                 </div>
-                <h3 class="text-3xl font-black text-white mb-6 leading-tight text-balance">Alertas Críticos</h3>
-                <p class="text-gray-400 text-lg leading-relaxed">Acionamento automático do SAMU e envio de localização GPS para sua rede de apoio em emergências.</p>
+                <h3 class="text-3xl font-black text-white mb-6 leading-tight text-balance">Aviso em Emergências</h3>
+                <p class="text-gray-400 text-lg leading-relaxed">Em caso de necessidade, seus responsáveis são avisados imediatamente com sua localização.</p>
             </div>
 
             <div class="p-10 bg-white/5 border border-white/10 rounded-[40px] hover:bg-white/[0.08] transition-all group reveal reveal-up delay-300">
                 <div class="w-20 h-20 bg-cyan-500/10 rounded-3xl flex items-center justify-center mb-10 group-hover:scale-110 transition-transform">
                     <img src="./imagens/celular.png" class="w-12">
                 </div>
-                <h3 class="text-3xl font-black text-white mb-6 leading-tight text-balance">Gestão Completa</h3>
-                <p class="text-gray-400 text-lg leading-relaxed">Histórico médico exportável para PDF em segundos, facilitando o diagnóstico do seu cardiologista.</p>
+                <h3 class="text-3xl font-black text-white mb-6 leading-tight text-balance">Histórico de Saúde</h3>
+                <p class="text-gray-400 text-lg leading-relaxed">Gere relatórios fáceis de entender para levar nas suas consultas médicas.</p>
             </div>
         </div>
     </div>
 </section>
 
-<!-- NOVO: SEÇÃO DE PLANOS -->
+<!-- SEÇÃO DE PLANOS -->
 <section id="planos" class="py-32 relative overflow-hidden">
     <div class="max-w-7xl mx-auto px-6">
         <div class="flex flex-col lg:flex-row justify-between items-end mb-20 gap-10">
@@ -286,17 +217,6 @@
                 <iframe class="w-full h-full" src="https://www.youtube.com/embed/mILYtp4UHIQ" title="Nossa História" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
               </div>
             </div>
-=======
-    <div class="relative flex justify-center items-center reveal reveal-right delay-200">
-      <div class="brilhoPosterior scale-150 opacity-50"></div>
-      <div class="koala relative z-20 group">
-        <img src="./imagens/koala1.png" alt="Koala Mascote" class="w-[300px] lg:w-[450px] drop-shadow-[0_0_30px_rgba(0,242,255,0.2)] transition-transform duration-700 group-hover:scale-105">
-        
-        <div class="absolute -bottom-10 -right-10 bg-black/40 backdrop-blur-md border border-white/10 p-4 rounded-2xl hidden lg:block animate-bounce shadow-2xl">
-          <div class="flex items-center gap-3">
-            <div class="w-3 h-3 bg-red-500 rounded-full animate-ping"></div>
-            <span class="text-sm font-bold text-white">Batimentos: 72 BPM</span>
->>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
           </div>
         </div>
       </div>
@@ -304,7 +224,6 @@
   </div>
 </section>
 
-<<<<<<< HEAD
 <!-- FOOTER REWORKED -->
 <footer class="bg-black pt-32 pb-12 border-t border-white/5 relative overflow-hidden">
   <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1000px] h-[300px] bg-neon1/5 rounded-full blur-[100px] -z-10"></div>
@@ -368,140 +287,3 @@
 
 </body>
 </html>
-html>
-onents/navbar.js"></script>
-<script src="script.js"></script>
-
-</body>
-</html>
-html>
-=======
-<section id="beneficios" class="secaoBeneficios bg-dark1/30 relative">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="text-center mb-16 reveal reveal-up">
-      <h2 class="text-4xl lg:text-5xl font-black mb-4 tituloSecao">Por que escolher Koavy?</h2>
-      <p class="text-gray-400 max-w-2xl mx-auto">Nossa plataforma combina hardware de precisão com software inteligente para oferecer o melhor cuidado cardíaco do mercado.</p>
-    </div>
-
-    <div class="grid md:grid-cols-3 gap-8">
-      <div class="cartaoBeneficio group reveal reveal-up delay-100">
-        <div class="w-16 h-16 bg-neon1/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-neon1/20 transition-colors">
-          <img src="./imagens/heartKoavy.png" class="w-10">
-        </div>
-        <h3 class="text-2xl font-bold mb-4 text-white">Monitoramento 24h</h3>
-        <p class="text-gray-400 leading-relaxed">Sensores de alta precisão que acompanham seu ritmo cardíaco a cada segundo, detectando anomalias instantaneamente.</p>
-      </div>
-
-      <div class="cartaoBeneficio group border-neon1/20 reveal reveal-up delay-200">
-        <div class="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-emerald-500/20 transition-colors">
-          <img src="./imagens/alertKoavy.png" class="w-10">
-        </div>
-        <h3 class="text-2xl font-bold mb-4 text-white">Alertas Reais</h3>
-        <p class="text-gray-400 leading-relaxed">Em caso de queda ou arritmia, enviamos alertas imediatos para seus tutores cadastrados com sua localização exata.</p>
-      </div>
-
-      <div class="cartaoBeneficio group reveal reveal-up delay-300">
-        <div class="w-16 h-16 bg-cyan-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-cyan-500/20 transition-colors">
-          <img src="./imagens/celular.png" class="w-10">
-        </div>
-        <h3 class="text-2xl font-bold mb-4 text-white">App Intuitivo</h3>
-        <p class="text-gray-400 leading-relaxed">Visualize seu histórico, gere relatórios para seu médico e acompanhe sua evolução através de um painel simples e moderno.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="sobre" class="py-24 relative overflow-hidden">
-  <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-neon1/5 rounded-full blur-[120px] -z-10"></div>
-  
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="bg-white/5 border border-white/10 rounded-[40px] p-8 lg:p-16 backdrop-blur-sm relative overflow-hidden reveal reveal-zoom">
-      
-      <div class="koalasono hidden lg:block opacity-20 pointer-events-none">
-        <img src="./imagens/koalaSono.png" class="w-64">
-      </div>
-
-      <div class="flex flex-col lg:flex-row gap-16 items-center">
-        <div class="lg:w-1/2 reveal reveal-left delay-200">
-          <h2 class="text-4xl lg:text-5xl font-black mb-8 leading-tight">Como Tudo <br/><span class="text-neon1">Começou</span></h2>
-          <div class="space-y-6 text-gray-400 text-lg leading-relaxed">
-            <p>
-              Tudo começou com uma necessidade real e familiar. Um de nossos fundadores via o desafio diário de seu irmão, professor de beach tennis, que precisava monitorar sua saúde cardíaca sem abrir mão de sua paixão pelo esporte.
-            </p>
-            <p>
-              Percebemos que o medo de crises e a falta de acompanhamento em tempo real limitavam a vida de muitas pessoas. Assim nasceu o Koavy: uma solução acessível, precisa e inteligente.
-            </p>
-          </div>
-          <div class="mt-10 flex items-center gap-6">
-            <div class="flex -space-x-4">
-              <div class="w-12 h-12 rounded-full border-2 border-dark2 bg-gray-800"></div>
-              <div class="w-12 h-12 rounded-full border-2 border-dark2 bg-gray-700"></div>
-              <div class="w-12 h-12 rounded-full border-2 border-dark2 bg-gray-600"></div>
-            </div>
-            <p class="text-sm font-bold text-gray-400">+500 Vidas impactadas</p>
-          </div>
-        </div>
-
-        <div class="lg:w-1/2 w-full reveal reveal-right delay-400">
-          <div class="relative group">
-            <div class="absolute -inset-1 bg-gradient-to-r from-neon1 to-neon2 rounded-3xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
-            <div class="relative bg-black rounded-3xl overflow-hidden shadow-2xl">
-              <div class="aspect-video">
-                <iframe class="w-full h-full" src="https://www.youtube.com/embed/mILYtp4UHIQ" title="Nossa História" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-              </div>
-            </div>
-          </div>
-          <p class="mt-6 text-center italic text-gray-500">Conheça os detalhes da nossa trajetória no vídeo acima.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<footer class="bg-black py-12 border-t border-white/5">
-  <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
-    <div class="flex items-center gap-2">
-      <div class="w-6 h-6 bg-gradient-to-br from-neon1 to-neon2 rounded flex items-center justify-center">
-        <span class="text-black font-black text-xs">K</span>
-      </div>
-      <span class="text-xl font-black text-white logo">Koavy</span>
-    </div>
-    
-    <div class="flex gap-8 text-gray-500 text-sm">
-      <a href="#" class="hover:text-white transition">Privacidade</a>
-      <a href="#" class="hover:text-white transition">Termos</a>
-      <a href="#" class="hover:text-white transition">Suporte</a>
-    </div>
-
-    <p class="text-gray-600 text-sm">&copy; 2026 Koavy. Todos os direitos reservados.</p>
-  </div>
-</footer>
-
-<script>
-  const menuBtn = document.getElementById('menu-btn');
-  const mobileMenu = document.getElementById('mobile-menu');
-  const menuIcon = document.getElementById('menu-icon');
-  const nav = document.getElementById('main-nav');
-
-  menuBtn.addEventListener('click', () => {
-    mobileMenu.classList.toggle('hidden');
-    mobileMenu.classList.toggle('flex');
-    menuIcon.textContent = mobileMenu.classList.contains('hidden') ? '☰' : '✕';
-  });
-
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-      nav.classList.add('bg-black/90', 'py-3');
-      nav.classList.remove('bg-black/60', 'py-4');
-    } else {
-      nav.classList.remove('bg-black/90', 'py-3');
-      nav.classList.add('bg-black/60', 'py-4');
-    }
-  });
-</script>
-
-<script src="script.js"></script>
-
-</body>
-</html>
->>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27

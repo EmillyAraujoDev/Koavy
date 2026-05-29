@@ -22,38 +22,11 @@
   </script>
 </head>
 
-<<<<<<< HEAD
 <body class="bg-[#0a0a0a] text-gray-300 font-inter min-h-screen selection:bg-neon1/30 selection:text-neon1">
 
 <script src="config.js"></script>
 <script src="auth.js"></script>
 <script src="components/navbar.js"></script>
-=======
-<body class="bg-[#0a0a0a] text-gray-300 font-inter min-h-screen">
-
-<nav class="fixed top-0 left-0 w-full z-50 backdrop-blur-xl bg-black/40 border-b border-white/5">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-    <div class="flex items-center gap-2">
-      <div class="w-8 h-8 bg-gradient-to-br from-neon1 to-neon2 rounded-lg flex items-center justify-center">
-        <span class="text-black font-black text-xl">K</span>
-      </div>
-      <h1 class="text-2xl font-black bg-gradient-to-r from-neon1 to-neon2 bg-clip-text text-transparent logo">Koavy</h1>
-    </div>
-
-    <div class="flex items-center gap-6">
-      <div class="hidden md:flex flex-col items-end">
-        <span class="text-sm font-bold text-white" id="user-name">Carregando...</span>
-        <span class="text-[10px] uppercase tracking-widest text-gray-500" id="user-profile">Perfil</span>
-      </div>
-      <button onclick="logout()" class="p-2 hover:bg-red-500/10 text-red-500 rounded-xl transition">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-        </svg>
-      </button>
-    </div>
-  </div>
-</nav>
->>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
 
 <main class="pt-32 pb-20 px-4 max-w-7xl mx-auto">
   
@@ -62,7 +35,6 @@
     <!-- COLUNA ESQUERDA: STATUS TEMPO REAL -->
     <div class="lg:col-span-2 space-y-8">
       
-<<<<<<< HEAD
       <!-- HEART RATE MAIN CARD -->
       <div class="glass rounded-[48px] p-8 lg:p-12 relative overflow-hidden group">
         <!-- AI Insight Badge -->
@@ -125,54 +97,12 @@
               <div class="bg-white/5 p-6 rounded-[32px] border border-white/5">
                 <span class="block text-[10px] font-extrabold text-gray-500 uppercase tracking-widest mb-2">Status Clínico</span>
                 <span class="text-xs font-extrabold text-emerald-500 bg-emerald-500/10 px-3 py-1.5 rounded-full" id="heart-status">EXCELENTE</span>
-=======
-      <div class="bg-white/5 border border-white/10 rounded-[40px] p-8 lg:p-12 relative overflow-hidden">
-        <div class="absolute top-0 right-0 p-8">
-          <div class="flex items-center gap-2 px-4 py-2 bg-neon1/10 rounded-full border border-neon1/20">
-            <span class="w-2 h-2 rounded-full bg-neon1 animate-ping"></span>
-            <span class="text-[10px] font-black text-neon1 uppercase tracking-widest">Monitorando</span>
-          </div>
-        </div>
-
-        <h2 class="text-3xl font-black text-white mb-10">Frequência Cardíaca</h2>
-        
-        <div class="flex flex-col md:flex-row items-center gap-12">
-          <div class="relative">
-            <svg class="w-48 h-48 transform -rotate-90">
-              <circle cx="96" cy="96" r="88" stroke="currentColor" stroke-width="12" fill="transparent" class="text-white/5" />
-              <circle cx="96" cy="96" r="88" stroke="currentColor" stroke-width="12" fill="transparent" stroke-dasharray="552.92" stroke-dashoffset="150" class="text-neon1 transition-all duration-1000" id="bpm-circle" />
-            </svg>
-            <div class="absolute inset-0 flex flex-col items-center justify-center">
-              <span class="text-5xl font-black text-white" id="bpm-value">--</span>
-              <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">BPM</span>
-            </div>
-          </div>
-
-          <div class="flex-1 w-full space-y-6">
-            <div class="bg-black/20 p-6 rounded-3xl border border-white/5">
-              <div class="flex justify-between items-center mb-2">
-                <span class="text-sm font-bold text-gray-500">Status Geral</span>
-                <span class="text-xs font-black text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded" id="heart-status">NORMAL</span>
-              </div>
-              <p class="text-sm text-gray-400">Seus batimentos estão dentro da faixa esperada para seu perfil.</p>
-            </div>
-            
-            <div class="grid grid-cols-2 gap-4">
-              <div class="bg-black/20 p-4 rounded-2xl border border-white/5">
-                <span class="block text-[10px] font-black text-gray-600 uppercase mb-1">Mínima (Hoje)</span>
-                <span class="text-xl font-bold text-white">62 <small class="text-xs text-gray-500">BPM</small></span>
-              </div>
-              <div class="bg-black/20 p-4 rounded-2xl border border-white/5">
-                <span class="block text-[10px] font-black text-gray-600 uppercase mb-1">Máxima (Hoje)</span>
-                <span class="text-xl font-bold text-white">115 <small class="text-xs text-gray-500">BPM</small></span>
->>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
               </div>
             </div>
           </div>
         </div>
       </div>
 
-<<<<<<< HEAD
       <!-- SECONDARY METRICS GRID -->
       <div class="grid md:grid-cols-2 gap-8">
         <!-- OXIGENAÇÃO -->
@@ -181,15 +111,15 @@
                 <div class="w-12 h-12 bg-neon2/10 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
                     <svg class="w-6 h-6 text-neon2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.691.34a2 2 0 01-1.783 0l-.691-.34a6 6 0 00-3.86-.517l-2.388.477a2 2 0 00-1.022.547V10a2 2 0 011.168-1.832l1.643-.76a6 6 0 014.378 0l1.643.76A2 2 0 0118 10v5.428z"></path></svg>
                 </div>
-                <span class="text-[10px] font-extrabold text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full uppercase tracking-widest">Normal</span>
+                <span class="text-[10px] font-extrabold text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full uppercase tracking-widest" id="spo2-status">Normal</span>
             </div>
             <h4 class="text-xl font-extrabold text-white mb-1">Saturação (SpO2)</h4>
             <div class="flex items-end gap-2">
-                <span class="text-5xl font-extrabold text-white tracking-tighter">98</span>
+                <span class="text-5xl font-extrabold text-white tracking-tighter" id="spo2-value">98</span>
                 <span class="text-xl font-bold text-gray-600 mb-1">%</span>
             </div>
             <div class="mt-6 w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                <div class="h-full bg-neon2 w-[98%] rounded-full shadow-[0_0_10px_rgba(0,212,170,0.5)]"></div>
+                <div class="h-full bg-neon2 w-[98%] rounded-full shadow-[0_0_10px_rgba(0,212,170,0.5)] transition-all duration-1000" id="spo2-bar"></div>
             </div>
         </div>
 
@@ -207,24 +137,6 @@
                 <span class="text-xl font-bold text-gray-600 mb-1">m</span>
             </div>
             <p class="mt-4 text-xs text-gray-500 font-medium italic">82% de eficiência detectada.</p>
-=======
-      <!-- LOCALIZAÇÃO -->
-      <div class="bg-white/5 border border-white/10 rounded-[40px] p-8 relative overflow-hidden">
-        <h2 class="text-2xl font-black text-white mb-6">Última Localização</h2>
-        <div class="aspect-video bg-black/40 rounded-3xl border border-white/5 flex items-center justify-center relative group">
-          <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/60 z-10"></div>
-          <div class="z-20 text-center">
-             <div class="w-12 h-12 bg-neon1 rounded-full flex items-center justify-center mb-4 mx-auto shadow-lg shadow-neon1/40 animate-bounce">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-             </div>
-             <p class="text-white font-bold" id="location-text">Rua das Flores, 123 - São Paulo, SP</p>
-             <p class="text-xs text-gray-500 mt-1">Atualizado há 2 minutos</p>
-          </div>
-          <button class="absolute bottom-6 right-6 z-30 bg-white text-black px-6 py-2 rounded-xl font-bold text-sm hover:scale-105 transition">Abrir no Maps</button>
->>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
         </div>
       </div>
 
@@ -234,7 +146,6 @@
     <div class="space-y-8">
       
       <!-- PERFIL RESUMO -->
-<<<<<<< HEAD
       <div class="glass rounded-[40px] p-8 text-center relative overflow-hidden">
         <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-neon1/10 rounded-full blur-[40px] -z-10"></div>
         <div class="w-24 h-24 rounded-3xl bg-gradient-to-br from-neon1 to-neon2 mx-auto mb-6 flex items-center justify-center shadow-2xl shadow-neon1/20 rotate-3">
@@ -256,33 +167,10 @@
 
         <a href="perfil.html" class="block w-full py-5 glass border-white/10 rounded-2xl font-extrabold hover:bg-white/10 transition-all text-sm uppercase tracking-widest">
           Gerenciar Conta
-=======
-      <div class="bg-white/5 border border-white/10 rounded-[40px] p-8 text-center">
-        <div class="w-24 h-24 rounded-full bg-gradient-to-br from-neon1 to-neon2 mx-auto mb-6 flex items-center justify-center shadow-xl shadow-neon1/20">
-          <span class="text-3xl font-black text-black" id="user-initials">--</span>
-        </div>
-        <h3 class="text-xl font-black text-white" id="profile-name">Carregando...</h3>
-        <p class="text-gray-500 text-sm mb-6" id="profile-id">ID: #---</p>
-        
-        <div class="grid grid-cols-2 gap-3 mb-8">
-          <div class="bg-black/20 py-3 rounded-2xl border border-white/5">
-            <span class="text-[10px] font-black text-gray-600 uppercase block">Idade</span>
-            <span class="text-white font-bold" id="profile-age">-- anos</span>
-          </div>
-          <div class="bg-black/20 py-3 rounded-2xl border border-white/5">
-            <span class="text-[10px] font-black text-gray-600 uppercase block">Sangue</span>
-            <span class="text-white font-bold" id="profile-blood">--</span>
-          </div>
-        </div>
-
-        <a href="pacientes.html" class="block w-full py-4 bg-white/5 border border-white/10 rounded-2xl font-bold hover:bg-white/10 transition-all">
-          Ver Perfil Completo
->>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
         </a>
       </div>
 
       <!-- ALERTAS RECENTES -->
-<<<<<<< HEAD
       <div class="glass rounded-[40px] p-8 relative overflow-hidden">
         <div class="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full blur-[40px] -z-10"></div>
         <div class="flex justify-between items-center mb-8">
@@ -308,25 +196,6 @@
                 <p class="text-[10px] font-extrabold text-neon2 uppercase tracking-widest">Sistema • 2h atrás</p>
             </div>
             <p class="text-sm text-gray-400 font-medium leading-relaxed">Sincronização completa realizada com sucesso.</p>
-=======
-      <div class="bg-white/5 border border-white/10 rounded-[40px] p-8">
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="text-lg font-black text-white">Alertas</h3>
-          <span class="w-2 h-2 rounded-full bg-red-500"></span>
-        </div>
-        
-        <div class="space-y-4" id="alerts-container">
-          <div class="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl">
-            <p class="text-xs font-black text-red-500 uppercase tracking-widest mb-1">Atenção</p>
-            <p class="text-sm text-gray-300">Batimento elevado detectado durante atividade física.</p>
-            <p class="text-[10px] text-gray-600 mt-2">14/05/2026 - 14:30</p>
-          </div>
-          
-          <div class="p-4 bg-white/5 border border-white/10 rounded-2xl">
-            <p class="text-xs font-black text-gray-500 uppercase tracking-widest mb-1">Info</p>
-            <p class="text-sm text-gray-300">Relatório semanal pronto para visualização.</p>
-            <p class="text-[10px] text-gray-600 mt-2">12/05/2026 - 09:00</p>
->>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
           </div>
         </div>
       </div>
@@ -337,7 +206,6 @@
 
 </main>
 
-<<<<<<< HEAD
 <script src="config.js"></script>
 <script src="auth.js"></script>
 <script src="components/demo.js"></script>
@@ -356,23 +224,96 @@
         if (document.getElementById("profile-blood")) document.getElementById("profile-blood").innerText = user.tipoSanguineo || '--';
 
         initLiveMonitoring();
+        loadAlerts();
     });
 
     // Real-time Simulation Engine
     const bpmHistory = Array(30).fill(72);
+    let lastAlertTime = 0;
+    const ALERT_COOLDOWN = 60000; // 1 minuto entre alertas automáticos
     
-    function initLiveMonitoring() {
-        const update = () => {
-            const bpm = Math.floor(68 + Math.random() * 12);
+    async function initLiveMonitoring() {
+        const user = Auth.getUser();
+        
+        const update = async () => {
+            // Se for demo ou se não houver conexão, usa simulação
+            let bpm = Math.floor(68 + Math.random() * 12);
+            let spo2 = 97 + Math.floor(Math.random() * 3);
+
+            if (user && user.id !== "DEMO") {
+                try {
+                    const response = await fetch(`${CONFIG.API_BASE_URL}/api/batimentos/usuario/${user.id}`);
+                    if (response.ok) {
+                        const history = await response.json();
+                        if (history.length > 0) {
+                            bpm = Math.round(history[0].frequenciaCard);
+                            spo2 = Math.round(history[0].saturacao || spo2);
+                        }
+                    }
+                } catch (e) { console.warn("Modo offline ou erro na API de batimentos"); }
+            }
+
             updateBPM(bpm);
+            updateSpO2(spo2);
+            checkCriticalStatus(bpm, spo2);
         };
+        
         setInterval(update, 3000);
         update();
+    }
+
+    async function checkCriticalStatus(bpm, spo2) {
+        const user = Auth.getUser();
+        if (!user || user.id === "DEMO") return;
+
+        // Limites de alerta: BPM > 120, BPM < 50 ou SpO2 < 93%
+        if ((bpm > 120 || bpm < 50 || spo2 < 93) && (Date.now() - lastAlertTime > ALERT_COOLDOWN)) {
+            lastAlertTime = Date.now();
+            console.warn("ALERTA CRÍTICO DETECTADO! Registrando na API...");
+            
+            try {
+                const alertData = {
+                    usuarioId: user.id,
+                    batMomento: bpm,
+                    satMomento: spo2,
+                    tipo: "CRITICO",
+                    descricao: `Alerta automático: Frequência (${bpm} BPM) ou Saturação (${spo2}%) fora dos limites de segurança.`,
+                    localReferencia: "Rua Vergueiro, 1211 - São Paulo, SP", // Exemplo de localização
+                    latitude: -23.5709,
+                    longitude: -46.6398
+                };
+
+                const response = await fetch(`${CONFIG.API_BASE_URL}/api/emergencias`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(alertData)
+                });
+
+                if (response.ok) {
+                    showVisualAlert("Risco Cardíaco Detectado! Notificações enviadas.");
+                    loadAlerts(); // Recarrega lista lateral
+                }
+            } catch (e) {
+                console.error("Falha ao registrar emergência:", e);
+            }
+        }
+    }
+
+    function showVisualAlert(msg) {
+        const toast = document.createElement('div');
+        toast.className = "fixed top-32 left-1/2 -translate-x-1/2 z-[300] bg-red-600 text-white px-8 py-4 rounded-2xl font-black shadow-[0_0_50px_rgba(220,38,38,0.5)] animate-bounce border-2 border-white/20";
+        toast.innerHTML = `<div class="flex items-center gap-4">
+            <svg class="w-8 h-8 animate-pulse" fill="currentColor" viewBox="0 0 24 24"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-11v6h2v-6h-2zm0-4v2h2V7h-2z"/></svg>
+            ${msg}
+        </div>`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 6000);
     }
 
     function updateBPM(bpm) {
         const bpmValue = document.getElementById("bpm-value");
         const heartIcon = document.getElementById("heart-icon-bg");
+        const heartStatus = document.getElementById("heart-status");
         
         if (bpmValue) bpmValue.innerText = bpm;
         
@@ -390,10 +331,77 @@
             bpmCircle.style.strokeDashoffset = offset;
         }
 
+        // Status logic
+        if (heartStatus) {
+            if (bpm > 100) {
+                heartStatus.innerText = "ELEVADO";
+                heartStatus.className = "text-xs font-extrabold text-red-500 bg-red-500/10 px-3 py-1.5 rounded-full";
+            } else if (bpm < 60) {
+                heartStatus.innerText = "BAIXO";
+                heartStatus.className = "text-xs font-extrabold text-yellow-500 bg-yellow-500/10 px-3 py-1.5 rounded-full";
+            } else {
+                heartStatus.innerText = "EXCELENTE";
+                heartStatus.className = "text-xs font-extrabold text-emerald-500 bg-emerald-500/10 px-3 py-1.5 rounded-full";
+            }
+        }
+
         // Update SVG Chart
         bpmHistory.push(bpm);
         if (bpmHistory.length > 30) bpmHistory.shift();
         drawChart();
+    }
+
+    function updateSpO2(val) {
+        const el = document.getElementById("spo2-value");
+        const bar = document.getElementById("spo2-bar");
+        const status = document.getElementById("spo2-status");
+        
+        if (el) el.innerText = val;
+        if (bar) bar.style.width = `${val}%`;
+        
+        if (status) {
+            if (val < 95) {
+                status.innerText = "Alerta";
+                status.className = "text-[10px] font-extrabold text-red-500 bg-red-500/10 px-3 py-1 rounded-full uppercase tracking-widest";
+            } else {
+                status.innerText = "Normal";
+                status.className = "text-[10px] font-extrabold text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full uppercase tracking-widest";
+            }
+        }
+    }
+
+    async function loadAlerts() {
+        const user = Auth.getUser();
+        if (!user || user.id === "DEMO") return;
+
+        try {
+            const response = await fetch(`${CONFIG.API_BASE_URL}/api/emergencias/usuario/${user.id}`);
+            if (response.ok) {
+                const alerts = await response.json();
+                renderAlerts(alerts);
+            }
+        } catch (e) { console.error("Erro ao carregar alertas reais"); }
+    }
+
+    function renderAlerts(alerts) {
+        const container = document.getElementById("alerts-container");
+        if (!container || alerts.length === 0) return;
+
+        container.innerHTML = "";
+        alerts.slice(0, 5).forEach(alert => {
+            const date = new Date(alert.dataHora).toLocaleString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            const isCritical = alert.tipo === 'CRITICO' || alert.batMomento > 120;
+            
+            container.innerHTML += `
+                <div class="p-5 ${isCritical ? 'bg-red-500/5 border-red-500/20' : 'bg-neon2/5 border-neon2/20'} border rounded-[32px] group hover:scale-[1.02] transition-all cursor-pointer">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-1.5 h-1.5 rounded-full ${isCritical ? 'bg-red-500' : 'bg-neon2'}"></div>
+                        <p class="text-[10px] font-extrabold ${isCritical ? 'text-red-500' : 'text-neon2'} uppercase tracking-widest">${alert.tipo || 'Evento'} • ${date}</p>
+                    </div>
+                    <p class="text-sm text-gray-300 font-medium leading-relaxed">${alert.descricao}</p>
+                </div>
+            `;
+        });
     }
 
     function drawChart() {
@@ -429,40 +437,3 @@
 
 </body>
 </html>
-=======
-<script>
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) window.location.href = "login.html";
-
-    document.getElementById("user-name").innerText = user.nome;
-    document.getElementById("profile-name").innerText = user.nome;
-    document.getElementById("profile-id").innerText = `ID: #${user.id}`;
-    document.getElementById("user-initials").innerText = user.nome.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
-    document.getElementById("profile-age").innerText = `${user.idade || '--'} anos`;
-    document.getElementById("profile-blood").innerText = user.tipoSanguineo || '--';
-    document.getElementById("user-profile").innerText = user.perfilId === 1 ? 'Paciente' : 'Tutor';
-
-    // Simulação de BPM tempo real
-    function updateBPM() {
-        const bpm = Math.floor(65 + Math.random() * 20);
-        document.getElementById("bpm-value").innerText = bpm;
-        
-        // Atualiza círculo visual (dashoffset: max 552.92 para 0, min 0 para 100%)
-        // Faixa de 40 a 160 BPM
-        const percentage = Math.min(Math.max((bpm - 40) / (160 - 40), 0), 1);
-        const offset = 552.92 * (1 - percentage);
-        document.getElementById("bpm-circle").setAttribute("stroke-dashoffset", offset);
-    }
-
-    setInterval(updateBPM, 3000);
-    updateBPM();
-
-    function logout() {
-        localStorage.removeItem("user");
-        window.location.href = "login.html";
-    }
-</script>
-
-</body>
-</html>
->>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27

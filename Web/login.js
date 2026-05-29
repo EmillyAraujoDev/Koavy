@@ -1,23 +1,18 @@
 const form = document.getElementById("login_form");
-<<<<<<< HEAD
 const submitBtn = form?.querySelector('button[type="submit"]');
 
 // Redireciona se já estiver logado
 document.addEventListener("DOMContentLoaded", () => {
     const currentUser = Auth.getUser();
     if (currentUser) {
-        if (currentUser.perfilId === 3) window.location.href = "admin.html";
-        else window.location.href = "dashboard.html";
+        Auth.redirectByRole(currentUser);
     }
 });
-=======
->>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27
 
 if (form) {
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-<<<<<<< HEAD
         const emailInput = document.getElementById("name");
         const senhaInput = document.getElementById("password");
         const email = emailInput.value.trim();
@@ -29,7 +24,6 @@ if (form) {
         }
 
         // ================= CONTAS DE TESTE (DEMO) =================
-        // Localizado em: login.js (Linhas 23-45 aprox)
         const demoAccounts = {
             "admin@koavy.com": { senha: "admin123", data: { id: 1, nome: "Admin Demo", email: "admin@koavy.com", perfilId: 3, ativo: true } },
             "paciente@koavy.com": { senha: "paciente123", data: { id: 100, nome: "Paciente Demo", email: "paciente@koavy.com", perfilId: 1, ativo: true, idade: 30, tipoSanguineo: "O+" } },
@@ -75,10 +69,8 @@ if (form) {
 // ================= SIMULAÇÃO GOOGLE =================
 async function loginWithGoogle() {
     console.log("Simulando login com Google...");
-    // Em um cenário real, isso abriria o popup do Google
     alert("Simulando conexão com Google...");
     
-    // Login automático de teste como paciente
     const testUser = {
         id: 999,
         nome: "Usuário Google Teste",
@@ -89,7 +81,7 @@ async function loginWithGoogle() {
     };
     
     Auth.saveSession(testUser);
-    window.location.href = "dashboard.html";
+    Auth.redirectByRole(testUser);
 }
 
 // ================= ESQUECI A SENHA =================
@@ -111,7 +103,6 @@ async function handleForgotSubmit(e) {
     msgEl.innerText = "Processando solicitação...";
     msgEl.className = "mt-4 text-sm font-bold text-neon1";
 
-    // Simulação de chamada de API para reset de senha
     setTimeout(() => {
         msgEl.innerHTML = `<div class="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl text-emerald-400 text-xs font-medium">
             Sucesso! Um link de recuperação foi enviado para <b>${email}</b>. 
@@ -146,51 +137,3 @@ function setLoading(isLoading) {
         submitBtn.innerText = submitBtn.dataset.originalText || "Entrar no Sistema";
     }
 }
-=======
-        const email = document.getElementById("name").value.trim();
-        const senha = document.getElementById("password").value.trim();
-
-        try {
-            const response = await fetch("http://localhost:8080/api/usuarios/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ email, senha })
-            });
-
-            let data;
-
-            // 🔥 lê UMA vez só
-            const contentType = response.headers.get("content-type");
-
-            if (contentType && contentType.includes("application/json")) {
-                data = await response.json();
-            } else {
-                data = await response.text();
-            }
-
-            if (response.ok) {
-                console.log("Login OK:", data);
-
-                localStorage.setItem("user", JSON.stringify(data));
-
-                if (data.perfilId === 2) {
-                    window.location.href = "admin.html";
-                } else if (data.perfilId === 1) {
-                    window.location.href = "dashboard.html";
-                } else {
-                    window.location.href = "tutor.html";
-                }
-
-            } else {
-                alert(data || "Usuário ou senha inválidos");
-            }
-
-        } catch (err) {
-            console.error(err);
-            alert("Erro de conexão com o servidor");
-        }
-    });
-}
->>>>>>> 0de5c821e4478e2161b6a5a2381235c8477e6d27

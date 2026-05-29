@@ -36,49 +36,141 @@
         <form id="profile-form" class="grid md:grid-cols-2 gap-8">
             <div class="space-y-2">
                 <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-1">Nome Completo</label>
-                <input type="text" id="edit-nome" class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-neon1 transition-all">
+                <input type="text" id="edit-nome" class="profile-input">
             </div>
             <div class="space-y-2">
                 <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-1">E-mail</label>
-                <input type="email" id="edit-email" class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-neon1 transition-all">
+                <input type="email" id="edit-email" class="profile-input" readonly>
             </div>
             <div class="space-y-2">
                 <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-1">Telefone</label>
-                <input type="text" id="edit-telefone" class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-neon1 transition-all">
+                <input type="text" id="edit-telefone" class="profile-input">
             </div>
             <div class="space-y-2">
                 <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-1">CEP</label>
-                <input type="text" id="edit-cep" class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-neon1 transition-all">
+                <input type="text" id="edit-cep" class="profile-input">
+            </div>
+
+            <!-- Campos Específicos de Saúde (Paciente) -->
+            <div id="paciente-fields" class="md:col-span-2 grid md:grid-cols-3 gap-8 hidden">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-1">Peso (kg)</label>
+                    <input type="number" id="edit-peso" class="profile-input">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-1">Altura (m)</label>
+                    <input type="number" step="0.01" id="edit-altura" class="profile-input">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-gray-500 ml-1">Tipo Sanguíneo</label>
+                    <select id="edit-sangue" class="profile-input">
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                    </select>
+                </div>
             </div>
             
             <div class="md:col-span-2 pt-8 border-t border-white/5 flex justify-end gap-4">
-                <a href="dashboard.html" class="px-8 py-4 rounded-2xl font-bold text-gray-500 hover:text-white transition-colors">Voltar</a>
-                <button type="submit" class="px-12 py-4 bg-neon1 text-black font-extrabold rounded-2xl shadow-lg shadow-neon1/20 hover:scale-105 transition-all">Salvar Alterações</button>
+                <a id="back-btn" href="#" class="px-8 py-4 rounded-2xl font-bold text-gray-500 hover:text-white transition-colors">Voltar</a>
+                <button type="submit" id="save-btn" class="px-12 py-4 bg-neon1 text-black font-extrabold rounded-2xl shadow-lg shadow-neon1/20 hover:scale-105 transition-all">Salvar Alterações</button>
             </div>
         </form>
     </div>
 </main>
 
+<style>
+    .profile-input {
+        @apply w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-neon1 transition-all;
+    }
+</style>
+
 <script src="script.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const user = Auth.check();
-        if (!user) return;
+    document.addEventListener("DOMContentLoaded", async () => {
+        const user = Auth.getUser();
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
 
+        // Setup UI
         document.getElementById("user-name").innerText = user.nome;
         document.getElementById("user-email").innerText = user.email;
         document.getElementById("user-initials").innerText = user.nome.substring(0,2).toUpperCase();
+        document.getElementById("user-badge").innerText = user.perfilId === 1 ? 'Paciente' : user.perfilId === 2 ? 'Tutor' : 'Admin';
+        
+        // Redirecionamento de volta dinâmico
+        const backBtn = document.getElementById("back-btn");
+        if (user.perfilId === 3) backBtn.href = "admin.html";
+        else if (user.perfilId === 2) backBtn.href = "dashboard_tutor.html";
+        else backBtn.href = "dashboard.html";
+
+        // Preenche campos comuns
         document.getElementById("edit-nome").value = user.nome;
         document.getElementById("edit-email").value = user.email;
         document.getElementById("edit-telefone").value = user.telefone || "";
         document.getElementById("edit-cep").value = user.cep || "";
-        document.getElementById("user-badge").innerText = user.perfilId === 1 ? 'Paciente' : 'Tutor';
+
+        // Se for paciente, mostra campos extras
+        if (user.perfilId === 1) {
+            document.getElementById("paciente-fields").classList.remove("hidden");
+            document.getElementById("edit-peso").value = user.peso || "";
+            document.getElementById("edit-altura").value = user.altura || "";
+            document.getElementById("edit-sangue").value = user.tipoSanguineo || "O+";
+        }
     });
 
-    document.getElementById("profile-form").addEventListener("submit", (e) => {
+    document.getElementById("profile-form").addEventListener("submit", async (e) => {
         e.preventDefault();
-        alert("Dados salvos com sucesso!");
-        window.location.href = "dashboard.html";
+        const user = Auth.getUser();
+        const btn = document.getElementById("save-btn");
+        
+        const originalText = btn.innerText;
+        btn.disabled = true;
+        btn.innerText = "Sincronizando...";
+
+        const dados = {
+            nome: document.getElementById("edit-nome").value,
+            telefone: document.getElementById("edit-telefone").value,
+            cep: document.getElementById("edit-cep").value,
+            peso: document.getElementById("edit-peso") ? Number(document.getElementById("edit-peso").value) : user.peso,
+            altura: document.getElementById("edit-altura") ? Number(document.getElementById("edit-altura").value) : user.altura,
+            tipoSanguineo: document.getElementById("edit-sangue") ? document.getElementById("edit-sangue").value : user.tipoSanguineo
+        };
+
+        try {
+            const resOrig = await fetch(`${CONFIG.API_BASE_URL}/api/usuarios/${user.id}`);
+            const userOrig = await resOrig.json();
+            
+            const payload = { ...userOrig, ...dados };
+
+            const response = await fetch(`${CONFIG.API_BASE_URL}/api/usuarios/${user.id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                const updatedUser = await response.json();
+                Auth.saveSession(updatedUser); 
+                alert("Perfil atualizado com sucesso!");
+                window.location.reload();
+            } else {
+                alert("Erro ao salvar alterações.");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Erro de conexão com a API.");
+        } finally {
+            btn.disabled = false;
+            btn.innerText = originalText;
+        }
     });
 </script>
 
