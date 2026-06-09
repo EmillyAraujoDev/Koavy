@@ -1,0 +1,568 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_application_loginkoavy/models/usuario.dart';
+import 'package:flutter_application_loginkoavy/pages/admin_page.dart';
+import 'package:flutter_application_loginkoavy/pages/cadastro_paciente_page.dart';
+import 'package:flutter_application_loginkoavy/pages/interface_page.dart';
+import 'package:flutter_application_loginkoavy/pages/dashboard_paciente_page.dart';
+import 'package:flutter_application_loginkoavy/pages/dashboard_tutor_page.dart';
+import 'package:flutter_application_loginkoavy/widgets/custom_text_field.dart';
+
+/// Página de Login do sistema Koavy.
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController senhaController = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
+
+  /// Lista de usuários padrão para teste local de autenticação
+  final List<Usuario> usuarios = [
+    Usuario("igor", "123"),
+    Usuario("admin", "admin"),
+    Usuario("teste", "456"),
+  ];
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    senhaController.dispose();
+    super.dispose();
+  }
+
+  /// Realiza o fluxo de autenticação e navegação baseada no tipo de usuário.
+  void fazerLogin() {
+    if (_formKey.currentState!.validate()) {
+      String emailDigitado = emailController.text.trim();
+      String senhaDigitada = senhaController.text;
+
+      // ================= CONTAS DE DEMONSTRAÇÃO WEB =================
+      if (emailDigitado == "admin@koavy.com" && senhaDigitada == "admin123") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const AdminPage()),
+        );
+        return;
+      } else if (emailDigitado == "paciente@koavy.com" && senhaDigitada == "paciente123") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DashboardPacientePage(
+              userName: 'Paciente Demo',
+              email: 'paciente@koavy.com',
+            ),
+          ),
+        );
+        return;
+      } else if (emailDigitado == "tutor@koavy.com" && senhaDigitada == "tutor123") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DashboardTutorPage(
+              userName: 'Tutor Demo',
+              email: 'tutor@koavy.com',
+            ),
+          ),
+        );
+        return;
+      }
+      // ==============================================================
+
+      // Fallback para contas originais locais
+      bool loginCorreto = false;
+      for (var usuario in usuarios) {
+        if (usuario.autenticar(emailDigitado, senhaDigitada)) {
+          loginCorreto = true;
+          break;
+        }
+      }
+
+      if (loginCorreto) {
+        if (emailDigitado == "admin") {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const AdminPage()),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const InterfacePage()),
+          );
+        }
+      } else {
+        mostrarMensagem("Erro de Acesso", "E-mail ou senha incorretos.");
+      }
+    }
+  }
+
+  /// Abre o modal de simulação de login com Google.
+  void loginWithGoogle() {
+    mostrarMensagem(
+      "Conexão com Google",
+      "Simulando conexão e login via Google...",
+      onConfirm: () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DashboardPacientePage(
+              userName: "Usuário Google Teste",
+              email: "google@teste.com",
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// Abre o modal para redefinição de senha.
+  void openForgotModal() {
+    final TextEditingController forgotEmailController = TextEditingController();
+    final forgotFormKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xff1a1c1e),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(40),
+            side: const BorderSide(color: Colors.white10),
+          ),
+          content: Form(
+            key: forgotFormKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  "Recuperar Acesso",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Outfit',
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  "Enviaremos um link de redefinição para o seu e-mail cadastrado.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey, fontSize: 13),
+                ),
+                const SizedBox(height: 24),
+                
+                // Input E-mail
+                const Text(
+                  "SEU E-MAIL",
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 9,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: forgotEmailController,
+                  style: const TextStyle(color: Colors.white),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Digite seu e-mail";
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    hintText: "seu@email.com",
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    filled: true,
+                    fillColor: Colors.black.withValues(alpha: 0.4),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: const BorderSide(color: Colors.white10),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: const BorderSide(color: Colors.white10),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Botão Enviar
+                ElevatedButton(
+                  onPressed: () {
+                    if (forgotFormKey.currentState!.validate()) {
+                      Navigator.pop(context);
+                      mostrarMensagem(
+                        "Link Enviado",
+                        "Sucesso! Um link de recuperação foi enviado para ${forgotEmailController.text}.\nVerifique sua caixa de entrada.",
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xff00f2ff),
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: const Text("Enviar Link", style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
+                const SizedBox(height: 12),
+                
+                // Botão Voltar
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(
+                    "Voltar ao Login",
+                    style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// Exibe um diálogo modal com informações ao usuário.
+  void mostrarMensagem(String titulo, String mensagem, {VoidCallback? onConfirm}) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xff101010),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: const Color(0xff00f2ff).withValues(alpha: 0.2)),
+          ),
+          title: Text(
+            titulo,
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            mensagem,
+            style: const TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                if (onConfirm != null) {
+                  onConfirm();
+                }
+              },
+              child: const Text(
+                "OK",
+                style: TextStyle(color: Color(0xff00f2ff), fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+
+    return Scaffold(
+      backgroundColor: const Color(0xff0f1011),
+      body: Stack(
+        children: [
+          // Efeitos de gradiente/blur no fundo
+          Positioned(
+            top: -100,
+            right: -100,
+            child: Container(
+              width: 300,
+              height: 300,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xff00f2ff).withValues(alpha: 0.04),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: -100,
+            left: -100,
+            child: Container(
+              width: 300,
+              height: 300,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xff00d4aa).withValues(alpha: 0.04),
+              ),
+            ),
+          ),
+
+          // NAVBAR FIXA NO TOPO
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.4),
+                border: Border(bottom: BorderSide(color: Colors.white.withValues(alpha: 0.05))),
+              ),
+              child: SafeArea(
+                bottom: false,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => const InterfacePage()),
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 32,
+                            height: 32,
+                            decoration: const BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Color(0xff00f2ff), Color(0xff00d4aa)],
+                              ),
+                              borderRadius: BorderRadius.all(Radius.circular(8)),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                "K",
+                                style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.w900),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          const Text(
+                            "Koavy",
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                              fontFamily: 'Outfit',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => const CadastroPacientePage()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        side: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      ),
+                      child: const Text(
+                        "Criar Conta",
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // FORMULÁRIO DE LOGIN
+          Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.only(left: 20, right: 20, top: 120, bottom: 40),
+              child: Container(
+                width: screenWidth < 540 ? double.infinity : 500,
+                padding: const EdgeInsets.all(40),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.03),
+                  borderRadius: BorderRadius.circular(40),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.08),
+                  ),
+                ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const Text(
+                        "Bem-vindo",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 36,
+                          fontWeight: FontWeight.w900,
+                          fontFamily: 'Outfit',
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        "Acesse sua conta para continuar.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.grey, fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 40),
+
+                      // Campo de E-mail
+                      const Text(
+                        "E-MAIL DE ACESSO",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      CustomTextField(
+                        controller: emailController,
+                        hintText: "seu@email.com",
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return "Por favor, digite seu e-mail";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Campo de Senha
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "SENHA",
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 2,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: openForgotModal,
+                            style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero),
+                            child: const Text(
+                              "Esqueci a senha",
+                              style: TextStyle(color: Color(0xff00f2ff), fontSize: 11, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      CustomTextField(
+                        controller: senhaController,
+                        hintText: "••••••••",
+                        obscureText: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Por favor, digite a senha";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 35),
+
+                      // Botão Entrar
+                      SizedBox(
+                        height: 60,
+                        child: ElevatedButton(
+                          onPressed: fazerLogin,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                            padding: EdgeInsets.zero,
+                          ),
+                          child: Ink(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(18),
+                              gradient: const LinearGradient(
+                                colors: [Color(0xff00f2ff), Color(0xff00d4aa)],
+                              ),
+                            ),
+                            child: Container(
+                              alignment: Alignment.center,
+                              child: const Text(
+                                "Entrar no Sistema",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+
+                      // Separador
+                      Row(
+                        children: [
+                          Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.05))),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(
+                              "OU ENTRE COM",
+                              style: TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.5),
+                            ),
+                          ),
+                          Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.05))),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Google Login Button
+                      OutlinedButton(
+                        onPressed: loginWithGoogle,
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset("assets/images/google.png", width: 20, height: 20),
+                            const SizedBox(width: 12),
+                            const Text(
+                              "Google",
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
