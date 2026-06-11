@@ -1,5 +1,5 @@
 const CONFIG = {
-    API_BASE_URL: "http://localhost:8080",
+    API_BASE_URL: "http://localhost/koavy/api/public",
     DEBUG: true
 };
 

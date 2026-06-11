@@ -23,38 +23,23 @@ if (form) {
             return;
         }
 
-        // ================= CONTAS DE TESTE (DEMO) =================
-        const demoAccounts = {
-            "admin@koavy.com": { senha: "admin123", data: { id: 1, nome: "Admin Demo", email: "admin@koavy.com", perfilId: 3, ativo: true } },
-            "paciente@koavy.com": { senha: "paciente123", data: { id: 100, nome: "Paciente Demo", email: "paciente@koavy.com", perfilId: 1, ativo: true, idade: 30, tipoSanguineo: "O+" } },
-            "tutor@koavy.com": { senha: "tutor123", data: { id: 200, nome: "Tutor Demo", email: "tutor@koavy.com", perfilId: 2, ativo: true } }
-        };
-
-        if (demoAccounts[email] && demoAccounts[email].senha === senha) {
-            console.log("Login via conta de demonstração");
-            Auth.saveSession(demoAccounts[email].data);
-            Auth.redirectByRole(demoAccounts[email].data);
-            return;
-        }
-        // ==========================================================
-
         setLoading(true);
 
         try {
-            const response = await fetch(`${CONFIG.API_BASE_URL}/api/usuarios/login`, {
+            const response = await fetch(`${CONFIG.API_BASE_URL}/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, senha })
             });
 
-            const data = await response.json();
+            const result = await response.json();
 
             if (response.ok) {
                 console.log("Login bem-sucedido");
-                Auth.saveSession(data);
-                Auth.redirectByRole(data);
+                Auth.saveSession(result.user, result.token);
+                Auth.redirectByRole(result.user);
             } else {
-                showError(data.message || "E-mail ou senha incorretos.");
+                showError(result.message || "E-mail ou senha incorretos.");
             }
 
         } catch (err) {

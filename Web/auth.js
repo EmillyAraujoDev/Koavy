@@ -4,49 +4,35 @@
  */
 
 const Auth = {
-    COOKIE_NAME: "user_session",
-    EXPIRY_DAYS: 7,
+    TOKEN_KEY: "koavy_token",
+    USER_KEY: "koavy_user",
 
-    // Salva sessão em ambos os locais
-    saveSession(userData) {
-        const d = new Date();
-        d.setTime(d.getTime() + (this.EXPIRY_DAYS * 24 * 60 * 60 * 1000));
-        let expires = "expires=" + d.toUTCString();
-        document.cookie = this.COOKIE_NAME + "=" + encodeURIComponent(JSON.stringify(userData)) + ";" + expires + ";path=/;SameSite=Lax";
-        localStorage.setItem("user", JSON.stringify(userData));
+    saveSession(userData, token) {
+        localStorage.setItem(this.USER_KEY, JSON.stringify(userData));
+        if (token) localStorage.setItem(this.TOKEN_KEY, token);
     },
 
-    // Recupera tentando cookies primeiro, depois localStorage
     getUser() {
-        let name = this.COOKIE_NAME + "=";
-        let decodedCookie = decodeURIComponent(document.cookie);
-        let ca = decodedCookie.split(';');
-        for (let i = 0; i < ca.length; i++) {
-            let c = ca[i];
-            while (c.charAt(0) == ' ') c = c.substring(1);
-            if (c.indexOf(name) == 0) {
-                try {
-                    return JSON.parse(decodeURIComponent(c.substring(name.length, c.length)));
-                } catch (e) { console.error("Erro no cookie:", e); }
-            }
-        }
-
-        const localUser = localStorage.getItem("user");
-        if (localUser) {
-            try { return JSON.parse(localUser); } catch(e) { return null; }
-        }
-        return null;
+        const user = localStorage.getItem(this.USER_KEY);
+        return user ? JSON.parse(user) : null;
     },
 
-    // Redireciona o usuário para seu dashboard específico baseado no perfilId
-    // 1: PACIENTE, 2: TUTOR, 3: ADMIN
+    getToken() {
+        return localStorage.getItem(this.TOKEN_KEY);
+    },
+
+    getAuthHeader() {
+        const token = this.getToken();
+        return token ? { 'Authorization': `Bearer ${token}` } : {};
+    },
+
     redirectByRole(user) {
         if (!user) {
             window.location.href = "login.html";
             return;
         }
         
-        switch(user.perfilId) {
+        switch(parseInt(user.perfil_id || user.perfilId)) {
             case 3:
                 window.location.href = "admin.html";
                 break;
@@ -62,43 +48,18 @@ const Auth = {
 
     check() {
         const user = this.getUser();
-        if (!user) {
-            window.location.href = "login.html";
+        const token = this.getToken();
+        if (!user || !token) {
+            this.logout();
             return null;
         }
         return user;
     },
 
     logout() {
-        document.cookie = this.COOKIE_NAME + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        localStorage.removeItem("user");
+        localStorage.removeItem(this.USER_KEY);
+        localStorage.removeItem(this.TOKEN_KEY);
         window.location.href = "login.html";
-    },
-
-    isAdmin() {
-        const user = this.getUser();
-        return user && user.perfilId === 3;
-    },
-
-    isAdult() {
-        const user = this.getUser();
-        if (!user) return false;
-        // Se a idade estiver salva diretamente
-        if (user.idade !== undefined && user.idade !== null) {
-            return user.idade >= 18;
-        }
-        // Se precisar calcular pela data de nascimento
-        if (user.dataNascimento) {
-            const birthDate = new Date(user.dataNascimento);
-            const today = new Date();
-            let age = today.getFullYear() - birthDate.getFullYear();
-            const m = today.getMonth() - birthDate.getMonth();
-            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
-            }
-            return age >= 18;
-        }
-        return false;
     }
 };
 

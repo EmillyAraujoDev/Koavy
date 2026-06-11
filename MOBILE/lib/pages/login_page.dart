@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_loginkoavy/models/usuario.dart';
+import 'package:flutter_application_loginkoavy/api_service.dart';
 import 'package:flutter_application_loginkoavy/pages/admin_page.dart';
 import 'package:flutter_application_loginkoavy/pages/cadastro_paciente_page.dart';
 import 'package:flutter_application_loginkoavy/pages/interface_page.dart';
 import 'package:flutter_application_loginkoavy/pages/dashboard_paciente_page.dart';
 import 'package:flutter_application_loginkoavy/pages/dashboard_tutor_page.dart';
 import 'package:flutter_application_loginkoavy/widgets/custom_text_field.dart';
+import 'package:dio/dio.dart';
 
 /// Página de Login do sistema Koavy.
 class LoginPage extends StatefulWidget {
@@ -18,15 +19,9 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController senhaController = TextEditingController();
+  final ApiService _apiService = ApiService();
 
   final _formKey = GlobalKey<FormState>();
-
-  /// Lista de usuários padrão para teste local de autenticação
-  final List<Usuario> usuarios = [
-    Usuario("igor", "123"),
-    Usuario("admin", "admin"),
-    Usuario("teste", "456"),
-  ];
 
   @override
   void dispose() {
@@ -35,67 +30,39 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  /// Realiza o fluxo de autenticação e navegação baseada no tipo de usuário.
-  void fazerLogin() {
+  /// Realiza o fluxo de autenticação via API PHP.
+  void fazerLogin() async {
     if (_formKey.currentState!.validate()) {
       String emailDigitado = emailController.text.trim();
       String senhaDigitada = senhaController.text;
 
-      // ================= CONTAS DE DEMONSTRAÇÃO WEB =================
-      if (emailDigitado == "admin@koavy.com" && senhaDigitada == "admin123") {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const AdminPage()),
-        );
-        return;
-      } else if (emailDigitado == "paciente@koavy.com" && senhaDigitada == "paciente123") {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const DashboardPacientePage(
-              userName: 'Paciente Demo',
-              email: 'paciente@koavy.com',
-            ),
-          ),
-        );
-        return;
-      } else if (emailDigitado == "tutor@koavy.com" && senhaDigitada == "tutor123") {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const DashboardTutorPage(
-              userName: 'Tutor Demo',
-              email: 'tutor@koavy.com',
-            ),
-          ),
-        );
-        return;
-      }
-      // ==============================================================
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(child: CircularProgressIndicator(color: Color(0xff00f2ff))),
+      );
 
-      // Fallback para contas originais locais
-      bool loginCorreto = false;
-      for (var usuario in usuarios) {
-        if (usuario.autenticar(emailDigitado, senhaDigitada)) {
-          loginCorreto = true;
-          break;
-        }
-      }
+      try {
+        final response = await _apiService.login(emailDigitado, senhaDigitada);
+        Navigator.pop(context); // Fecha o loading
 
-      if (loginCorreto) {
-        if (emailDigitado == "admin") {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const AdminPage()),
-          );
-        } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const InterfacePage()),
-          );
+        if (response.statusCode == 200) {
+          final user = response.data['user'];
+          final int perfilId = user['perfil_id'] ?? 1;
+
+          if (perfilId == 3) {
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const AdminPage()));
+          } else if (perfilId == 2) {
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DashboardTutorPage(userName: user['nome'], email: user['email'])));
+          } else {
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DashboardPacientePage(userName: user['nome'], email: user['email'])));
+          }
         }
-      } else {
-        mostrarMensagem("Erro de Acesso", "E-mail ou senha incorretos.");
+      } on DioException catch (e) {
+        Navigator.pop(context); // Fecha o loading
+        String msg = "E-mail ou senha incorretos.";
+        if (e.type == DioExceptionType.connectionTimeout) msg = "Erro de conexão com o servidor.";
+        mostrarMensagem("Erro de Acesso", msg);
       }
     }
   }
