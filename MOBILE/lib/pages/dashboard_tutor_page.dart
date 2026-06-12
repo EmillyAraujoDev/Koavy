@@ -473,7 +473,7 @@ class _DashboardTutorPageState extends State<DashboardTutorPage> with SingleTick
                           const SizedBox(height: 6),
                           Text(
                             "$currentO2%",
-                            style: const TextStyle(color: const Color(0xff34d399), fontSize: 24, fontWeight: FontWeight.bold),
+                            style: const TextStyle(color: Color(0xff34d399), fontSize: 24, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),

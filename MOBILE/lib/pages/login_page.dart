@@ -44,6 +44,7 @@ class _LoginPageState extends State<LoginPage> {
 
       try {
         final response = await _apiService.login(emailDigitado, senhaDigitada);
+        if (!mounted) return;
         Navigator.pop(context); // Fecha o loading
 
         if (response.statusCode == 200) {
@@ -59,6 +60,7 @@ class _LoginPageState extends State<LoginPage> {
           }
         }
       } on DioException catch (e) {
+        if (!mounted) return;
         Navigator.pop(context); // Fecha o loading
         String msg = "E-mail ou senha incorretos.";
         if (e.type == DioExceptionType.connectionTimeout) msg = "Erro de conexão com o servidor.";

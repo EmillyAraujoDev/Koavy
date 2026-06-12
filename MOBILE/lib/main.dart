@@ -72,12 +72,12 @@ class KoavyApp extends StatelessWidget {
       ),
 
       // ================= ROTA INICIAL =================
-      home: const InterfacePage(),
+      //home: const InterfacePage(),
 
       // ================= ROTAS NOMEADAS =================
       // Permite Navigator.pushNamed(context, '/login') em qualquer lugar
       routes: {
-        '/':                    (context) => const InterfacePage(),
+        '/':                    (context) =>  InterfacePage(),
         '/login':               (context) => const LoginPage(),
         '/cadastro-paciente':   (context) => const CadastroPacientePage(),
         '/cadastro-tutor':      (context) => const CadastroTutorPage(),

@@ -15,6 +15,18 @@ const Navbar = {
         const user = typeof Auth !== 'undefined' ? Auth.getUser() : null;
         const isIndex = window.location.pathname.endsWith('interface.html') || window.location.pathname.endsWith('/') || window.location.pathname.endsWith('index.html');
         
+        let dashboardHref = 'login.html';
+        if (user) {
+            if (user.isDemo) {
+                dashboardHref = 'dashboard.html?demo=true';
+            } else {
+                const role = parseInt(user.perfil_id || user.perfilId);
+                if (role === 3) dashboardHref = 'admin.html';
+                else if (role === 2) dashboardHref = 'dashboard_tutor.html';
+                else dashboardHref = 'dashboard_paciente.html';
+            }
+        }
+
         const navHTML = `
         <nav class="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl z-[100] backdrop-blur-2xl bg-black/60 border border-white/10 rounded-[24px] transition-all duration-500 px-6 py-3 flex items-center justify-between shadow-2xl" id="main-nav">
             <div class="flex items-center gap-3">
@@ -31,7 +43,7 @@ const Navbar = {
                 <a href="${isIndex ? '#inicio' : 'interface.html'}" class="text-gray-400 hover:text-white transition-colors">Início</a>
                 <a href="sobre.html" class="text-gray-400 hover:text-white transition-colors">Sobre</a>
                 <a href="funcionalidades.html" class="text-gray-400 hover:text-white transition-colors">Funcionalidades</a>
-                <a href="dashboard.html" class="text-gray-400 hover:text-white transition-colors">Monitoramento</a>
+                <a href="${dashboardHref}" class="text-gray-400 hover:text-white transition-colors">Monitoramento</a>
                 <a href="contato.html" class="text-gray-400 hover:text-white transition-colors">Suporte</a>
             </div>
 
@@ -49,7 +61,7 @@ const Navbar = {
                 <a href="${isIndex ? '#inicio' : 'interface.html'}" class="text-lg font-bold text-white">Início</a>
                 <a href="sobre.html" class="text-lg font-bold text-white">Sobre</a>
                 <a href="funcionalidades.html" class="text-lg font-bold text-white">Funcionalidades</a>
-                <a href="dashboard.html" class="text-lg font-bold text-white">Dashboard</a>
+                <a href="${dashboardHref}" class="text-lg font-bold text-white">Dashboard</a>
                 <a href="contato.html" class="text-lg font-bold text-white">Suporte</a>
                 <div class="h-px bg-white/10 my-2"></div>
                 ${user ? `

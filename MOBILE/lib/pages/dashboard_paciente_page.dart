@@ -100,7 +100,7 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Exame enviado com sucesso!'),
-        backgroundColor: const Color(0xff34d399),
+        backgroundColor: Color(0xff34d399),
       ),
     );
   }
@@ -137,7 +137,7 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
     final bool isMobile = screenWidth < 900;
 
     return Scaffold(
-      backgroundColor: const Color(0xff050505),
+      backgroundColor: Color(0xff050505),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
         child: Container(
@@ -192,7 +192,7 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
                         ),
                         const Text(
                           "Paciente Ativo",
-                          style: TextStyle(color: const Color(0xff34d399), fontWeight: FontWeight.bold, fontSize: 10),
+                          style: TextStyle(color: Color(0xff34d399), fontWeight: FontWeight.bold, fontSize: 10),
                         ),
                       ],
                     ),
@@ -261,7 +261,7 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         decoration: BoxDecoration(
-          color: isActive ? const Color(0xff00f2ff) : Colors.white.withValues(alpha: 0.03),
+          color: isActive ? Color(0xff00f2ff) : Colors.white.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isActive ? Colors.transparent : Colors.white.withValues(alpha: 0.08),
@@ -333,10 +333,10 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
                   return Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                     decoration: BoxDecoration(
-                      color: const Color(0xff00f2ff).withValues(alpha: 0.1 + (pulseController.value * 0.1)),
+                      color: Color(0xff00f2ff).withValues(alpha: 0.1 + (pulseController.value * 0.1)),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: const Color(0xff00f2ff).withValues(alpha: 0.2 + (pulseController.value * 0.3)),
+                        color: Color(0xff00f2ff).withValues(alpha: 0.2 + (pulseController.value * 0.3)),
                       ),
                     ),
                     child: Row(
@@ -448,7 +448,7 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
                           Text(
                             "Seu coração está batendo em um ritmo saudável. Continue assim!",
                             style: TextStyle(
-                              color: const Color(0xff34d399),
+                              color: Color(0xff34d399),
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
                             ),
@@ -512,7 +512,7 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xff00f2ff).withValues(alpha: 0.08),
+            Color(0xff00f2ff).withValues(alpha: 0.08),
             Colors.transparent,
           ],
         ),
@@ -527,8 +527,8 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
             height: 90,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xff00f2ff), width: 2),
-              color: const Color(0xff16181b),
+              border: Border.all(color: Color(0xff00f2ff), width: 2),
+              color: Color(0xff16181b),
             ),
             child: const Center(
               child: Icon(
@@ -573,7 +573,7 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
           Text(
             value,
             style: TextStyle(
-              color: highlightValue ? const Color(0xff00f2ff) : Colors.white,
+              color: highlightValue ? Color(0xff00f2ff) : Colors.white,
               fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
@@ -610,7 +610,7 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
               icon: const Icon(Icons.attach_file, color: Colors.black),
               label: const Text("Anexar Novo Exame"),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xff00d4aa),
+                backgroundColor: Color(0xff00d4aa),
                 foregroundColor: Colors.black,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -638,7 +638,7 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
                 color: Colors.white.withValues(alpha: 0.03),
                 borderRadius: BorderRadius.circular(32),
                 border: Border.all(
-                  color: isNew ? const Color(0xff00f2ff).withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.08),
+                  color: isNew ? Color(0xff00f2ff).withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.08),
                 ),
               ),
               child: Column(
@@ -683,7 +683,7 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
                       if (isNew)
                         const Text(
                           "ENVIADO ✔",
-                          style: TextStyle(color: const Color(0xff34d399), fontSize: 11, fontWeight: FontWeight.bold),
+                          style: TextStyle(color: Color(0xff34d399), fontSize: 11, fontWeight: FontWeight.bold),
                         )
                       else
                         const Text(
@@ -769,7 +769,7 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
               ElevatedButton(
                 onPressed: salvarPerfil,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff00f2ff),
+                  backgroundColor: Color(0xff00f2ff),
                   foregroundColor: Colors.black,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),

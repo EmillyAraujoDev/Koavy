@@ -13,12 +13,25 @@ class BatimentoController {
         $this->db = Database::getInstance();
     }
 
+    private function formatBatimento($row) {
+        if (!$row) return null;
+        $row['frequenciaCard'] = (float)$row['bpm'];
+        $row['dataHora'] = $row['timestamp'];
+        $row['bpm'] = (float)$row['bpm'];
+        $row['saturacao'] = isset($row['saturacao']) ? (float)$row['saturacao'] : null;
+        $row['pressaoSistolica'] = isset($row['pressao_sistolica']) ? (int)$row['pressao_sistolica'] : null;
+        $row['pressaoDiastolica'] = isset($row['pressao_diastolica']) ? (int)$row['pressao_diastolica'] : null;
+        $row['dispositivoId'] = isset($row['dispositivo_id']) ? (int)$row['dispositivo_id'] : null;
+        $row['usuarioId'] = (int)$row['usuario_id'];
+        return $row;
+    }
+
     public function registrar($data, $userId) {
         if (!isset($data['bpm'])) {
             return ["status" => 400, "data" => ["message" => "BPM é obrigatório"]];
         }
 
-        $bpm = $data['bpm'];
+        $bpm = (float)$data['bpm'];
         $saturacao = $data['saturacao'] ?? null;
         $dispositivoId = $data['dispositivo_id'] ?? null;
 
@@ -70,7 +83,9 @@ class BatimentoController {
         return ["status" => 201, "data" => [
             "message" => "Leitura registrada",
             "id" => $batimentoId,
-            "classificacao" => $classificacao
+            "classificacao" => $classificacao,
+            "frequenciaCard" => $bpm,
+            "saturacao" => $saturacao
         ]];
     }
 
@@ -86,7 +101,6 @@ class BatimentoController {
     }
 
     private function registrarEmergencia($userId, $bpm) {
-        // Busca o último alerta criado acima
         $alertaId = $this->db->lastInsertId();
         
         $stmt = $this->db->prepare("INSERT INTO emergencia (usuario_id, alerta_id, status) VALUES (:uid, :aid, 'PENDENTE')");
@@ -94,8 +108,6 @@ class BatimentoController {
             'uid' => $userId,
             'aid' => $alertaId
         ]);
-
-        // TODO: Disparar Push Notification via FCM aqui
     }
 
     public function getHistorico($userId, $limit = 50) {
@@ -103,6 +115,7 @@ class BatimentoController {
         $stmt->bindValue(':uid', $userId, PDO::PARAM_INT);
         $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
         $stmt->execute();
-        return ["status" => 200, "data" => $stmt->fetchAll()];
+        $rows = $stmt->fetchAll();
+        return ["status" => 200, "data" => array_map([$this, 'formatBatimento'], $rows)];
     }
 }

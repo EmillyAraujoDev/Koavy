@@ -4,8 +4,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("tutor_form");
     const mensagem = document.getElementById("mensagemTutor");
     const pacienteIdInput = document.getElementById("pacienteId");
+    const cadastroTutorFields = document.getElementById("cadastroTutorFields");
 
     if (!form) return;
+
+    // Verificar se o usuário já está logado como tutor
+    const loggedUser = typeof Auth !== 'undefined' ? Auth.getUser() : null;
+    const isLoggedTutor = loggedUser && parseInt(loggedUser.perfil_id || loggedUser.perfilId) === 2;
+
+    if (isLoggedTutor && cadastroTutorFields) {
+        cadastroTutorFields.style.display = "none";
+        console.log("Tutor já logado. Ocultando campos de cadastro.");
+    }
 
     // Tenta pegar ID do sessionStorage para preencher automaticamente
     const pacienteIdSalvo = sessionStorage.getItem("pacienteId");
@@ -17,24 +27,49 @@ document.addEventListener("DOMContentLoaded", () => {
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const nomeInput = document.getElementById("nomeTutor");
-        const dataInputEl = document.getElementById("dataVinculo");
-
-        const nome = nomeInput.value.trim();
         const pacienteId = pacienteIdInput.value.trim();
+        const dataInputEl = document.getElementById("dataVinculo");
         const dataInput = dataInputEl ? dataInputEl.value : null;
 
-        if (!nome || !pacienteId) {
-            exibirMensagem("❌ Preencha seu nome e o ID do Paciente", true);
+        if (!pacienteId) {
+            exibirMensagem("❌ Preencha o ID do Paciente", true);
             return;
         }
 
-        const vinculo = {
-            nome,
+        let vinculo = {
             pacienteId: Number(pacienteId),
-            dataVinculo: dataInput ? new Date(dataInput).toISOString() : null,
+            dataVinculo: dataInput ? new Date(dataInput).toISOString().slice(0, 19).replace('T', ' ') : null,
             principal: false
         };
+
+        // Se NÃO estiver logado como tutor, exige e adiciona as novas credenciais
+        if (!isLoggedTutor) {
+            const nomeTutor = document.getElementById("nomeTutor").value.trim();
+            const emailTutor = document.getElementById("emailTutor").value.trim();
+            const senhaTutor = document.getElementById("senhaTutor").value;
+            const telefoneTutor = document.getElementById("telefoneTutor").value.trim();
+
+            if (!nomeTutor || !emailTutor || !senhaTutor) {
+                exibirMensagem("❌ Por favor, preencha Nome, E-mail e Senha para criar sua conta.", true);
+                return;
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailTutor)) {
+                exibirMensagem("❌ Formato de e-mail inválido.", true);
+                return;
+            }
+
+            if (senhaTutor.length < 8) {
+                exibirMensagem("❌ A senha deve conter no mínimo 8 caracteres.", true);
+                return;
+            }
+
+            vinculo.nome = nomeTutor;
+            vinculo.email = emailTutor;
+            vinculo.senha = senhaTutor;
+            vinculo.telefone = telefoneTutor;
+        }
 
         const btn = document.getElementById("btnTutor");
         const originalText = btn.innerText;
@@ -42,22 +77,33 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.innerText = "Vinculando...";
 
         try {
-            const response = await fetch(`${CONFIG.API_BASE_URL}/api/vinculos`, {
+            const headers = { "Content-Type": "application/json" };
+            if (typeof Auth !== 'undefined' && Auth.getToken()) {
+                headers['Authorization'] = `Bearer ${Auth.getToken()}`;
+            }
+
+            const response = await fetch(`${CONFIG.API_BASE_URL}/vinculos`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: headers,
                 body: JSON.stringify(vinculo)
             });
 
+            const result = await response.json();
+
             if (response.ok) {
-                exibirMensagem("✔ Tutor vinculado com sucesso!", false);
+                exibirMensagem("✔ Vínculo realizado com sucesso!", false);
                 setTimeout(() => {
                     form.reset();
                     sessionStorage.removeItem("pacienteId");
-                    window.location.href = "login.html"; // Redireciona para login após sucesso
+                    
+                    if (isLoggedTutor) {
+                        window.location.href = "dashboard_tutor.html";
+                    } else {
+                        window.location.href = "login.html"; 
+                    }
                 }, 2000);
             } else {
-                const texto = await response.text();
-                exibirMensagem("❌ " + (texto || "Erro ao salvar vínculo"), true);
+                exibirMensagem("❌ " + (result.message || "Erro ao salvar vínculo"), true);
             }
         } catch (err) {
             console.error("Erro fetch:", err);

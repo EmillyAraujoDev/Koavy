@@ -61,10 +61,32 @@
     <form id="tutor_form" class="space-y-8">
       
       <div class="space-y-6">
-        <div class="space-y-2">
-          <label class="text-xs font-black uppercase tracking-widest text-gray-500 ml-1">Seu Nome Completo</label>
-          <input id="nomeTutor" type="text" placeholder="Como devemos te chamar?" 
-            class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-neon1/50 focus:ring-1 focus:ring-neon1/20 transition-all placeholder:text-gray-700">
+        
+        <!-- Campos de cadastro de credenciais (ocultos se já logado) -->
+        <div id="cadastroTutorFields" class="space-y-6">
+          <div class="space-y-2">
+            <label class="text-xs font-black uppercase tracking-widest text-gray-500 ml-1">Seu Nome Completo</label>
+            <input id="nomeTutor" type="text" placeholder="Como devemos te chamar?" 
+              class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-neon1/50 focus:ring-1 focus:ring-neon1/20 transition-all placeholder:text-gray-700">
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label class="text-xs font-black uppercase tracking-widest text-gray-500 ml-1">E-mail</label>
+              <input id="emailTutor" type="email" placeholder="seu@email.com" 
+                class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-neon1/50 focus:ring-1 focus:ring-neon1/20 transition-all placeholder:text-gray-700">
+            </div>
+            <div class="space-y-2">
+              <label class="text-xs font-black uppercase tracking-widest text-gray-500 ml-1">Senha de Acesso</label>
+              <input id="senhaTutor" type="password" placeholder="••••••••" 
+                class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-neon1/50 focus:ring-1 focus:ring-neon1/20 transition-all placeholder:text-gray-700">
+            </div>
+            <div class="space-y-2 md:col-span-2">
+              <label class="text-xs font-black uppercase tracking-widest text-gray-500 ml-1">WhatsApp / Telefone</label>
+              <input id="telefoneTutor" type="text" placeholder="(00) 00000-0000" 
+                class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-neon1/50 focus:ring-1 focus:ring-neon1/20 transition-all placeholder:text-gray-700">
+            </div>
+          </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -104,6 +126,7 @@
 </style>
 
 <script src="config.js"></script>
+<script src="auth.js"></script>
 <script defer src="cadastrotutor.js"></script>
 </body>
 </html>
