@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_loginkoavy/pages/cadastro_paciente_page.dart';
-import 'package:flutter_application_loginkoavy/pages/interface_page.dart';
-import 'package:flutter_application_loginkoavy/pages/login_page.dart';
 import 'package:flutter_application_loginkoavy/widgets/custom_navbar.dart';
 import 'package:flutter_application_loginkoavy/widgets/custom_text_field.dart';
 
@@ -42,16 +39,12 @@ class _CadastroTutorPageState extends State<CadastroTutorPage> {
         "Sucesso",
         "Vínculo como Tutor realizado com sucesso!\n\nVocê está vinculado ao Paciente ID #${pacienteIdController.text}.",
         onConfirm: () {
-          // Limpa o formulário e redireciona para a página principal ou login
+          // Limpa o formulário e redireciona para a página principal
           _formKey.currentState!.reset();
           setState(() {
             dataVinculo = null;
           });
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => const InterfacePage(),
-            ),
-          );
+          Navigator.pushReplacementNamed(context, '/welcome');
         },
       );
     } else {
@@ -106,7 +99,7 @@ class _CadastroTutorPageState extends State<CadastroTutorPage> {
       backgroundColor: const Color(0xff050505),
       body: Stack(
         children: [
-          // Efeitos de gradiente/blur de fundo (Mesh Background)
+          // Efeitos de gradiente/blur de fundo
           Positioned(
             top: -100,
             right: -100,
@@ -116,11 +109,6 @@ class _CadastroTutorPageState extends State<CadastroTutorPage> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: const Color(0xff00f2ff).withValues(alpha: 0.05),
-              ),
-              child: Container(
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                ),
               ),
             ),
           ),
@@ -132,18 +120,10 @@ class _CadastroTutorPageState extends State<CadastroTutorPage> {
                 showBackButton: true,
                 activeTab: 'Cadastro',
                 onBackTap: () {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) => const InterfacePage(),
-                    ),
-                  );
+                  Navigator.pushReplacementNamed(context, '/welcome');
                 },
                 onEntrarTap: () {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) => const LoginPage(),
-                    ),
-                  );
+                  Navigator.pushReplacementNamed(context, '/login');
                 },
               ),
 
@@ -303,8 +283,7 @@ class _CadastroTutorPageState extends State<CadastroTutorPage> {
                                                       onPrimary: Colors.black,
                                                       surface: Color(0xff16181b),
                                                       onSurface: Colors.white,
-                                                    ),
-                                                    dialogBackgroundColor: const Color(0xff0f1011),
+                                                    ), dialogTheme: const DialogThemeData(backgroundColor: Color(0xff0f1011)),
                                                   ),
                                                   child: child!,
                                                 );
@@ -340,7 +319,7 @@ class _CadastroTutorPageState extends State<CadastroTutorPage> {
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(height: 15), // Ajustar espaço inferior
+                                        const SizedBox(height: 15),
                                       ],
                                     ),
                                   ),
@@ -400,11 +379,7 @@ class _CadastroTutorPageState extends State<CadastroTutorPage> {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.of(context).pushReplacement(
-                                        MaterialPageRoute(
-                                          builder: (context) => const CadastroPacientePage(),
-                                        ),
-                                      );
+                                      Navigator.pushReplacementNamed(context, '/cadastro-paciente');
                                     },
                                     child: const Text(
                                       'Cadastrar como Paciente',

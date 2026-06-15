@@ -12,6 +12,10 @@ const Auth = {
         if (token) localStorage.setItem(this.TOKEN_KEY, token);
     },
 
+    save(token, userData) {
+        this.saveSession(userData, token);
+    },
+
     getUser() {
         const user = localStorage.getItem(this.USER_KEY);
         return user ? JSON.parse(user) : null;
@@ -46,12 +50,19 @@ const Auth = {
         }
     },
 
-    check() {
+    check(requiredRole = null) {
         const user = this.getUser();
         const token = this.getToken();
         if (!user || !token) {
             this.logout();
             return null;
+        }
+        if (requiredRole !== null) {
+            const role = parseInt(user.perfil_id || user.perfilId);
+            if (role !== requiredRole) {
+                this.redirectByRole(user);
+                return null;
+            }
         }
         return user;
     },

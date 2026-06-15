@@ -18,8 +18,8 @@ const char* ssid = "SUA_REDE_WIFI";
 const char* password = "SUA_SENHA_WIFI";
 
 // Configurações API
-const char* api_url = "https://seu-dominio.com/api/batimentos";
-const char* device_token = "TOKEN_DO_DISPOSITIVO_GERADO_NA_API";
+const char* api_url = "http://143.106.241.4/koavy/api/public/batimentos";
+const char* device_token = "COLE_O_TOKEN_JWT_AQUI";
 
 // Pinos
 const int SENSOR_PIN = 34; // Exemplo de pino analógico

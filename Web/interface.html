@@ -212,9 +212,31 @@
         <div class="lg:w-1/2 w-full reveal reveal-right delay-400">
           <div class="relative group">
             <div class="absolute -inset-4 bg-gradient-to-r from-neon1 to-neon2 rounded-[40px] blur-2xl opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-            <div class="relative bg-black rounded-[40px] overflow-hidden border border-white/20 shadow-2xl">
-              <div class="aspect-video">
-                <iframe class="w-full h-full" src="https://www.youtube.com/embed/mILYtp4UHIQ" title="Nossa História" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <div class="relative bg-black/40 backdrop-blur-3xl rounded-[40px] p-8 lg:p-12 border border-white/20 shadow-2xl overflow-hidden">
+              <div class="grid grid-cols-2 gap-6">
+                <div class="bg-white/5 p-6 rounded-3xl border border-white/5">
+                  <p class="text-[10px] font-black text-neon1 uppercase tracking-widest mb-4">Score Cardíaco</p>
+                  <p class="text-5xl font-black text-white">92<small class="text-xs text-gray-500 uppercase ml-1">/100</small></p>
+                  <div class="mt-4 h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+                    <div class="h-full bg-neon1 w-[92%] rounded-full shadow-[0_0_10px_#00f2ff]"></div>
+                  </div>
+                </div>
+                <div class="bg-white/5 p-6 rounded-3xl border border-white/5">
+                  <p class="text-[10px] font-black text-neon2 uppercase tracking-widest mb-4">VFC Médio</p>
+                  <p class="text-5xl font-black text-white">45<small class="text-xs text-gray-500 uppercase ml-1">ms</small></p>
+                  <p class="text-[10px] text-emerald-500 mt-4 font-bold uppercase tracking-widest">▲ 12% Estável</p>
+                </div>
+                <div class="col-span-2 bg-neon1/5 p-8 rounded-3xl border border-neon1/10 relative overflow-hidden">
+                   <div class="flex justify-between items-center mb-6">
+                      <p class="text-xs font-black text-white uppercase tracking-[0.2em]">Fluxo de Saúde IA</p>
+                      <div class="w-2 h-2 rounded-full bg-neon1 animate-ping"></div>
+                   </div>
+                   <!-- SVG Gráfico Pequeno -->
+                   <svg class="w-full h-16" viewBox="0 0 100 20">
+                      <path d="M0,10 Q10,2 20,15 T40,5 T60,18 T80,3 T100,10" fill="none" stroke="#00f2ff" stroke-width="2" stroke-linecap="round" />
+                   </svg>
+                   <p class="text-[10px] text-gray-500 mt-4 leading-relaxed">Nossa IA analisa mais de 10.000 pontos de dados diariamente para garantir sua segurança.</p>
+                </div>
               </div>
             </div>
           </div>

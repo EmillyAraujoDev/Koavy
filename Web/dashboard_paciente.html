@@ -202,7 +202,7 @@
 <script src="config.js"></script>
 <script src="auth.js"></script>
 <script>
-    const user = Auth.check();
+    const user = Auth.check(1);
 
     function init() {
         if (!user) return;

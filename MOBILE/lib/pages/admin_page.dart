@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_loginkoavy/pages/login_page.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_application_loginkoavy/api_service.dart';
 
 /// Página de Administração (Dashboard) do sistema Koavy.
 class AdminPage extends StatefulWidget {
@@ -12,6 +13,7 @@ class AdminPage extends StatefulWidget {
 }
 
 class _AdminPageState extends State<AdminPage> {
+  final ApiService _apiService = ApiService();
   int selectedMenu = 0;
 
   static const Color neon1 = Color(0xff00F2FF);
@@ -99,13 +101,10 @@ class _AdminPageState extends State<AdminPage> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LoginPage(),
-                          ),
-                        );
+                      onPressed: () async {
+                        await _apiService.logout();
+                        if (!mounted) return;
+                        Navigator.pushReplacementNamed(context, '/');
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red.withValues(alpha: .1),

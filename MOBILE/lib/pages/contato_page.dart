@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_loginkoavy/pages/interface_page.dart';
-import 'package:flutter_application_loginkoavy/pages/login_page.dart';
 import 'package:flutter_application_loginkoavy/widgets/custom_navbar.dart';
 import 'package:flutter_application_loginkoavy/widgets/custom_text_field.dart';
 
@@ -44,11 +42,8 @@ class _ContatoPageState extends State<ContatoPage> {
           setState(() {
             assuntoSelecionado = 'Dúvidas Gerais';
           });
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => const InterfacePage(),
-            ),
-          );
+          // Redireciona para a página principal
+          Navigator.pushReplacementNamed(context, '/welcome');
         },
       );
     } else {
@@ -107,18 +102,10 @@ class _ContatoPageState extends State<ContatoPage> {
             showBackButton: true,
             activeTab: 'Contato',
             onBackTap: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => const InterfacePage(),
-                ),
-              );
+              Navigator.pushReplacementNamed(context, '/welcome');
             },
             onEntrarTap: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => const LoginPage(),
-                ),
-              );
+              Navigator.pushReplacementNamed(context, '/login');
             },
           ),
 

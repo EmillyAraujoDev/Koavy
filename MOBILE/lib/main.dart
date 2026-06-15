@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+// Importações de páginas existentes
 import 'package:flutter_application_loginkoavy/pages/interface_page.dart';
 import 'package:flutter_application_loginkoavy/pages/login_page.dart';
 import 'package:flutter_application_loginkoavy/pages/cadastro_paciente_page.dart';
 import 'package:flutter_application_loginkoavy/pages/dashboard_paciente_page.dart';
 import 'package:flutter_application_loginkoavy/pages/dashboard_tutor_page.dart';
 import 'package:flutter_application_loginkoavy/pages/admin_page.dart';
-import 'package:flutter_application_loginkoavy/cadastrotutor.dart';
-import 'package:flutter_application_loginkoavy/contato.dart';
+import 'package:flutter_application_loginkoavy/pages/cadastro_tutor_page.dart';
+import 'package:flutter_application_loginkoavy/pages/contato_page.dart';
+
+// Novas importações de páginas para arquitetura profissional
+import 'package:flutter_application_loginkoavy/pages/home_page.dart';
+import 'package:flutter_application_loginkoavy/pages/dashboard_page.dart';
+import 'package:flutter_application_loginkoavy/pages/perfil_page.dart';
+import 'package:flutter_application_loginkoavy/pages/historico_page.dart';
 
 void main() {
   runApp(const KoavyApp());
@@ -17,10 +25,10 @@ void main() {
 class KoavyApp extends StatelessWidget {
   const KoavyApp({super.key});
 
-  // Paleta de cores Koavy
-  static const Color neon1 = Color(0xff00f2ff); // --neon1
-  static const Color neon2 = Color(0xff00d4aa); // --neon2
-  static const Color bgDark = Color(0xff050505); // fundo global
+  // Paleta de cores Koavy (neon e dark)
+  static const Color neonCyan = Color(0xff00f2ff);
+  static const Color neonGreen = Color(0xff00d4aa);
+  static const Color backgroundDark = Color(0xff050505);
 
   @override
   Widget build(BuildContext context) {
@@ -30,61 +38,76 @@ class KoavyApp extends StatelessWidget {
 
       // ================= TEMA GLOBAL =================
       theme: ThemeData(
-        // Cores principais baseadas na identidade visual Koavy
         colorScheme: const ColorScheme.dark(
-          primary: neon1,
-          secondary: neon2,
+          primary: neonCyan,
+          secondary: neonGreen,
           surface: Color(0xff111418),
           onPrimary: Colors.black,
           onSecondary: Colors.black,
           onSurface: Colors.white,
         ),
-        scaffoldBackgroundColor: bgDark,
+        scaffoldBackgroundColor: backgroundDark,
 
-        // Tipografia: Google Fonts Inter (mesma fonte do projeto WEB)
+        // Tipografia: Inter (Google Fonts)
         textTheme: GoogleFonts.interTextTheme(
           ThemeData.dark().textTheme,
         ),
 
-        // ElevatedButton padrão com gradiente neon
+        // Estilização de botões globais
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: neon1,
+            backgroundColor: neonCyan,
             foregroundColor: Colors.black,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
-            textStyle: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
+            textStyle: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
-
-        // TextButton padrão neon
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            foregroundColor: neon1,
-          ),
-        ),
-
-        // Componentes de Material 3
+        
         useMaterial3: true,
       ),
 
-      // ================= ROTA INICIAL =================
-      home: const InterfacePage(),
-
-      // ================= ROTAS NOMEADAS =================
-      // Permite Navigator.pushNamed(context, '/login') em qualquer lugar
+      // ================= NAVEGAÇÃO PROFISSIONAL =================
+      // SOLUÇÃO: Usamos initialRoute '/' mapeado diretamente para LoginPage
+      // para evitar qualquer conflito de redundância com a propriedade 'home'.
+      initialRoute: '/',
+      
+      // Rotas estáticas (sem argumentos)
       routes: {
-        '/':                    (context) => const InterfacePage(),
-        '/login':               (context) => const LoginPage(),
-        '/cadastro-paciente':   (context) => const CadastroPacientePage(),
-        '/cadastro-tutor':      (context) => const CadastroTutorPage(),
-        '/contato':             (context) => const ContatoPage(),
-        '/admin':               (context) => const AdminPage(),
-        '/dashboard-paciente':  (context) => const DashboardPacientePage(),
-        '/dashboard-tutor':     (context) => const DashboardTutorPage(),
+        '/': (context) => const LoginPage(),
+        '/welcome': (context) => const InterfacePage(),
+        '/home': (context) => const HomePage(),
+        '/dashboard': (context) => const DashboardPage(),
+        '/perfil': (context) => const PerfilPage(),
+        '/historico': (context) => const HistoricoPage(),
+        '/cadastro-paciente': (context) => const CadastroPacientePage(),
+        '/cadastro-tutor': (context) => const CadastroTutorPage(),
+        '/contato': (context) => const ContatoPage(),
+        '/admin': (context) => const AdminPage(),
+      },
+
+      // Gerenciador de rotas dinâmicas (com argumentos complexos)
+      onGenerateRoute: (settings) {
+        if (settings.name == '/dashboard-paciente') {
+          final args = settings.arguments as Map<String, dynamic>?;
+          return MaterialPageRoute(
+            builder: (context) => DashboardPacientePage(
+              userName: args?['userName'] ?? 'Paciente Demo',
+              email: args?['email'] ?? 'paciente@koavy.com',
+            ),
+          );
+        }
+        if (settings.name == '/dashboard-tutor') {
+          final args = settings.arguments as Map<String, dynamic>?;
+          return MaterialPageRoute(
+            builder: (context) => DashboardTutorPage(
+              userName: args?['userName'] ?? 'Tutor Demo',
+              email: args?['email'] ?? 'tutor@koavy.com',
+            ),
+          );
+        }
+        return null; // Deixa o Flutter procurar no mapa de 'routes'
       },
     );
   }

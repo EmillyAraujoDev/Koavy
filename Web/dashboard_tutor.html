@@ -137,7 +137,7 @@
 <script src="config.js"></script>
 <script src="auth.js"></script>
 <script>
-    const user = Auth.check();
+    const user = Auth.check(2);
     if (user) {
         document.getElementById("user-name").innerText = user.nome;
     }

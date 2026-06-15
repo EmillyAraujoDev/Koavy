@@ -213,6 +213,10 @@
 
 <script src="config.js"></script>
 <script src="auth.js"></script>
+<script>
+    // Enforce Admin Access (role 3)
+    Auth.check(3);
+</script>
 <script src="admin.js"></script>
 </body>
 </html>

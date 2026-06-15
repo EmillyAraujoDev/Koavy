@@ -99,7 +99,8 @@ class BatimentoController {
     }
 
     public function getHistorico($userId, $limit = 50) {
-        $stmt = $this->db->prepare("SELECT * FROM batimentos WHERE usuario_id = :uid ORDER BY timestamp DESC LIMIT :limit");
+        $stmt = $this->db->prepare("SELECT id, usuario_id, dispositivo_id, bpm as frequenciaCard, saturacao, classificacao, timestamp as dataHora 
+                                   FROM batimentos WHERE usuario_id = :uid ORDER BY timestamp DESC LIMIT :limit");
         $stmt->bindValue(':uid', $userId, PDO::PARAM_INT);
         $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
         $stmt->execute();

@@ -1,4 +1,4 @@
 {
-    "java.compile.nullAnalysis.mode": "automatic",
+    "java.configuration.updateBuildConfiguration": "interactive",
     "cmake.sourceDirectory": "C:/Users/emill/Downloads/Koavy/MOBILE/linux"
 }

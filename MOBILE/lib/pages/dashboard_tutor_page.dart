@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_loginkoavy/cadastrotutor.dart';
+import 'package:flutter_application_loginkoavy/pages/cadastro_tutor_page.dart';
 import 'package:flutter_application_loginkoavy/pages/login_page.dart';
+import 'package:flutter_application_loginkoavy/api_service.dart';
 
 class DashboardTutorPage extends StatefulWidget {
   final String userName;
@@ -19,6 +20,7 @@ class DashboardTutorPage extends StatefulWidget {
 }
 
 class _DashboardTutorPageState extends State<DashboardTutorPage> with SingleTickerProviderStateMixin {
+  final ApiService _apiService = ApiService();
   // Dados de Telemetria do Paciente
   int currentBPM = 74;
   int currentO2 = 98;
@@ -51,10 +53,10 @@ class _DashboardTutorPageState extends State<DashboardTutorPage> with SingleTick
     super.dispose();
   }
 
-  void logout() {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const LoginPage()),
-    );
+  void logout() async {
+    await _apiService.logout();
+    if (!mounted) return;
+    Navigator.pushReplacementNamed(context, '/');
   }
 
   void abrirHistoricoModal() {
@@ -473,7 +475,7 @@ class _DashboardTutorPageState extends State<DashboardTutorPage> with SingleTick
                           const SizedBox(height: 6),
                           Text(
                             "$currentO2%",
-                            style: const TextStyle(color: const Color(0xff34d399), fontSize: 24, fontWeight: FontWeight.bold),
+                            style: const TextStyle(color: Color(0xff34d399), fontSize: 24, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -509,9 +511,7 @@ class _DashboardTutorPageState extends State<DashboardTutorPage> with SingleTick
   Widget _buildAddPatientCard() {
     return InkWell(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const CadastroTutorPage()),
-        );
+        Navigator.pushNamed(context, '/cadastro-tutor');
       },
       borderRadius: BorderRadius.circular(40),
       child: Container(

@@ -1,11 +1,58 @@
 const form = document.getElementById("login_form");
 const submitBtn = form?.querySelector('button[type="submit"]');
 
+// ================= CONFIGURAÇÃO GOOGLE GIS =================
+window.onload = function () {
+    if (typeof google !== 'undefined') {
+        google.accounts.id.initialize({
+            client_id: "564333524566-cq8tcbvlhadhnrqtncp7rb9qpdo1iftf.apps.googleusercontent.com", // Substitua pelo seu Client ID real
+            callback: handleGoogleResponse
+        });
+        google.accounts.id.prompt();
+        
+    }
+};
+
+async function handleGoogleResponse(response) {v
+    // Decodifica o payload para pegar e-mail e nome (apenas para exibição/cadastro rápido)
+    const payload = JSON.parse(atob(response.credential.split('.')[1]));
+    
+    try {
+        const res = await fetch(`${CONFIG.API_BASE_URL}/google-login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                credential: response.credential,
+                email: payload.email,
+                nome: payload.name
+            })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            Auth.save(data.token, data.user);
+            window.location.href = "dashboard.html";
+        } else {
+            showError(data.message || "Erro ao entrar com Google.");
+        }
+    } catch (e) {
+        showError("Falha na conexão com o servidor Google Login.");
+    }
+}
+
+function loginWithGoogle() {
+    if (typeof google !== 'undefined') {
+        google.accounts.id.prompt();
+    } else {
+        alert("Google Identity Services não carregado.");
+    }
+}
+
 // Redireciona se já estiver logado
 document.addEventListener("DOMContentLoaded", () => {
-    const currentUser = Auth.getUser();
+    const currentUser = Auth.check();
     if (currentUser) {
-        Auth.redirectByRole(currentUser);
+        window.location.href = "dashboard.html";
     }
 });
 
@@ -35,38 +82,18 @@ if (form) {
             const result = await response.json();
 
             if (response.ok) {
-                console.log("Login bem-sucedido");
-                Auth.saveSession(result.user, result.token);
-                Auth.redirectByRole(result.user);
+                Auth.save(result.token, result.user);
+                window.location.href = "dashboard.html";
             } else {
                 showError(result.message || "E-mail ou senha incorretos.");
             }
 
         } catch (err) {
-            console.error("Erro no login:", err);
-            showError("Erro de conexão com o servidor. Verifique se o backend está rodando.");
+            showError("Erro de conexão com o servidor.");
         } finally {
             setLoading(false);
         }
     });
-}
-
-// ================= SIMULAÇÃO GOOGLE =================
-async function loginWithGoogle() {
-    console.log("Simulando login com Google...");
-    alert("Simulando conexão com Google...");
-    
-    const testUser = {
-        id: 999,
-        nome: "Usuário Google Teste",
-        email: "google@teste.com",
-        perfilId: 1,
-        idade: 25,
-        ativo: true
-    };
-    
-    Auth.saveSession(testUser);
-    Auth.redirectByRole(testUser);
 }
 
 // ================= ESQUECI A SENHA =================
@@ -80,26 +107,36 @@ function closeForgotModal() {
     document.getElementById("forgotModal").classList.remove("flex");
 }
 
-async function handleForgotSubmit(e) {
-    e.preventDefault();
-    const email = document.getElementById("forgotEmail").value;
-    const msgEl = document.getElementById("forgotMessage");
-    
-    msgEl.innerText = "Processando solicitação...";
-    msgEl.className = "mt-4 text-sm font-bold text-neon1";
-
-    setTimeout(() => {
-        msgEl.innerHTML = `<div class="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl text-emerald-400 text-xs font-medium">
-            Sucesso! Um link de recuperação foi enviado para <b>${email}</b>. 
-            Verifique sua caixa de entrada.
-        </div>`;
-        console.log("Link de recuperação gerado (Simulado): redefinir-senha.html");
-    }, 1500);
-}
-
 const forgotForm = document.getElementById("forgot_form");
 if (forgotForm) {
-    forgotForm.addEventListener("submit", handleForgotSubmit);
+    forgotForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("forgotEmail").value;
+        const msgEl = document.getElementById("forgotMessage");
+        
+        msgEl.innerText = "Processando solicitação...";
+        msgEl.className = "mt-4 text-sm font-bold text-neon1";
+
+        try {
+            const res = await fetch(`${CONFIG.API_BASE_URL}/recuperar-senha`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email })
+            });
+            const data = await res.json();
+            
+            if (res.ok) {
+                msgEl.innerHTML = `<div class="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl text-emerald-400 text-xs font-medium">
+                    ${data.message}
+                </div>`;
+            } else {
+                msgEl.innerText = data.message;
+                msgEl.className = "mt-4 text-sm font-bold text-red-500";
+            }
+        } catch (e) {
+            msgEl.innerText = "Erro de conexão.";
+        }
+    });
 }
 
 // ================= UTILITÁRIOS =================

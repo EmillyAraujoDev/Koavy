@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_loginkoavy/pages/login_page.dart';
+import 'package:flutter_application_loginkoavy/api_service.dart';
 
 class DashboardPacientePage extends StatefulWidget {
   final String userName;
@@ -18,6 +19,7 @@ class DashboardPacientePage extends StatefulWidget {
 }
 
 class _DashboardPacientePageState extends State<DashboardPacientePage> with SingleTickerProviderStateMixin {
+  final ApiService _apiService = ApiService();
   int activeTab = 0; // 0: Resumo, 1: Histórico, 2: Perfil
 
   // Dados do paciente (editáveis)
@@ -100,7 +102,7 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Exame enviado com sucesso!'),
-        backgroundColor: const Color(0xff34d399),
+        backgroundColor: Color(0xff34d399),
       ),
     );
   }
@@ -125,10 +127,10 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
     });
   }
 
-  void logout() {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const LoginPage()),
-    );
+  void logout() async {
+    await _apiService.logout();
+    if (!mounted) return;
+    Navigator.pushReplacementNamed(context, '/');
   }
 
   @override
@@ -192,7 +194,7 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
                         ),
                         const Text(
                           "Paciente Ativo",
-                          style: TextStyle(color: const Color(0xff34d399), fontWeight: FontWeight.bold, fontSize: 10),
+                          style: TextStyle(color: Color(0xff34d399), fontWeight: FontWeight.bold, fontSize: 10),
                         ),
                       ],
                     ),
@@ -301,6 +303,7 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
   }
 
   Widget _buildMonitorCard() {
+    final bool isMobile = MediaQuery.of(context).size.width < 900;
     double percentage = (currentBPM - 40) / (160 - 40);
     percentage = percentage.clamp(0.0, 1.0);
 
@@ -368,137 +371,266 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
             ],
           ),
           const SizedBox(height: 40),
-          Row(
-            children: [
-              // Radial BPM Ring
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  SizedBox(
-                    width: 180,
-                    height: 180,
-                    child: CircularProgressIndicator(
-                      value: percentage,
-                      strokeWidth: 12,
-                      backgroundColor: Colors.white.withValues(alpha: 0.05),
-                      valueColor: const AlwaysStoppedAnimation<Color>(Color(0xff00f2ff)),
-                    ),
-                  ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ScaleTransition(
-                        scale: Tween(begin: 0.95, end: 1.05).animate(
-                          CurvedAnimation(parent: pulseController, curve: Curves.easeInOut),
-                        ),
-                        child: const Icon(
-                          Icons.favorite,
-                          color: Color(0xff00f2ff),
-                          size: 32,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        "$currentBPM",
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 48,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                      const Text(
-                        "BPM",
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(width: 40),
-              // Status & Stats
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          isMobile
+              ? Column(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.4),
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "STATUS DO SISTEMA",
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.5,
+                    Center(
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          SizedBox(
+                            width: 180,
+                            height: 180,
+                            child: CircularProgressIndicator(
+                              value: percentage,
+                              strokeWidth: 12,
+                              backgroundColor: Colors.white.withValues(alpha: 0.05),
+                              valueColor: const AlwaysStoppedAnimation<Color>(Color(0xff00f2ff)),
                             ),
                           ),
-                          SizedBox(height: 8),
-                          Text(
-                            "Seu coração está batendo em um ritmo saudável. Continue assim!",
-                            style: TextStyle(
-                              color: const Color(0xff34d399),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ScaleTransition(
+                                scale: Tween(begin: 0.95, end: 1.05).animate(
+                                  CurvedAnimation(parent: pulseController, curve: Curves.easeInOut),
+                                ),
+                                child: const Icon(
+                                  Icons.favorite,
+                                  color: Color(0xff00f2ff),
+                                  size: 32,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                "$currentBPM",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 48,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                              const Text(
+                                "BPM",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    Row(
+                    const SizedBox(height: 32),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.03),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Column(
-                              children: const [
-                                Text("MÍNIMA", style: TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
-                                SizedBox(height: 4),
-                                Text("65", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                              ],
-                            ),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.4),
+                            borderRadius: BorderRadius.circular(24),
+                            border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text(
+                                "STATUS DO SISTEMA",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.5,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                "Seu coração está batendo em um ritmo saudável. Continue assim!",
+                                style: TextStyle(
+                                  color: Color(0xff34d399),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.03),
-                              borderRadius: BorderRadius.circular(16),
+                        const SizedBox(height: 20),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.03),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Column(
+                                  children: const [
+                                    Text("MÍNIMA", style: TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
+                                    SizedBox(height: 4),
+                                    Text("65", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                                  ],
+                                ),
+                              ),
                             ),
-                            child: Column(
-                              children: const [
-                                Text("MÁXIMA", style: TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
-                                SizedBox(height: 4),
-                                Text("110", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                              ],
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.03),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Column(
+                                  children: const [
+                                    Text("MÁXIMA", style: TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
+                                    SizedBox(height: 4),
+                                    Text("110", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       ],
                     ),
                   ],
+                )
+              : Row(
+                  children: [
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SizedBox(
+                          width: 180,
+                          height: 180,
+                          child: CircularProgressIndicator(
+                            value: percentage,
+                            strokeWidth: 12,
+                            backgroundColor: Colors.white.withValues(alpha: 0.05),
+                            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xff00f2ff)),
+                          ),
+                        ),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ScaleTransition(
+                              scale: Tween(begin: 0.95, end: 1.05).animate(
+                                CurvedAnimation(parent: pulseController, curve: Curves.easeInOut),
+                              ),
+                              child: const Icon(
+                                Icons.favorite,
+                                color: Color(0xff00f2ff),
+                                size: 32,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              "$currentBPM",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 48,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                            const Text(
+                              "BPM",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 40),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.4),
+                              borderRadius: BorderRadius.circular(24),
+                              border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text(
+                                  "STATUS DO SISTEMA",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.5,
+                                  ),
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  "Seu coração está batendo em um ritmo saudável. Continue assim!",
+                                  style: TextStyle(
+                                    color: Color(0xff34d399),
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.03),
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: Column(
+                                    children: const [
+                                      Text("MÍNIMA", style: TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
+                                      SizedBox(height: 4),
+                                      Text("65", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.03),
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: Column(
+                                    children: const [
+                                      Text("MÁXIMA", style: TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
+                                      SizedBox(height: 4),
+                                      Text("110", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
         ],
       ),
     );
@@ -585,39 +717,73 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
 
   // ================= ABA 2: HISTÓRICO MÉDICO =================
   Widget _buildHistoricoTab() {
+    final bool isMobile = MediaQuery.of(context).size.width < 900;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  "Histórico de Exames",
-                  style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'Outfit'),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  "Mantenha seus documentos organizados para consultas futuras.",
-                  style: TextStyle(color: Colors.grey, fontSize: 14),
-                ),
-              ],
-            ),
-            ElevatedButton.icon(
-              onPressed: simularAnexoExame,
-              icon: const Icon(Icons.attach_file, color: Colors.black),
-              label: const Text("Anexar Novo Exame"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xff00d4aa),
-                foregroundColor: Colors.black,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        isMobile
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Histórico de Exames",
+                    style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'Outfit'),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "Mantenha seus documentos organizados para consultas futuras.",
+                    style: TextStyle(color: Colors.grey, fontSize: 14),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: simularAnexoExame,
+                      icon: const Icon(Icons.attach_file, color: Colors.black),
+                      label: const Text("Anexar Novo Exame"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xff00d4aa),
+                        foregroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text(
+                          "Histórico de Exames",
+                          style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'Outfit'),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          "Mantenha seus documentos organizados para consultas futuras.",
+                          style: TextStyle(color: Colors.grey, fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  ElevatedButton.icon(
+                    onPressed: simularAnexoExame,
+                    icon: const Icon(Icons.attach_file, color: Colors.black),
+                    label: const Text("Anexar Novo Exame"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xff00d4aa),
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
         const SizedBox(height: 30),
         GridView.builder(
           shrinkWrap: true,
@@ -683,7 +849,7 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
                       if (isNew)
                         const Text(
                           "ENVIADO ✔",
-                          style: TextStyle(color: const Color(0xff34d399), fontSize: 11, fontWeight: FontWeight.bold),
+                          style: TextStyle(color: Color(0xff34d399), fontSize: 11, fontWeight: FontWeight.bold),
                         )
                       else
                         const Text(

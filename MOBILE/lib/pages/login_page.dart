@@ -1,12 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_loginkoavy/api_service.dart';
-import 'package:flutter_application_loginkoavy/pages/admin_page.dart';
-import 'package:flutter_application_loginkoavy/pages/cadastro_paciente_page.dart';
-import 'package:flutter_application_loginkoavy/pages/interface_page.dart';
-import 'package:flutter_application_loginkoavy/pages/dashboard_paciente_page.dart';
-import 'package:flutter_application_loginkoavy/pages/dashboard_tutor_page.dart';
 import 'package:flutter_application_loginkoavy/widgets/custom_text_field.dart';
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Página de Login do sistema Koavy.
 class LoginPage extends StatefulWidget {
@@ -24,13 +21,48 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
   @override
+  void initState() {
+    super.initState();
+    verificarLogin();
+  }
+
+  /// Verifica se já existe uma sessão ativa salva localmente e realiza o auto-login.
+  void verificarLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('koavy_token');
+    final userJson = prefs.getString('koavy_user');
+    
+    if (token != null && userJson != null) {
+      try {
+        final Map<String, dynamic> user = jsonDecode(userJson);
+        final int perfilId = user['perfil_id'] ?? user['perfilId'] ?? 1;
+
+        if (!mounted) return;
+        if (perfilId == 3) {
+          Navigator.pushReplacementNamed(context, '/admin');
+        } else if (perfilId == 2) {
+          Navigator.pushReplacementNamed(
+            context, 
+            '/dashboard-tutor',
+            arguments: {'userName': user['nome'], 'email': user['email']},
+          );
+        } else {
+          Navigator.pushReplacementNamed(context, '/home');
+        }
+      } catch (e) {
+        // Ignora erro e aguarda login manual se o JSON estiver corrompido
+      }
+    }
+  }
+
+  @override
   void dispose() {
     emailController.dispose();
     senhaController.dispose();
     super.dispose();
   }
 
-  /// Realiza o fluxo de autenticação via API PHP.
+  /// Realiza o fluxo de autenticação tradicional via API PHP.
   void fazerLogin() async {
     if (_formKey.currentState!.validate()) {
       String emailDigitado = emailController.text.trim();
@@ -44,21 +76,30 @@ class _LoginPageState extends State<LoginPage> {
 
       try {
         final response = await _apiService.login(emailDigitado, senhaDigitada);
+        if (!mounted) return;
         Navigator.pop(context); // Fecha o loading
 
         if (response.statusCode == 200) {
           final user = response.data['user'];
           final int perfilId = user['perfil_id'] ?? 1;
 
+          if (!mounted) return;
+          
+          // NAVEGAÇÃO PROFISSIONAL: Usando rotas nomeadas com argumentos
           if (perfilId == 3) {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const AdminPage()));
+            Navigator.pushReplacementNamed(context, '/admin');
           } else if (perfilId == 2) {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DashboardTutorPage(userName: user['nome'], email: user['email'])));
+            Navigator.pushReplacementNamed(
+              context, 
+              '/dashboard-tutor',
+              arguments: {'userName': user['nome'], 'email': user['email']},
+            );
           } else {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DashboardPacientePage(userName: user['nome'], email: user['email'])));
+            Navigator.pushReplacementNamed(context, '/home');
           }
         }
       } on DioException catch (e) {
+        if (!mounted) return;
         Navigator.pop(context); // Fecha o loading
         String msg = "E-mail ou senha incorretos.";
         if (e.type == DioExceptionType.connectionTimeout) msg = "Erro de conexão com o servidor.";
@@ -67,23 +108,47 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  /// Abre o modal de simulação de login com Google.
-  void loginWithGoogle() {
-    mostrarMensagem(
-      "Conexão com Google",
-      "Simulando conexão e login via Google...",
-      onConfirm: () {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const DashboardPacientePage(
-              userName: "Usuário Google Teste",
-              email: "google@teste.com",
-            ),
-          ),
-        );
-      },
+  /// Realiza a autenticação via Google no Servidor PHP.
+  void loginWithGoogle() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator(color: Color(0xff00f2ff))),
     );
+
+    try {
+      // Usamos um token fictício prefixado com mock_ em desenvolvimento local.
+      // Em produção, isso integrará com o plugin nativo google_sign_in para obter o token real.
+      final response = await _apiService.googleLogin(
+        'mock_google_token_12345',
+        email: 'google@teste.com',
+        name: 'Usuário Google Teste',
+      );
+
+      if (!mounted) return;
+      Navigator.pop(context); // Fecha o loading
+
+      if (response.statusCode == 200) {
+        final user = response.data['user'];
+        final int perfilId = user['perfil_id'] ?? 1;
+
+        if (perfilId == 3) {
+          Navigator.pushReplacementNamed(context, '/admin');
+        } else if (perfilId == 2) {
+          Navigator.pushReplacementNamed(
+            context, 
+            '/dashboard-tutor',
+            arguments: {'userName': user['nome'], 'email': user['email']},
+          );
+        } else {
+          Navigator.pushReplacementNamed(context, '/home');
+        }
+      }
+    } on DioException catch (_) {
+      if (!mounted) return;
+      Navigator.pop(context); // Fecha o loading
+      mostrarMensagem("Erro no Google Login", "Falha ao sincronizar a sessão com o servidor.");
+    }
   }
 
   /// Abre o modal para redefinição de senha.
@@ -290,10 +355,7 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     InkWell(
                       onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => const InterfacePage()),
-                        );
+                        Navigator.pushReplacementNamed(context, '/welcome');
                       },
                       child: Row(
                         children: [
@@ -328,10 +390,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => const CadastroPacientePage()),
-                        );
+                        Navigator.pushReplacementNamed(context, '/cadastro-paciente');
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,

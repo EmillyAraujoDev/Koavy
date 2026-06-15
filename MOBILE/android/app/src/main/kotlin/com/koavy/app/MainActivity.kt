@@ -1,4 +1,4 @@
-package com.example.flutter_application_loginkoavy
+package com.koavy.app
 
 import io.flutter.embedding.android.FlutterActivity
 

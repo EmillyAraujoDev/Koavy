@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_loginkoavy/pages/cadastro_paciente_page.dart';
-import 'package:flutter_application_loginkoavy/pages/login_page.dart';
 import 'package:flutter_application_loginkoavy/widgets/custom_navbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -41,12 +39,7 @@ class _InterfacePageState extends State<InterfacePage> {
             CustomNavBar(
               activeTab: 'Início',
               onEntrarTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoginPage(),
-                  ),
-                );
+                Navigator.pushReplacementNamed(context, '/login');
               },
             ),
 
@@ -194,12 +187,7 @@ class _InterfacePageState extends State<InterfacePage> {
         const SizedBox(height: 35),
         InkWell(
           onTap: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const CadastroPacientePage(),
-              ),
-            );
+            Navigator.pushReplacementNamed(context, '/cadastro-paciente');
           },
           borderRadius: BorderRadius.circular(999),
           child: Container(

@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_loginkoavy/cadastrotutor.dart';
-import 'package:flutter_application_loginkoavy/pages/interface_page.dart';
-import 'package:flutter_application_loginkoavy/pages/login_page.dart';
 import 'package:flutter_application_loginkoavy/widgets/custom_navbar.dart';
 import 'package:flutter_application_loginkoavy/widgets/custom_text_field.dart';
 
@@ -62,16 +59,12 @@ class _CadastroPacientePageState extends State<CadastroPacientePage> {
         "Sucesso",
         "Paciente cadastrado com sucesso!\n\nDados salvos para ${nomeController.text}.",
         onConfirm: () {
-          // Limpa o formulário e navega de volta
+          // Limpa o formulário e navega de volta para a tela inicial
           _formKey.currentState!.reset();
           setState(() {
             dataNascimento = null;
           });
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => const InterfacePage(),
-            ),
-          );
+          Navigator.pushReplacementNamed(context, '/welcome');
         },
       );
     } else {
@@ -131,18 +124,10 @@ class _CadastroPacientePageState extends State<CadastroPacientePage> {
             showBackButton: true,
             activeTab: 'Cadastro',
             onBackTap: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => const InterfacePage(),
-                ),
-              );
+              Navigator.pushReplacementNamed(context, '/welcome');
             },
             onEntrarTap: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => const LoginPage(),
-                ),
-              );
+              Navigator.pushReplacementNamed(context, '/login');
             },
           ),
 
@@ -371,8 +356,7 @@ class _CadastroPacientePageState extends State<CadastroPacientePage> {
                                             onPrimary: Colors.black,
                                             surface: Color(0xff16181b),
                                             onSurface: Colors.white,
-                                          ),
-                                          dialogBackgroundColor: const Color(0xff0f1011),
+                                          ), dialogTheme: DialogThemeData(backgroundColor: const Color(0xff0f1011)),
                                         ),
                                         child: child!,
                                       );
@@ -461,11 +445,7 @@ class _CadastroPacientePageState extends State<CadastroPacientePage> {
                               ),
                               TextButton(
                                 onPressed: () {
-                                  Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                      builder: (context) => const CadastroTutorPage(),
-                                    ),
-                                  );
+                                  Navigator.pushReplacementNamed(context, '/cadastro-tutor');
                                 },
                                 child: const Text(
                                   'Cadastrar como Tutor',
@@ -532,8 +512,6 @@ class _CadastroPacientePageState extends State<CadastroPacientePage> {
       ),
     );
 
-    // No desktop, os campos ficam dentro de um Row, logo precisam do Expanded.
-    // No mobile, eles são empilhados em um Column, portanto não devem ser Expanded.
     if (isMobile) {
       return textFieldWidget;
     } else {
