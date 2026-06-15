@@ -17,7 +17,7 @@ const Demo = {
             tipoSanguineo: "AB+",
             isDemo: true
         };
-        localStorage.setItem("user", JSON.stringify(fakeUser));
+        localStorage.setItem("koavy_user", JSON.stringify(fakeUser));
         window.location.href = "dashboard.html?demo=true";
     },
 

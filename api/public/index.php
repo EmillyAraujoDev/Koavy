@@ -20,17 +20,27 @@ require_once __DIR__ . '/../src/JWTHelper.php';
 require_once __DIR__ . '/../src/Controllers/UsuarioController.php';
 require_once __DIR__ . '/../src/Controllers/BatimentoController.php';
 require_once __DIR__ . '/../src/Controllers/EmergenciaController.php';
+<<<<<<< HEAD
 require_once __DIR__ . '/../src/Controllers/TutorController.php';
 require_once __DIR__ . '/../src/Controllers/RelatorioController.php';
+=======
+require_once __DIR__ . '/../src/Controllers/VinculoController.php';
+>>>>>>> c3ddca26d8b70f1dc0598fe5875b7f961c21046f
 
 use App\Controllers\UsuarioController;
 use App\Controllers\BatimentoController;
 use App\Controllers\EmergenciaController;
+<<<<<<< HEAD
 use App\Controllers\TutorController;
 use App\Controllers\RelatorioController;
+=======
+use App\Controllers\VinculoController;
+>>>>>>> c3ddca26d8b70f1dc0598fe5875b7f961c21046f
 use App\JWTHelper;
 
+// Roteador dinâmico relativo à pasta de instalação do script
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+<<<<<<< HEAD
 $uri_parts = explode('/', trim($uri, '/'));
 
 /**
@@ -68,18 +78,49 @@ if (count($reversed) >= 1) {
 // Fallback para o modo anterior se não detectado
 if (!$resource && count($uri_parts) >= 1) {
     $resource = end($uri_parts);
+=======
+$scriptName = $_SERVER['SCRIPT_NAME'];
+$basePath = dirname($scriptName);
+$basePath = rtrim($basePath, '/\\');
+
+if ($basePath !== '' && strpos($uri, $basePath) === 0) {
+    $routePath = substr($uri, strlen($basePath));
+} else {
+    $routePath = $uri;
+>>>>>>> c3ddca26d8b70f1dc0598fe5875b7f961c21046f
 }
 
-$input = json_decode(file_get_contents("php://input"), true);
+// Remover index.php e limpar barras das extremidades
+$routePath = str_replace('index.php', '', $routePath);
+$routePath = trim($routePath, '/');
+
+// Limpar prefixo api/ se presente
+if (strpos($routePath, 'api/') === 0) {
+    $routePath = substr($routePath, 4);
+} elseif ($routePath === 'api') {
+    $routePath = '';
+}
+
+$segments = explode('/', $routePath);
+$resource = $segments[0] ?? null;
+$action = $segments[1] ?? null;
+$id = $segments[1] ?? null; // Mapeia padrão /{recurso}/{id}
+
+$input = json_decode(file_get_contents("php://input"), true) ?? [];
 
 $usuarioController = new UsuarioController();
 $batimentoController = new BatimentoController();
 $emergenciaController = new EmergenciaController();
+<<<<<<< HEAD
 $tutorController = new TutorController();
 $relatorioController = new RelatorioController();
+=======
+$vinculoController = new VinculoController();
+>>>>>>> c3ddca26d8b70f1dc0598fe5875b7f961c21046f
 
 // Middleware de Autenticação
 $auth = null;
+<<<<<<< HEAD
 if (!in_array($resource, ['login', 'cadastro', 'google-login', 'recuperar-senha', 'vinculos', 'vinculo'])) {
     $headers = getallheaders();
     $token = $headers['Authorization'] ?? $headers['authorization'] ?? null;
@@ -94,15 +135,69 @@ if (!in_array($resource, ['login', 'cadastro', 'google-login', 'recuperar-senha'
         echo json_encode(["message" => "Não autorizado. Token inválido ou expirado."]);
         exit;
     }
+=======
+$isPublicRoute = in_array($resource, ['login', 'cadastro']);
+$headers = getallheaders();
+$token = $headers['Authorization'] ?? $headers['authorization'] ?? null;
+
+if ($token) {
+    $token = str_replace('Bearer ', '', $token);
+    $auth = JWTHelper::validate($token);
+>>>>>>> c3ddca26d8b70f1dc0598fe5875b7f961c21046f
 }
 
-// Rotas
+// vinculos pode ser acessado publicamente no POST para novos tutores
+if (!$auth && !$isPublicRoute && !($resource === 'vinculos' && $_SERVER['REQUEST_METHOD'] === 'POST')) {
+    http_response_code(401);
+    echo json_encode(["message" => "Não autorizado"]);
+    exit;
+}
+
+// Função auxiliar de controle de acesso (RBAC + Propriedade)
+function checkAccessToPatient($auth, $patientId) {
+    if (!$auth) return false;
+    
+    // O próprio usuário tem acesso
+    if ($auth['id'] == $patientId) {
+        return true;
+    }
+    
+    // Admin tem acesso a todos
+    $perfil = $auth['perfilId'] ?? null;
+    if ($perfil == 3) {
+        return true;
+    }
+    
+    // Tutor tem acesso aos seus pacientes vinculados
+    if ($perfil == 2) {
+        $db = \App\Database::getInstance();
+        $stmt = $db->prepare("SELECT 1 FROM tutor_paciente WHERE tutor_id = :tutor_id AND paciente_id = :paciente_id");
+        $stmt->execute(['tutor_id' => $auth['id'], 'paciente_id' => $patientId]);
+        if ($stmt->fetch()) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+// Roteamento dos Recursos
 switch ($resource) {
     case 'login':
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(["message" => "Método não permitido"]);
+            break;
+        }
         $res = $usuarioController->login($input);
         break;
 
     case 'cadastro':
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(["message" => "Método não permitido"]);
+            break;
+        }
         $res = $usuarioController->cadastrar($input);
         break;
 
@@ -114,8 +209,114 @@ switch ($resource) {
         $res = $usuarioController->solicitarRecuperacao($input['email'] ?? '');
         break;
 
+    case 'usuarios':
+        // GET /usuarios (restrito a admin)
+        if ($_SERVER['REQUEST_METHOD'] === 'GET' && empty($id)) {
+            $perfil = $auth['perfilId'] ?? null;
+            if ($perfil != 3) {
+                http_response_code(403);
+                echo json_encode(["message" => "Acesso proibido"]);
+                break;
+            }
+            $res = $usuarioController->getTodos();
+            http_response_code($res['status']);
+            echo json_encode($res['data']);
+        }
+        // GET /usuarios/{id} (self ou admin)
+        elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && !empty($id)) {
+            if (!checkAccessToPatient($auth, $id)) {
+                http_response_code(403);
+                echo json_encode(["message" => "Acesso proibido"]);
+                break;
+            }
+            $res = $usuarioController->getPorId($id);
+            http_response_code($res['status']);
+            echo json_encode($res['data']);
+        }
+        // PUT /usuarios/{id} (self ou admin)
+        elseif ($_SERVER['REQUEST_METHOD'] === 'PUT' && !empty($id)) {
+            $perfil = $auth['perfilId'] ?? null;
+            if ($auth['id'] != $id && $perfil != 3) {
+                http_response_code(403);
+                echo json_encode(["message" => "Acesso proibido"]);
+                break;
+            }
+            $res = $usuarioController->atualizar($id, $input);
+            http_response_code($res['status']);
+            echo json_encode($res['data']);
+        }
+        else {
+            http_response_code(405);
+            echo json_encode(["message" => "Método não permitido"]);
+        }
+        break;
+
     case 'batimentos':
+        // GET /batimentos (retorna histórico do usuário logado)
+        if ($_SERVER['REQUEST_METHOD'] === 'GET' && empty($action)) {
+            $res = $batimentoController->getHistorico($auth['id']);
+            http_response_code($res['status']);
+            echo json_encode($res['data']);
+        }
+        // POST /batimentos (registra batimento para o próprio usuário)
+        elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($action)) {
+            $res = $batimentoController->registrar($input, $auth['id']);
+            http_response_code($res['status']);
+            echo json_encode($res['data']);
+        }
+        // GET /batimentos/usuario/{id}
+        elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && $action === 'usuario' && isset($segments[2])) {
+            $patientId = $segments[2];
+            if (!checkAccessToPatient($auth, $patientId)) {
+                http_response_code(403);
+                echo json_encode(["message" => "Acesso proibido"]);
+                break;
+            }
+            $res = $batimentoController->getHistorico($patientId);
+            http_response_code($res['status']);
+            echo json_encode($res['data']);
+        }
+        else {
+            http_response_code(405);
+            echo json_encode(["message" => "Método não permitido"]);
+        }
+        break;
+
+    case 'emergencias':
+        // POST /emergencias (registra emergência)
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $userId = $input['usuarioId'] ?? $input['usuario_id'] ?? $auth['id'];
+            if ($auth['id'] != $userId && ($auth['perfilId'] ?? null) != 3) {
+                http_response_code(403);
+                echo json_encode(["message" => "Acesso proibido"]);
+                break;
+            }
+            $res = $emergenciaController->registrar($input, $userId);
+            http_response_code($res['status']);
+            echo json_encode($res['data']);
+        }
+        // GET /emergencias/usuario/{id}
+        elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && $action === 'usuario' && isset($segments[2])) {
+            $patientId = $segments[2];
+            if (!checkAccessToPatient($auth, $patientId)) {
+                http_response_code(403);
+                echo json_encode(["message" => "Acesso proibido"]);
+                break;
+            }
+            $res = $emergenciaController->getHistoricoUsuario($patientId);
+            http_response_code($res['status']);
+            echo json_encode($res['data']);
+        }
+        else {
+            http_response_code(405);
+            echo json_encode(["message" => "Método não permitido"]);
+        }
+        break;
+
+    case 'vinculos':
+        // POST /vinculos
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+<<<<<<< HEAD
             $res = $batimentoController->registrar($input, $auth['id']);
         } else {
             // Suporta /batimentos/usuario/123 ou apenas /batimentos
@@ -158,6 +359,34 @@ switch ($resource) {
             $res = $relatorioController->gerar($auth['id'], $input['tipo'] ?? 'DIARIO');
         } else {
             $res = $relatorioController->getLista($auth['id']);
+=======
+            $res = $vinculoController->vincular($input, $auth ? $auth['id'] : null);
+            http_response_code($res['status']);
+            echo json_encode($res['data']);
+        }
+        else {
+            http_response_code(405);
+            echo json_encode(["message" => "Método não permitido"]);
+        }
+        break;
+
+    case 'tutor':
+        // GET /tutor/pacientes
+        if ($_SERVER['REQUEST_METHOD'] === 'GET' && $action === 'pacientes') {
+            $perfil = $auth['perfilId'] ?? null;
+            if ($perfil != 2) {
+                http_response_code(403);
+                echo json_encode(["message" => "Acesso proibido. Apenas tutores."]);
+                break;
+            }
+            $res = $vinculoController->getPacientesTutor($auth['id']);
+            http_response_code($res['status']);
+            echo json_encode($res['data']);
+        }
+        else {
+            http_response_code(405);
+            echo json_encode(["message" => "Método não permitido"]);
+>>>>>>> c3ddca26d8b70f1dc0598fe5875b7f961c21046f
         }
         break;
 

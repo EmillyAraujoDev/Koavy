@@ -286,20 +286,54 @@
         }
     }
 
-    document.getElementById("edit-form").addEventListener("submit", (e) => {
+    document.getElementById("edit-form").addEventListener("submit", async (e) => {
         e.preventDefault();
-        // Simulação de salvamento
-        const updatedUser = {
-            ...user,
+        
+        const btn = e.target.querySelector('button[type="submit"]');
+        const originalText = btn.innerText;
+        btn.disabled = true;
+        btn.innerText = "Salvando...";
+
+        const dados = {
             nome: document.getElementById("in-nome").value,
             email: document.getElementById("in-email").value,
-            peso: document.getElementById("in-peso").value,
-            altura: document.getElementById("in-altura").value,
+            peso: Number(document.getElementById("in-peso").value),
+            altura: Number(document.getElementById("in-altura").value),
             tipoSanguineo: document.getElementById("in-sangue").value
         };
-        Auth.saveSession(updatedUser);
-        alert("Perfil atualizado com sucesso!");
-        window.location.reload();
+
+        try {
+            const resOrig = await fetch(`${CONFIG.API_BASE_URL}/api/usuarios/${user.id}`, {
+                headers: Auth.getAuthHeader()
+            });
+            const userOrig = await resOrig.json();
+            
+            const payload = { ...userOrig, ...dados };
+
+            const response = await fetch(`${CONFIG.API_BASE_URL}/api/usuarios/${user.id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    ...Auth.getAuthHeader()
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                const updatedUser = await response.json();
+                Auth.saveSession(updatedUser);
+                alert("Perfil atualizado com sucesso!");
+                window.location.reload();
+            } else {
+                alert("Erro ao salvar alterações.");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Erro de conexão com o servidor.");
+        } finally {
+            btn.disabled = false;
+            btn.innerText = originalText;
+        }
     });
 
     init();

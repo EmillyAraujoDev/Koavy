@@ -4,9 +4,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
   final Dio _dio = Dio(BaseOptions(
+<<<<<<< HEAD
     // Em produção, a URL deve apontar para o host do servidor REST.
     // Usamos 10.0.2.2 como padrão para emuladores Android (que mapeia para o localhost da máquina hospedeira).
     baseUrl: "http://8080/koavy/api/public", 
+=======
+    baseUrl: "http://localhost:8080/koavy/api/public", // 10.0.2.2 é o localhost do host no emulador Android
+>>>>>>> c3ddca26d8b70f1dc0598fe5875b7f961c21046f
     connectTimeout: const Duration(seconds: 5),
     receiveTimeout: const Duration(seconds: 3),
   ));
@@ -21,7 +25,7 @@ class ApiService {
         final prefs = await SharedPreferences.getInstance();
         final token = prefs.getString('koavy_token');
         if (token != null) {
-          options.headers['Authorization'] = 'Bearer $token';
+      // linha q está dando erro    options.headers['Authorization'] = 'Bearer $token'; 
         }
         return handler.next(options);
       },
@@ -40,6 +44,7 @@ class ApiService {
 
   /// Autentica o usuário com e-mail e senha tradicionais na API PHP.
   Future<Response> login(String email, String senha) async {
+<<<<<<< HEAD
     try {
       final response = await _dio.post('/login', data: {
         'email': email,
@@ -55,7 +60,27 @@ class ApiService {
       return response;
     } on DioException catch (_) {
       rethrow;
+=======
+    final response = await _dio.post('/login', data: {
+      'email': email,
+      'senha': senha,
+    });
+
+    if (response.statusCode == 200) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('koavy_token', response.data['token']);
+      await prefs.setString('koavy_user', jsonEncode(response.data['user']));
+>>>>>>> c3ddca26d8b70f1dc0598fe5875b7f961c21046f
     }
+    return response;
+  }
+
+  Future<Response> cadastrarPaciente(Map<String, dynamic> usuario) async {
+    return _dio.post('/cadastro', data: usuario);
+  }
+
+  Future<Response> vincularTutor(Map<String, dynamic> vinculo) async {
+    return _dio.post('/vinculos', data: vinculo);
   }
 
   /// Autentica o usuário via Google Sign-In enviando o idToken (credential) à API PHP.

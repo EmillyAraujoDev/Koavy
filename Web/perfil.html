@@ -145,14 +145,19 @@
         };
 
         try {
-            const resOrig = await fetch(`${CONFIG.API_BASE_URL}/api/usuarios/${user.id}`);
+            const resOrig = await fetch(`${CONFIG.API_BASE_URL}/api/usuarios/${user.id}`, {
+                headers: Auth.getAuthHeader()
+            });
             const userOrig = await resOrig.json();
             
             const payload = { ...userOrig, ...dados };
 
             const response = await fetch(`${CONFIG.API_BASE_URL}/api/usuarios/${user.id}`, {
                 method: "PUT",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    ...Auth.getAuthHeader()
+                },
                 body: JSON.stringify(payload)
             });
 

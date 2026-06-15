@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Feedback Visual
     function mostrarFeedback(msg, tipo) {
         if (tipo === 'erro') {
-            erroMsg.innerText = msg;
+            erroMsg.innerHTML = msg;
             erroMsg.classList.remove('hidden');
             sucessoMsg.classList.add('hidden');
         } else {

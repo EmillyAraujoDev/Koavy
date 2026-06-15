@@ -68,6 +68,7 @@ class KoavyApp extends StatelessWidget {
         useMaterial3: true,
       ),
 
+<<<<<<< HEAD
       // ================= NAVEGAÇÃO PROFISSIONAL =================
       // SOLUÇÃO: Usamos initialRoute '/' mapeado diretamente para LoginPage
       // para evitar qualquer conflito de redundância com a propriedade 'home'.
@@ -108,6 +109,22 @@ class KoavyApp extends StatelessWidget {
           );
         }
         return null; // Deixa o Flutter procurar no mapa de 'routes'
+=======
+      // ================= ROTA INICIAL =================
+      //home: const InterfacePage(),
+
+      // ================= ROTAS NOMEADAS =================
+      // Permite Navigator.pushNamed(context, '/login') em qualquer lugar
+      routes: {
+        '/':                    (context) =>  InterfacePage(),
+        '/login':               (context) => const LoginPage(),
+        '/cadastro-paciente':   (context) => const CadastroPacientePage(),
+        '/cadastro-tutor':      (context) => const CadastroTutorPage(),
+        '/contato':             (context) => const ContatoPage(),
+        '/admin':               (context) => const AdminPage(),
+        '/dashboard-paciente':  (context) => const DashboardPacientePage(),
+        '/dashboard-tutor':     (context) => const DashboardTutorPage(),
+>>>>>>> c3ddca26d8b70f1dc0598fe5875b7f961c21046f
       },
     );
   }
