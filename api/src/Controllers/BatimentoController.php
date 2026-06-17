@@ -119,4 +119,25 @@ class BatimentoController {
         $rows = $stmt->fetchAll();
         return ["status" => 200, "data" => array_map([$this, 'formatBatimento'], $rows)];
     }
+
+    public function getBpmRealtime($userId) {
+        $stmt = $this->db->prepare("SELECT bpm, saturacao, timestamp FROM batimentos WHERE usuario_id = :uid ORDER BY timestamp DESC LIMIT 1");
+        $stmt->execute(['uid' => $userId]);
+        $row = $stmt->fetch();
+        
+        if ($row) {
+            return ["status" => 200, "data" => [
+                "bpm" => (float)$row['bpm'],
+                "timestamp" => $row['timestamp'],
+                "saturacao" => (float)$row['saturacao']
+            ]];
+        }
+        
+        // Simulação caso não haja dados
+        return ["status" => 200, "data" => [
+            "bpm" => 72,
+            "timestamp" => date('Y-m-d H:i:s'),
+            "saturacao" => 98
+        ]];
+    }
 }

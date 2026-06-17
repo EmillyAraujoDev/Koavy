@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_loginkoavy/pages/cadastro_tutor_page.dart';
+import 'package:flutter_application_loginkoavy/pages/login_page.dart';
 import 'package:flutter_application_loginkoavy/widgets/custom_navbar.dart';
 import 'package:flutter_application_loginkoavy/widgets/custom_text_field.dart';
 import 'package:flutter_application_loginkoavy/api_service.dart';
+import 'package:flutter_application_loginkoavy/widgets/responsive_helper.dart';
 import 'package:dio/dio.dart';
 
 /// Página de Cadastro de Paciente Cardíaco.
@@ -20,7 +23,6 @@ class _CadastroPacientePageState extends State<CadastroPacientePage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController senhaController = TextEditingController();
   final TextEditingController telefoneController = TextEditingController();
-  final TextEditingController idadeController = TextEditingController();
   final TextEditingController pesoController = TextEditingController();
   final TextEditingController alturaController = TextEditingController();
   final TextEditingController sexoController = TextEditingController();
@@ -37,7 +39,6 @@ class _CadastroPacientePageState extends State<CadastroPacientePage> {
     emailController.dispose();
     senhaController.dispose();
     telefoneController.dispose();
-    idadeController.dispose();
     pesoController.dispose();
     alturaController.dispose();
     sexoController.dispose();
@@ -52,21 +53,8 @@ class _CadastroPacientePageState extends State<CadastroPacientePage> {
   Future<void> realizarCadastro() async {
     if (!_formKey.currentState!.validate()) {
       mostrarMensagem(
-<<<<<<< HEAD
-        "Sucesso",
-        "Paciente cadastrado com sucesso!\n\nDados salvos para ${nomeController.text}.",
-        onConfirm: () {
-          // Limpa o formulário e navega de volta para a tela inicial
-          _formKey.currentState!.reset();
-          setState(() {
-            dataNascimento = null;
-          });
-          Navigator.pushReplacementNamed(context, '/welcome');
-        },
-=======
         'Dados Inválidos',
         'Por favor, corrija os erros no formulário antes de continuar.',
->>>>>>> c3ddca26d8b70f1dc0598fe5875b7f961c21046f
       );
       return;
     }
@@ -102,7 +90,6 @@ class _CadastroPacientePageState extends State<CadastroPacientePage> {
       'email': emailController.text.trim(),
       'senha': senhaController.text,
       'telefone': telefoneController.text.trim(),
-      'idade': int.tryParse(idadeController.text.trim()),
       'dataNascimento': dataNascStr,
       'sexo': sexo,
       'peso': double.tryParse(pesoController.text.trim().replaceAll(',', '.')),
@@ -184,7 +171,7 @@ class _CadastroPacientePageState extends State<CadastroPacientePage> {
         backgroundColor: const Color(0xff16181b),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: Colors.cyan.withOpacity(0.2)),
+          side: BorderSide(color: Colors.cyan.withValues(alpha: 0.2)),
         ),
         title: Text(
           titulo,
@@ -218,35 +205,24 @@ class _CadastroPacientePageState extends State<CadastroPacientePage> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final bool isMobile = screenWidth < 900;
+    final bool isMobile = ResponsiveHelper.isMobile(context);
 
+    var customNavBar = CustomNavBar(
+      showBackButton: true,
+      activeTab: 'Cadastro',
+      onBackTap: () {
+        Navigator.pushReplacementNamed(context, '/welcome');
+      },
+      onEntrarTap: () {
+        Navigator.pushReplacementNamed(context, '/login');
+      },
+    );
     return Scaffold(
       backgroundColor: const Color(0xff0f1011),
       body: Column(
         children: [
           // ================= NAVBAR =================
-          CustomNavBar(
-            showBackButton: true,
-            activeTab: 'Cadastro',
-            onBackTap: () {
-<<<<<<< HEAD
-              Navigator.pushReplacementNamed(context, '/welcome');
-            },
-            onEntrarTap: () {
-              Navigator.pushReplacementNamed(context, '/login');
-=======
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => const InterfacePage()),
-              );
-            },
-            onEntrarTap: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => const LoginPage()),
-              );
->>>>>>> c3ddca26d8b70f1dc0598fe5875b7f961c21046f
-            },
-          ),
+          customNavBar,
 
           // ================= FORMULÁRIO =================
           Expanded(
@@ -261,7 +237,7 @@ class _CadastroPacientePageState extends State<CadastroPacientePage> {
                       color: const Color(0xff16181b),
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(
-                        color: Colors.cyan.withOpacity(0.2),
+                        color: Colors.cyan.withValues(alpha: 0.2),
                       ),
                     ),
                     child: Form(
@@ -353,24 +329,10 @@ class _CadastroPacientePageState extends State<CadastroPacientePage> {
 
                           SizedBox(height: isMobile ? 0 : 20),
 
-                          // LINHA 2 — Idade, Peso, Altura, Sexo
+                          // LINHA 2 — Peso, Altura, Sexo
                           _buildFormSection(
                             isMobile: isMobile,
                             children: [
-                              _buildField(
-                                controller: idadeController,
-                                hint: 'Idade',
-                                isMobile: isMobile,
-                                keyboardType: TextInputType.number,
-                                validator: (val) {
-                                  if (val == null || val.trim().isEmpty) {
-                                    return 'Obrigatório';
-                                  }
-                                  final n = int.tryParse(val.trim());
-                                  if (n == null || n <= 0) return 'Inválido';
-                                  return null;
-                                },
-                              ),
                               _buildField(
                                 controller: pesoController,
                                 hint: 'Peso (kg)',
@@ -500,20 +462,15 @@ class _CadastroPacientePageState extends State<CadastroPacientePage> {
                                     builder: (context, child) {
                                       return Theme(
                                         data: Theme.of(context).copyWith(
-                                          colorScheme:
-                                              const ColorScheme.dark(
+                                          colorScheme: const ColorScheme.dark(
                                             primary: Colors.cyanAccent,
                                             onPrimary: Colors.black,
                                             surface: Color(0xff16181b),
                                             onSurface: Colors.white,
-<<<<<<< HEAD
-                                          ), dialogTheme: DialogThemeData(backgroundColor: const Color(0xff0f1011)),
-=======
                                           ),
                                           dialogTheme: const DialogThemeData(
                                             backgroundColor: Color(0xff0f1011),
                                           ),
->>>>>>> c3ddca26d8b70f1dc0598fe5875b7f961c21046f
                                         ),
                                         child: child!,
                                       );
@@ -600,15 +557,11 @@ class _CadastroPacientePageState extends State<CadastroPacientePage> {
                               ),
                               TextButton(
                                 onPressed: () {
-<<<<<<< HEAD
-                                  Navigator.pushReplacementNamed(context, '/cadastro-tutor');
-=======
                                   Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
                                       builder: (_) => const CadastroTutorPage(),
                                     ),
                                   );
->>>>>>> c3ddca26d8b70f1dc0598fe5875b7f961c21046f
                                 },
                                 child: const Text(
                                   'Cadastrar como Tutor',
@@ -672,15 +625,7 @@ class _CadastroPacientePageState extends State<CadastroPacientePage> {
         validator: validator,
       ),
     );
-<<<<<<< HEAD
 
-    if (isMobile) {
-      return textFieldWidget;
-    } else {
-      return Expanded(child: textFieldWidget);
-    }
-=======
     return isMobile ? field : Expanded(child: field);
->>>>>>> c3ddca26d8b70f1dc0598fe5875b7f961c21046f
   }
 }

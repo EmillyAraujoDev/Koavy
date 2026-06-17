@@ -35,16 +35,6 @@ class UsuarioController {
             return ["status" => 400, "data" => ["message" => "E-mail e senha são obrigatórios"]];
         }
 
-<<<<<<< HEAD
-        $user = null;
-        try {
-            $stmt = $this->db->prepare("SELECT * FROM usuarios WHERE email = :email AND ativo = 1");
-            $stmt->execute(['email' => $data['email']]);
-            $user = $stmt->fetch();
-        } catch (\Exception $e) {
-            error_log("Database error during login check: " . $e->getMessage());
-        }
-=======
         $email = filter_var($data['email'], FILTER_VALIDATE_EMAIL);
         if (!$email) {
             return ["status" => 400, "data" => ["message" => "Formato de e-mail inválido"]];
@@ -53,7 +43,6 @@ class UsuarioController {
         $stmt = $this->db->prepare("SELECT * FROM usuarios WHERE email = :email AND ativo = 1");
         $stmt->execute(['email' => $email]);
         $user = $stmt->fetch();
->>>>>>> c3ddca26d8b70f1dc0598fe5875b7f961c21046f
 
         // 1. Validar no banco de dados se o usuário existir
         if ($user && password_verify($data['senha'], $user['senha'])) {
@@ -64,7 +53,9 @@ class UsuarioController {
             ]);
 
             // Atualiza data do último login
-            $stmtUpdate = $this->db->prepare("UPDATE usuarios SET ultimo_login = NOW() WHERE id = :id");
+            $config = require __DIR__ . '/../../config/database.php';
+            $tsFunc = (isset($config['driver']) && $config['driver'] === 'sqlite') ? 'CURRENT_TIMESTAMP' : 'NOW()';
+            $stmtUpdate = $this->db->prepare("UPDATE usuarios SET ultimo_login = $tsFunc WHERE id = :id");
             $stmtUpdate->execute(['id' => $user['id']]);
 
             $mappedUser = $this->mapUserKeys($user);
@@ -124,24 +115,6 @@ class UsuarioController {
     public function cadastrar($data) {
         // Validações básicas
         if (empty($data['nome']) || empty($data['email']) || empty($data['senha'])) {
-<<<<<<< HEAD
-            return ["status" => 400, "data" => ["message" => "Dados incompletos (nome, email e senha são obrigatórios)"]];
-        }
-
-        // Mapeamento de campos do Frontend (camelCase) para o Banco (snake_case)
-        $perfil_id = $data['perfil_id'] ?? $data['perfilId'] ?? 1;
-        $hash = password_hash($data['senha'], PASSWORD_BCRYPT);
-        
-        $sql = "INSERT INTO usuarios (
-                    perfil_id, nome, email, senha, idade, data_nascimento, 
-                    sexo, telefone, tipo_sanguineo, peso, altura, 
-                    marcapasso, obs_med, cep, ativo
-                ) VALUES (
-                    :perfil_id, :nome, :email, :senha, :idade, :data_nascimento, 
-                    :sexo, :telefone, :tipo_sanguineo, :peso, :altura, 
-                    :marcapasso, :obs_med, :cep, 1
-                )";
-=======
             return ["status" => 400, "data" => ["message" => "Dados obrigatórios incompletos"]];
         }
 
@@ -174,36 +147,10 @@ class UsuarioController {
 
         $sql = "INSERT INTO usuarios (perfil_id, nome, email, senha, idade, data_nascimento, sexo, telefone, tipo_sanguineo, peso, altura, marcapasso, obs_med, cep, ativo) 
                 VALUES (:perfil_id, :nome, :email, :senha, :idade, :data_nascimento, :sexo, :telefone, :tipo_sanguineo, :peso, :altura, :marcapasso, :obs_med, :cep, 1)";
->>>>>>> c3ddca26d8b70f1dc0598fe5875b7f961c21046f
         
         $stmt = $this->db->prepare($sql);
         try {
             $stmt->execute([
-<<<<<<< HEAD
-                'perfil_id'       => $perfil_id,
-                'nome'            => $data['nome'],
-                'email'           => $data['email'],
-                'senha'           => $hash,
-                'idade'           => $data['idade'] ?? null,
-                'data_nascimento' => $data['data_nascimento'] ?? $data['dataNascimento'] ?? null,
-                'sexo'            => $data['sexo'] ?? 'O',
-                'telefone'        => $data['telefone'] ?? null,
-                'tipo_sanguineo'  => $data['tipo_sanguineo'] ?? $data['tipoSanguineo'] ?? null,
-                'peso'            => $data['peso'] ?? null,
-                'altura'          => $data['altura'] ?? null,
-                'marcapasso'      => isset($data['marcapasso']) ? (int)$data['marcapasso'] : 0,
-                'obs_med'         => $data['obs_med'] ?? $data['obsMed'] ?? null,
-                'cep'             => $data['cep'] ?? null
-            ]);
-
-            $userId = $this->db->lastInsertId();
-
-            // Criar configuração cardíaca padrão para o novo usuário
-            $stmtConfig = $this->db->prepare("INSERT INTO configuracoes_cardiacas (usuario_id) VALUES (:uid)");
-            $stmtConfig->execute(['uid' => $userId]);
-
-            return ["status" => 201, "data" => ["message" => "Usuário cadastrado com sucesso", "id" => $userId]];
-=======
                 'perfil_id' => $perfil_id,
                 'nome' => $nome,
                 'email' => $email,
@@ -222,11 +169,14 @@ class UsuarioController {
 
             $newId = $this->db->lastInsertId();
 
+            // Criar configuração cardíaca padrão para o novo usuário
+            $stmtConfig = $this->db->prepare("INSERT INTO configuracoes_cardiacas (usuario_id) VALUES (:uid)");
+            $stmtConfig->execute(['uid' => $newId]);
+
             return ["status" => 201, "data" => [
                 "message" => "Usuário cadastrado com sucesso",
                 "id" => $newId
             ]];
->>>>>>> c3ddca26d8b70f1dc0598fe5875b7f961c21046f
         } catch (\PDOException $e) {
             if ($e->getCode() == 23000) {
                 return ["status" => 409, "data" => ["message" => "E-mail já cadastrado"]];
@@ -237,41 +187,92 @@ class UsuarioController {
     }
 
     public function listar() {
-        $stmt = $this->db->query("SELECT id, perfil_id as perfilId, nome, email, ativo, idade, tipo_sanguineo as tipoSanguineo, telefone, peso, altura FROM usuarios ORDER BY nome ASC");
-        return ["status" => 200, "data" => $stmt->fetchAll()];
+        return $this->getTodos();
     }
 
     public function buscarPorId($id) {
-        $stmt = $this->db->prepare("SELECT id, perfil_id as perfilId, nome, email, ativo, idade, tipo_sanguineo as tipoSanguineo, telefone, peso, altura, marcapasso, obs_med as obsMed, cep FROM usuarios WHERE id = :id");
-        $stmt->execute(['id' => $id]);
-        $user = $stmt->fetch();
-        if (!$user) return ["status" => 404, "data" => ["message" => "Usuário não encontrado"]];
-        return ["status" => 200, "data" => $user];
+        return $this->getPorId($id);
     }
 
     public function atualizar($id, $data) {
+        // Verificar se usuário existe
+        $stmtCheck = $this->db->prepare("SELECT * FROM usuarios WHERE id = :id");
+        $stmtCheck->execute(['id' => $id]);
+        $user = $stmtCheck->fetch();
+        if (!$user) {
+            return ["status" => 404, "data" => ["message" => "Usuário não encontrado"]];
+        }
+
+        // Ler campos e mesclar
+        $nome = htmlspecialchars(strip_tags($data['nome'] ?? $user['nome']));
+        $email = filter_var($data['email'] ?? $user['email'], FILTER_VALIDATE_EMAIL);
+        if (!$email) {
+            return ["status" => 400, "data" => ["message" => "E-mail inválido"]];
+        }
+
+        $telefone = htmlspecialchars(strip_tags($data['telefone'] ?? $user['telefone'] ?? ''));
+        $peso = isset($data['peso']) ? (float)$data['peso'] : ($user['peso'] ? (float)$user['peso'] : null);
+        $altura = isset($data['altura']) ? (float)$data['altura'] : ($user['altura'] ? (float)$user['altura'] : null);
+        $tipo_sanguineo = $data['tipoSanguineo'] ?? $data['tipo_sanguineo'] ?? $user['tipo_sanguineo'];
+        $cep = htmlspecialchars(strip_tags($data['cep'] ?? $user['cep'] ?? ''));
+        $ativo = isset($data['ativo']) ? ($data['ativo'] ? 1 : 0) : $user['ativo'];
+        $sexo = $data['sexo'] ?? $user['sexo'];
+        $data_nascimento = $data['dataNascimento'] ?? $data['data_nascimento'] ?? $user['data_nascimento'];
+        $marcapasso = isset($data['marcapasso']) ? ($data['marcapasso'] ? 1 : 0) : $user['marcapasso'];
+        $obs_med = htmlspecialchars(strip_tags($data['obsMed'] ?? $data['obs_med'] ?? $user['obs_med'] ?? ''));
+
+        // Se uma nova senha for fornecida e for diferente do hash atual
+        $senha = $user['senha'];
+        if (!empty($data['senha']) && strpos($data['senha'], '$2y$') !== 0) {
+            if (strlen($data['senha']) < 8) {
+                return ["status" => 400, "data" => ["message" => "A nova senha deve possuir no mínimo 8 caracteres"]];
+            }
+            $senha = password_hash($data['senha'], PASSWORD_BCRYPT);
+        }
+
         $sql = "UPDATE usuarios SET 
-                nome = :nome, email = :email, telefone = :telefone, 
-                peso = :peso, altura = :altura, tipo_sanguineo = :tipoSanguineo, 
-                ativo = :ativo, idade = :idade
+                    nome = :nome,
+                    email = :email,
+                    senha = :senha,
+                    telefone = :telefone,
+                    peso = :peso,
+                    altura = :altura,
+                    tipo_sanguineo = :tipo_sanguineo,
+                    cep = :cep,
+                    ativo = :ativo,
+                    sexo = :sexo,
+                    data_nascimento = :data_nascimento,
+                    marcapasso = :marcapasso,
+                    obs_med = :obs_med
                 WHERE id = :id";
         
         $stmt = $this->db->prepare($sql);
         try {
             $stmt->execute([
-                'id' => $id,
-                'nome' => $data['nome'],
-                'email' => $data['email'],
-                'telefone' => $data['telefone'] ?? null,
-                'peso' => $data['peso'] ?? null,
-                'altura' => $data['altura'] ?? null,
-                'tipoSanguineo' => $data['tipoSanguineo'] ?? $data['tipo_sanguineo'] ?? null,
-                'ativo' => isset($data['ativo']) ? (int)$data['ativo'] : 1,
-                'idade' => $data['idade'] ?? null
+                'nome' => $nome,
+                'email' => $email,
+                'senha' => $senha,
+                'telefone' => $telefone,
+                'peso' => $peso,
+                'altura' => $altura,
+                'tipo_sanguineo' => $tipo_sanguineo,
+                'cep' => $cep,
+                'ativo' => $ativo,
+                'sexo' => $sexo,
+                'data_nascimento' => $data_nascimento,
+                'marcapasso' => $marcapasso,
+                'obs_med' => $obs_med,
+                'id' => $id
             ]);
-            return ["status" => 200, "data" => ["message" => "Usuário atualizado"]];
+
+            // Obter registro atualizado
+            $stmtUpdated = $this->db->prepare("SELECT * FROM usuarios WHERE id = :id");
+            $stmtUpdated->execute(['id' => $id]);
+            $updatedUser = $stmtUpdated->fetch();
+
+            return ["status" => 200, "data" => $this->mapUserKeys($updatedUser)];
         } catch (\PDOException $e) {
-            return ["status" => 500, "data" => ["message" => "Erro ao atualizar: " . $e->getMessage()]];
+            return ["status" => 500, "data" => ["message" => "Erro ao atualizar usuário: " . $e->getMessage()]];
         }
     }
 
@@ -299,7 +300,6 @@ class UsuarioController {
             }
         } catch (\Exception $e) {
             error_log("Database error during Google login sync: " . $e->getMessage());
-            // Fallback mock user if DB is down/disconnected
             $user = [
                 'id' => 888,
                 'perfil_id' => 1,
@@ -316,12 +316,9 @@ class UsuarioController {
         ]);
 
         unset($user['senha']);
-        return ["status" => 200, "data" => ["user" => $user, "token" => $token]];
+        return ["status" => 200, "data" => ["user" => $this->mapUserKeys($user), "token" => $token]];
     }
 
-    /**
-     * Login com Google Real
-     */
     public function googleLogin($data) {
         if (!isset($data['credential'])) {
             return ["status" => 400, "data" => ["message" => "Token do Google ausente"]];
@@ -329,7 +326,6 @@ class UsuarioController {
 
         $tokenStr = $data['credential'];
 
-        // 1. Fallback / Modo Desenvolvedor se o token for mock
         if (strpos($tokenStr, 'mock_') === 0 || !class_exists('Google\Client')) {
             $email = $data['email'] ?? 'google_test@koavy.com';
             $nome = $data['nome'] ?? 'Usuário Google Teste';
@@ -337,7 +333,6 @@ class UsuarioController {
         }
 
         try {
-            // Suporta os dois Client IDs do projeto (Web e Mobile) para evitar conflitos de Audience
             $clientIds = [
                 '564333524566-6rdtj7cv3dcid25saevvh1oh37tkoijr.apps.googleusercontent.com',
                 '564333524566-cq8tcbvlhadhnrqtncp7rb9qpdo1iftf.apps.googleusercontent.com'
@@ -349,24 +344,18 @@ class UsuarioController {
                     $client = new GoogleClient(['client_id' => $clientId]);
                     $payload = $client->verifyIdToken($tokenStr);
                     if ($payload) break;
-                } catch (\Exception $ex) {
-                    // Ignora erro do client ID individual e tenta o próximo
-                }
+                } catch (\Exception $ex) {}
             }
             
             if ($payload) {
-                $email = $payload['email'];
-                $nome = $payload['name'] ?? 'Usuário Google';
-                return $this->processarGoogleUser($email, $nome);
+                return $this->processarGoogleUser($payload['email'], $payload['name'] ?? 'Usuário Google');
             } else {
-                // Fallback para desenvolvimento local: se o token não validar mas veio dados informados
                 if (isset($data['email']) && isset($data['nome'])) {
                     return $this->processarGoogleUser($data['email'], $data['nome']);
                 }
                 return ["status" => 401, "data" => ["message" => "Token do Google inválido ou expirado"]];
             }
         } catch (\Exception $e) {
-            // Se falhar a biblioteca, tenta processar com os dados enviados se fornecidos
             if (isset($data['email']) && isset($data['nome'])) {
                 return $this->processarGoogleUser($data['email'], $data['nome']);
             }
@@ -374,9 +363,6 @@ class UsuarioController {
         }
     }
 
-    /**
-     * Recuperação de Senha com PHPMailer
-     */
     public function solicitarRecuperacao($email) {
         $stmt = $this->db->prepare("SELECT id, nome FROM usuarios WHERE email = :email");
         $stmt->execute(['email' => $email]);
@@ -387,161 +373,43 @@ class UsuarioController {
         $token = bin2hex(random_bytes(25));
         $link = "http://143.106.241.4/koavy/Web/redefinir-senha.html?token=" . $token;
 
-        // Envio de E-mail Real (Exemplo com Gmail)
         $mail = new PHPMailer(true);
         try {
-            // Configurações do Servidor (VOCÊ DEVE AJUSTAR ESTES DADOS)
             $mail->isSMTP();
             $mail->Host       = 'emilly1190.gmail.com'; 
             $mail->SMTPAuth   = true;
-            $mail->Username   = 'emilly1190@gmail.com'; // <- SEU EMAIL AQUI
-            $mail->Password   = '3105866-app';        // <- SUA SENHA DE APP AQUI
+            $mail->Username   = 'emilly1190@gmail.com';
+            $mail->Password   = '3105866-app'; 
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = 587;
 
-            // Destinatários
             $mail->setFrom('suporte@koavy.com', 'Koavy Health');
             $mail->addAddress($email, $user['nome']);
-
-            // Conteúdo Profissional (Template Koavy)
             $mail->isHTML(true);
             $mail->Subject = 'Recuperacao de Acesso - Koavy Health';
-            
-            // Design do Email (CSS inline para compatibilidade)
-            $mail->Body    = "
-            <div style='background-color: #050505; color: #d1d5db; font-family: sans-serif; padding: 40px; text-align: center; border-radius: 20px;'>
-                <div style='margin-bottom: 30px;'>
-                    <div style='background: linear-gradient(135deg, #00f2ff, #00d4aa); width: 60px; height: 60px; border-radius: 15px; display: inline-block; line-height: 60px; color: black; font-weight: 900; font-size: 30px;'>K</div>
-                    <h1 style='color: white; margin-top: 20px; font-weight: 800; letter-spacing: -1px;'>Koavy <span style='color: #00f2ff;'>Health</span></h1>
-                </div>
-                
-                <div style='background-color: #111; padding: 30px; border-radius: 30px; border: 1px solid #222; max-width: 500px; margin: 0 auto;'>
-                    <h2 style='color: white;'>Recuperar Acesso</h2>
-                    <p style='font-size: 16px; line-height: 1.6;'>Olá, <strong>{$user['nome']}</strong>.</p>
-                    <p style='font-size: 14px; color: #9ca3af;'>Recebemos uma solicitação para redefinir a senha da sua conta Koavy. Se você não solicitou isso, pode ignorar este e-mail.</p>
-                    
-                    <div style='margin: 40px 0;'>
-                        <a href='{$link}' style='background: linear-gradient(to right, #00f2ff, #00d4aa); color: black; padding: 18px 35px; border-radius: 15px; text-decoration: none; font-weight: 800; font-size: 16px; box-shadow: 0 10px 20px rgba(0,242,255,0.2);'>REDEFINIR MINHA SENHA</a>
-                    </div>
-                    
-                    <p style='font-size: 11px; color: #4b5563; margin-top: 40px;'>Este link expira em 1 hora por segurança.</p>
-                </div>
-                
-                <div style='margin-top: 40px; font-size: 12px; color: #4b5563;'>
-                    &copy; 2026 Koavy Health Technologies. <br>
-                    Sua saúde monitorada com inteligência.
-                </div>
-            </div>";
-
-            $mail->AltBody = "Olá {$user['nome']}, acesse o link para redefinir sua senha: {$link}";
+            $mail->Body    = "Olá {$user['nome']}, acesse o link para redefinir sua senha: <a href='{$link}'>{$link}</a>";
 
             $mail->send();
             return ["status" => 200, "data" => ["message" => "Um link de redefinição foi enviado para o seu e-mail."]];
         } catch (Exception $e) {
-            error_log("Falha no PHPMailer: " . $mail->ErrorInfo);
-            return ["status" => 500, "data" => ["message" => "Erro ao enviar e-mail. Verifique suas configurações de SMTP."]];
+            return ["status" => 500, "data" => ["message" => "Erro ao enviar e-mail"]];
         }
     }
 
     public function getTodos() {
         $stmt = $this->db->query("SELECT * FROM usuarios ORDER BY nome ASC");
         $users = $stmt->fetchAll();
-        $mapped = array_map([$this, 'mapUserKeys'], $users);
-        return ["status" => 200, "data" => $mapped];
+        return ["status" => 200, "data" => array_map([$this, 'mapUserKeys'], $users)];
     }
 
     public function getPorId($id) {
         $stmt = $this->db->prepare("SELECT * FROM usuarios WHERE id = :id");
         $stmt->execute(['id' => $id]);
         $user = $stmt->fetch();
-        if (!$user) {
-            return ["status" => 404, "data" => ["message" => "Usuário não encontrado"]];
-        }
+        if (!$user) return ["status" => 404, "data" => ["message" => "Usuário não encontrado"]];
         return ["status" => 200, "data" => $this->mapUserKeys($user)];
     }
-
-    public function atualizar($id, $data) {
-        // Verificar se usuário existe
-        $stmtCheck = $this->db->prepare("SELECT * FROM usuarios WHERE id = :id");
-        $stmtCheck->execute(['id' => $id]);
-        $user = $stmtCheck->fetch();
-        if (!$user) {
-            return ["status" => 404, "data" => ["message" => "Usuário não encontrado"]];
-        }
-
-        // Ler campos e mesclar
-        $nome = htmlspecialchars(strip_tags($data['nome'] ?? $user['nome']));
-        $email = filter_var($data['email'] ?? $user['email'], FILTER_VALIDATE_EMAIL);
-        if (!$email) {
-            return ["status" => 400, "data" => ["message" => "E-mail inválido"]];
-        }
-
-        $telefone = htmlspecialchars(strip_tags($data['telefone'] ?? $user['telefone'] ?? ''));
-        $peso = isset($data['peso']) ? (float)$data['peso'] : ($user['peso'] ? (float)$user['peso'] : null);
-        $altura = isset($data['altura']) ? (float)$data['altura'] : ($user['altura'] ? (float)$user['altura'] : null);
-        $tipo_sanguineo = $data['tipoSanguineo'] ?? $data['tipo_sanguineo'] ?? $user['tipo_sanguineo'];
-        $cep = htmlspecialchars(strip_tags($data['cep'] ?? $user['cep'] ?? ''));
-        $ativo = isset($data['ativo']) ? ($data['ativo'] ? 1 : 0) : $user['ativo'];
-        $sexo = $data['sexo'] ?? $user['sexo'];
-        $idade = isset($data['idade']) ? (int)$data['idade'] : ($user['idade'] ? (int)$user['idade'] : null);
-        $data_nascimento = $data['dataNascimento'] ?? $data['data_nascimento'] ?? $user['data_nascimento'];
-        $marcapasso = isset($data['marcapasso']) ? ($data['marcapasso'] ? 1 : 0) : $user['marcapasso'];
-        $obs_med = htmlspecialchars(strip_tags($data['obsMed'] ?? $data['obs_med'] ?? $user['obs_med'] ?? ''));
-
-        // Se uma nova senha for fornecida e for diferente do hash atual
-        $senha = $user['senha'];
-        if (!empty($data['senha']) && strpos($data['senha'], '$2y$') !== 0) {
-            if (strlen($data['senha']) < 8) {
-                return ["status" => 400, "data" => ["message" => "A nova senha deve possuir no mínimo 8 caracteres"]];
-            }
-            $senha = password_hash($data['senha'], PASSWORD_BCRYPT);
-        }
-
-        $sql = "UPDATE usuarios SET 
-                    nome = :nome,
-                    email = :email,
-                    senha = :senha,
-                    telefone = :telefone,
-                    peso = :peso,
-                    altura = :altura,
-                    tipo_sanguineo = :tipo_sanguineo,
-                    cep = :cep,
-                    ativo = :ativo,
-                    sexo = :sexo,
-                    idade = :idade,
-                    data_nascimento = :data_nascimento,
-                    marcapasso = :marcapasso,
-                    obs_med = :obs_med
-                WHERE id = :id";
-        
-        $stmt = $this->db->prepare($sql);
-        try {
-            $stmt->execute([
-                'nome' => $nome,
-                'email' => $email,
-                'senha' => $senha,
-                'telefone' => $telefone,
-                'peso' => $peso,
-                'altura' => $altura,
-                'tipo_sanguineo' => $tipo_sanguineo,
-                'cep' => $cep,
-                'ativo' => $ativo,
-                'sexo' => $sexo,
-                'idade' => $idade,
-                'data_nascimento' => $data_nascimento,
-                'marcapasso' => $marcapasso,
-                'obs_med' => $obs_med,
-                'id' => $id
-            ]);
-
-            // Obter registro atualizado
-            $stmtUpdated = $this->db->prepare("SELECT * FROM usuarios WHERE id = :id");
-            $stmtUpdated->execute(['id' => $id]);
-            $updatedUser = $stmtUpdated->fetch();
-
-            return ["status" => 200, "data" => $this->mapUserKeys($updatedUser)];
-        } catch (\PDOException $e) {
-            return ["status" => 500, "data" => ["message" => "Erro ao atualizar usuário: " . $e->getMessage()]];
-        }
+}
+atus" => 200, "data" => $this->mapUserKeys($user)];
     }
 }

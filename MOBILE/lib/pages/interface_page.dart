@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_loginkoavy/widgets/custom_navbar.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_application_loginkoavy/widgets/responsive_helper.dart';
 
 /// Página Inicial (Landing Page) da aplicação Koavy.
 class InterfacePage extends StatefulWidget {
@@ -11,24 +11,9 @@ class InterfacePage extends StatefulWidget {
 }
 
 class _InterfacePageState extends State<InterfacePage> {
-  /// Abre o link do vídeo explicativo no navegador.
-  Future<void> abrirVideo() async {
-    final Uri url = Uri.parse('https://www.youtube.com/watch?v=mILYtp4UHIQ');
-    try {
-      if (await canLaunchUrl(url)) {
-        await launchUrl(url, mode: LaunchMode.externalApplication);
-      } else {
-        debugPrint('Não foi possível abrir a URL: $url');
-      }
-    } catch (e) {
-      debugPrint('Erro ao tentar abrir o vídeo: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final bool isMobile = screenWidth < 800;
+    final bool isMobile = ResponsiveHelper.isMobile(context);
 
     return Scaffold(
       backgroundColor: const Color(0xff07090b),
@@ -86,7 +71,6 @@ class _InterfacePageState extends State<InterfacePage> {
                     ),
                   ),
                   SizedBox(height: isMobile ? 40 : 60),
-                  // O Wrap permite responsividade automática empilhando os cards em telas menores
                   Wrap(
                     spacing: 30,
                     runSpacing: 30,
@@ -121,8 +105,6 @@ class _InterfacePageState extends State<InterfacePage> {
               ),
               child: Column(
                 children: [
-                  Image.asset("assets/images/koalaSono.png", width: isMobile ? 200 : 260),
-                  const SizedBox(height: 30),
                   Text(
                     "Como Tudo Começou",
                     textAlign: TextAlign.center,
@@ -138,7 +120,7 @@ class _InterfacePageState extends State<InterfacePage> {
                           children: [
                             _buildHistoriaText(),
                             const SizedBox(height: 30),
-                            _buildVideoWidget(isMobile),
+                            _buildHeroImage(), // Usando imagem hero como placeholder
                           ],
                         )
                       : Row(
@@ -146,7 +128,7 @@ class _InterfacePageState extends State<InterfacePage> {
                           children: [
                             Expanded(child: _buildHistoriaText()),
                             const SizedBox(width: 40),
-                            Expanded(child: _buildVideoWidget(isMobile)),
+                            Expanded(child: _buildHeroImage()),
                           ],
                         ),
                 ],
@@ -202,7 +184,7 @@ class _InterfacePageState extends State<InterfacePage> {
               ),
             ),
             child: const Text(
-              "Cadastre-se",
+              "Começar agora",
               style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
@@ -286,52 +268,13 @@ class _InterfacePageState extends State<InterfacePage> {
         border: Border.all(color: Colors.white10),
       ),
       child: const Text(
-        "Tudo começou com o irmão mais velho de uma dos integrantes que tem 23 anos e, desde que nasceu, sofre com uma desregulação cardíaca. Ele sempre foi uma pessoa muito ativa e é professor de beach tennis, um esporte bastante intenso. Recentemente, após perceber que ele vinha apresentando alterações cardíacas mais frequentes, a médica recomendou que ele evitasse esforços físicos intensos, devido à sua condição. Quando o irmão era mais novo, a mãe tinha muito medo e ficava preocupada sempre que ele saía de casa sem ela, pois não sabia o que poderia acontecer caso ele tivesse uma crise. Pensando nisso, surgiu a ideia de desenvolver uma pulseira inteligente que possa auxiliá-lo no monitoramento da saúde cardíaca.",
+        "Tudo começou com o irmão mais velho de uma dos integrantes que tem 23 anos e, desde que nasceu, sofre com uma desregulação cardíaca. Ele sempre foi uma pessoa muito ativa e é professor de beach tennis, um esporte bastante intenso. Recentemente, após perceber que ele vinha apresentando alterações cardíacas mais frequentes, a médica recomendou que ele evitasse esforços físicos intensos, devido à sua condição. Pensando nisso, surgiu a ideia de desenvolver uma pulseira inteligente que possa auxiliá-lo no monitoramento da saúde cardíaca.",
         style: TextStyle(
           color: Colors.white70,
           fontSize: 17,
           height: 1.8,
         ),
       ),
-    );
-  }
-
-  Widget _buildVideoWidget(bool isMobile) {
-    return Column(
-      crossAxisAlignment: isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Aqui está um vídeo de onde surgiu a ideia",
-          textAlign: isMobile ? TextAlign.center : TextAlign.start,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: isMobile ? 22 : 26,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 25),
-        InkWell(
-          onTap: abrirVideo,
-          child: Container(
-            height: 300,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: const Color(0xff111418),
-              borderRadius: BorderRadius.circular(25),
-              border: Border.all(
-                color: Colors.cyanAccent.withValues(alpha: 0.3),
-              ),
-            ),
-            child: const Center(
-              child: Icon(
-                Icons.play_circle_fill,
-                color: Colors.cyanAccent,
-                size: 90,
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

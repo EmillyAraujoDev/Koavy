@@ -17,7 +17,17 @@ import 'package:flutter_application_loginkoavy/pages/dashboard_page.dart';
 import 'package:flutter_application_loginkoavy/pages/perfil_page.dart';
 import 'package:flutter_application_loginkoavy/pages/historico_page.dart';
 
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    debugPrint("Firebase initialization error: $e");
+    // Em alguns casos (como web ou sem google-services.json) pode falhar.
+    // Continuamos para não travar o app se o usuário não for usar Google Login.
+  }
   runApp(const KoavyApp());
 }
 
@@ -68,15 +78,15 @@ class KoavyApp extends StatelessWidget {
         useMaterial3: true,
       ),
 
-<<<<<<< HEAD
+
       // ================= NAVEGAÇÃO PROFISSIONAL =================
-      // SOLUÇÃO: Usamos initialRoute '/' mapeado diretamente para LoginPage
-      // para evitar qualquer conflito de redundância com a propriedade 'home'.
+      // SOLUÇÃO: Usamos initialRoute '/' mapeado diretamente para InterfacePage (Welcome)
       initialRoute: '/',
       
-      // Rotas estáticas (sem argumentos)
+      // Rotas estáticas
       routes: {
-        '/': (context) => const LoginPage(),
+        '/': (context) => const InterfacePage(),
+        '/login': (context) => const LoginPage(),
         '/welcome': (context) => const InterfacePage(),
         '/home': (context) => const HomePage(),
         '/dashboard': (context) => const DashboardPage(),
@@ -108,23 +118,7 @@ class KoavyApp extends StatelessWidget {
             ),
           );
         }
-        return null; // Deixa o Flutter procurar no mapa de 'routes'
-=======
-      // ================= ROTA INICIAL =================
-      //home: const InterfacePage(),
-
-      // ================= ROTAS NOMEADAS =================
-      // Permite Navigator.pushNamed(context, '/login') em qualquer lugar
-      routes: {
-        '/':                    (context) =>  InterfacePage(),
-        '/login':               (context) => const LoginPage(),
-        '/cadastro-paciente':   (context) => const CadastroPacientePage(),
-        '/cadastro-tutor':      (context) => const CadastroTutorPage(),
-        '/contato':             (context) => const ContatoPage(),
-        '/admin':               (context) => const AdminPage(),
-        '/dashboard-paciente':  (context) => const DashboardPacientePage(),
-        '/dashboard-tutor':     (context) => const DashboardTutorPage(),
->>>>>>> c3ddca26d8b70f1dc0598fe5875b7f961c21046f
+        return null;
       },
     );
   }

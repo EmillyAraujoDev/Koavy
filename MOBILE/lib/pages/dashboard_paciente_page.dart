@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_loginkoavy/pages/login_page.dart';
 import 'package:flutter_application_loginkoavy/api_service.dart';
+import 'package:flutter_application_loginkoavy/widgets/responsive_helper.dart';
 
 class DashboardPacientePage extends StatefulWidget {
   final String userName;
@@ -28,7 +28,6 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
   String currentWeight = '75';
   String currentHeight = '180';
   String currentBloodType = 'O+';
-  String currentAge = '30';
 
   // Controladores do Formulário de Edição
   late TextEditingController nameController;
@@ -72,7 +71,6 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
       }
     });
 
-    // Controle de pulsação do indicador "LIVE" e ícone de coração
     pulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
@@ -135,11 +133,10 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final bool isMobile = screenWidth < 900;
+    final bool isMobile = ResponsiveHelper.isMobile(context);
 
     return Scaffold(
-      backgroundColor: Color(0xff050505),
+      backgroundColor: const Color(0xff050505),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
         child: Container(
@@ -152,7 +149,6 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Row(
                 children: [
-                  // Logo
                   Container(
                     width: 32,
                     height: 32,
@@ -178,11 +174,9 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
                       fontSize: 24,
                       fontWeight: FontWeight.w900,
                       color: Colors.white,
-                      fontFamily: 'Outfit',
                     ),
                   ),
                   const Spacer(),
-                  // Paciente Ativo tag e Nome
                   if (!isMobile)
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -199,11 +193,9 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
                       ],
                     ),
                   const SizedBox(width: 20),
-                  // Botão de Logout
                   IconButton(
                     onPressed: logout,
                     icon: const Icon(Icons.logout, color: Colors.redAccent),
-                    tooltip: 'Sair do Sistema',
                   ),
                 ],
               ),
@@ -219,7 +211,6 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // TABS NAVEGAÇÃO
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -233,14 +224,12 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
                   ),
                 ),
                 const SizedBox(height: 35),
-
-                // CONTEÚDO DAS ABAS
                 IndexedStack(
                   index: activeTab,
                   children: [
                     _buildResumoTab(isMobile),
-                    _buildHistoricoTab(),
-                    _buildPerfilTab(),
+                    _buildHistoricoTab(isMobile),
+                    _buildPerfilTab(isMobile),
                   ],
                 ),
               ],
@@ -254,16 +243,12 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
   Widget _buildTabButton(String label, int index) {
     final bool isActive = activeTab == index;
     return InkWell(
-      onTap: () {
-        setState(() {
-          activeTab = index;
-        });
-      },
+      onTap: () => setState(() => activeTab = index),
       borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         decoration: BoxDecoration(
-          color: isActive ? Color(0xff00f2ff) : Colors.white.withValues(alpha: 0.03),
+          color: isActive ? const Color(0xff00f2ff) : Colors.white.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isActive ? Colors.transparent : Colors.white.withValues(alpha: 0.08),
@@ -282,12 +267,11 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
     );
   }
 
-  // ================= ABA 1: RESUMO REALTIME =================
   Widget _buildResumoTab(bool isMobile) {
     return isMobile
         ? Column(
             children: [
-              _buildMonitorCard(),
+              _buildMonitorCard(isMobile),
               const SizedBox(height: 24),
               _buildProfileSidebarCard(),
             ],
@@ -295,15 +279,14 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
         : Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(flex: 2, child: _buildMonitorCard()),
+              Expanded(flex: 2, child: _buildMonitorCard(isMobile)),
               const SizedBox(width: 30),
               Expanded(flex: 1, child: _buildProfileSidebarCard()),
             ],
           );
   }
 
-  Widget _buildMonitorCard() {
-    final bool isMobile = MediaQuery.of(context).size.width < 900;
+  Widget _buildMonitorCard(bool isMobile) {
     double percentage = (currentBPM - 40) / (160 - 40);
     percentage = percentage.clamp(0.0, 1.0);
 
@@ -326,20 +309,18 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
                   color: Colors.white,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Outfit',
                 ),
               ),
-              // Pulse LIVE Badge
               AnimatedBuilder(
                 animation: pulseController,
                 builder: (context, child) {
                   return Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Color(0xff00f2ff).withValues(alpha: 0.1 + (pulseController.value * 0.1)),
+                      color: const Color(0xff00f2ff).withValues(alpha: 0.1 + (pulseController.value * 0.1)),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: Color(0xff00f2ff).withValues(alpha: 0.2 + (pulseController.value * 0.3)),
+                        color: const Color(0xff00f2ff).withValues(alpha: 0.2 + (pulseController.value * 0.3)),
                       ),
                     ),
                     child: Row(
@@ -348,21 +329,10 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
                         Container(
                           width: 8,
                           height: 8,
-                          decoration: const BoxDecoration(
-                            color: Color(0xff00f2ff),
-                            shape: BoxShape.circle,
-                          ),
+                          decoration: const BoxDecoration(color: Color(0xff00f2ff), shape: BoxShape.circle),
                         ),
                         const SizedBox(width: 8),
-                        const Text(
-                          "LIVE",
-                          style: TextStyle(
-                            color: Color(0xff00f2ff),
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1,
-                          ),
-                        ),
+                        const Text("LIVE", style: TextStyle(color: Color(0xff00f2ff), fontSize: 10, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   );
@@ -371,278 +341,91 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
             ],
           ),
           const SizedBox(height: 40),
-          isMobile
-              ? Column(
-                  children: [
-                    Center(
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          SizedBox(
-                            width: 180,
-                            height: 180,
-                            child: CircularProgressIndicator(
-                              value: percentage,
-                              strokeWidth: 12,
-                              backgroundColor: Colors.white.withValues(alpha: 0.05),
-                              valueColor: const AlwaysStoppedAnimation<Color>(Color(0xff00f2ff)),
-                            ),
-                          ),
-<<<<<<< HEAD
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              ScaleTransition(
-                                scale: Tween(begin: 0.95, end: 1.05).animate(
-                                  CurvedAnimation(parent: pulseController, curve: Curves.easeInOut),
-                                ),
-                                child: const Icon(
-                                  Icons.favorite,
-                                  color: Color(0xff00f2ff),
-                                  size: 32,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                "$currentBPM",
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 48,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                              ),
-                              const Text(
-                                "BPM",
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1,
-                                ),
-                              ),
-                            ],
-=======
-                          SizedBox(height: 8),
-                          Text(
-                            "Seu coração está batendo em um ritmo saudável. Continue assim!",
-                            style: TextStyle(
-                              color: Color(0xff34d399),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
->>>>>>> c3ddca26d8b70f1dc0598fe5875b7f961c21046f
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.4),
-                            borderRadius: BorderRadius.circular(24),
-                            border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text(
-                                "STATUS DO SISTEMA",
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.5,
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                "Seu coração está batendo em um ritmo saudável. Continue assim!",
-                                style: TextStyle(
-                                  color: Color(0xff34d399),
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 12),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.03),
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Column(
-                                  children: const [
-                                    Text("MÍNIMA", style: TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
-                                    SizedBox(height: 4),
-                                    Text("65", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 12),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.03),
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Column(
-                                  children: const [
-                                    Text("MÁXIMA", style: TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
-                                    SizedBox(height: 4),
-                                    Text("110", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                )
-              : Row(
-                  children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        SizedBox(
-                          width: 180,
-                          height: 180,
-                          child: CircularProgressIndicator(
-                            value: percentage,
-                            strokeWidth: 12,
-                            backgroundColor: Colors.white.withValues(alpha: 0.05),
-                            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xff00f2ff)),
-                          ),
-                        ),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ScaleTransition(
-                              scale: Tween(begin: 0.95, end: 1.05).animate(
-                                CurvedAnimation(parent: pulseController, curve: Curves.easeInOut),
-                              ),
-                              child: const Icon(
-                                Icons.favorite,
-                                color: Color(0xff00f2ff),
-                                size: 32,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              "$currentBPM",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 48,
-                                fontWeight: FontWeight.w900,
-                              ),
-                            ),
-                            const Text(
-                              "BPM",
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 40),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.4),
-                              borderRadius: BorderRadius.circular(24),
-                              border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Text(
-                                  "STATUS DO SISTEMA",
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.5,
-                                  ),
-                                ),
-                                SizedBox(height: 8),
-                                Text(
-                                  "Seu coração está batendo em um ritmo saudável. Continue assim!",
-                                  style: TextStyle(
-                                    color: Color(0xff34d399),
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.03),
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: Column(
-                                    children: const [
-                                      Text("MÍNIMA", style: TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
-                                      SizedBox(height: 4),
-                                      Text("65", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.03),
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: Column(
-                                    children: const [
-                                      Text("MÁXIMA", style: TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
-                                      SizedBox(height: 4),
-                                      Text("110", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+          _buildBpmDisplay(percentage, isMobile),
         ],
+      ),
+    );
+  }
+
+  Widget _buildBpmDisplay(double percentage, bool isMobile) {
+    final Widget indicator = Stack(
+      alignment: Alignment.center,
+      children: [
+        SizedBox(
+          width: 180,
+          height: 180,
+          child: CircularProgressIndicator(
+            value: percentage,
+            strokeWidth: 12,
+            backgroundColor: Colors.white.withValues(alpha: 0.05),
+            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xff00f2ff)),
+          ),
+        ),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ScaleTransition(
+              scale: Tween(begin: 0.95, end: 1.05).animate(pulseController),
+              child: const Icon(Icons.favorite, color: Color(0xff00f2ff), size: 32),
+            ),
+            Text("$currentBPM", style: const TextStyle(color: Colors.white, fontSize: 48, fontWeight: FontWeight.w900)),
+            const Text("BPM", style: TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ],
+    );
+
+    final Widget info = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.black.withValues(alpha: 0.4),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text("STATUS DO SISTEMA", style: TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
+              SizedBox(height: 8),
+              Text("Ritmo saudável. Continue assim!", style: TextStyle(color: Color(0xff34d399), fontWeight: FontWeight.w600, fontSize: 14)),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        Row(
+          children: [
+            _buildMinMaxCard("MÍNIMA", "65"),
+            const SizedBox(width: 16),
+            _buildMinMaxCard("MÁXIMA", "110"),
+          ],
+        ),
+      ],
+    );
+
+    return isMobile
+        ? Column(children: [Center(child: indicator), const SizedBox(height: 32), info])
+        : Row(children: [indicator, const SizedBox(width: 40), Expanded(child: info)]);
+  }
+
+  Widget _buildMinMaxCard(String label, String value) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.03),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          children: [
+            Text(label, style: const TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 4),
+            Text(value, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+          ],
+        ),
       ),
     );
   }
@@ -651,407 +434,131 @@ class _DashboardPacientePageState extends State<DashboardPacientePage> with Sing
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xff00f2ff).withValues(alpha: 0.08),
-            Colors.transparent,
-          ],
-        ),
-        borderRadius: BorderRadius.circular(40),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
-      ),
-      child: Column(
-        children: [
-          // Avatar
-          Container(
-            width: 90,
-            height: 90,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Color(0xff00f2ff), width: 2),
-              color: Color(0xff16181b),
-            ),
-            child: const Center(
-              child: Icon(
-                Icons.person,
-                color: Color(0xff00f2ff),
-                size: 48,
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            currentName,
-            style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 4),
-          const Text(
-            "ID: #100",
-            style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 30),
-          // Info List
-          _buildSidebarInfoRow("Idade", "$currentAge anos"),
-          const SizedBox(height: 12),
-          _buildSidebarInfoRow("Sanguíneo", currentBloodType, highlightValue: true),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSidebarInfoRow(String label, String value, {bool highlightValue = false}) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.03)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
-          Text(
-            value,
-            style: TextStyle(
-              color: highlightValue ? Color(0xff00f2ff) : Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ================= ABA 2: HISTÓRICO MÉDICO =================
-  Widget _buildHistoricoTab() {
-    final bool isMobile = MediaQuery.of(context).size.width < 900;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-<<<<<<< HEAD
-        isMobile
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Histórico de Exames",
-                    style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'Outfit'),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    "Mantenha seus documentos organizados para consultas futuras.",
-                    style: TextStyle(color: Colors.grey, fontSize: 14),
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: simularAnexoExame,
-                      icon: const Icon(Icons.attach_file, color: Colors.black),
-                      label: const Text("Anexar Novo Exame"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xff00d4aa),
-                        foregroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text(
-                          "Histórico de Exames",
-                          style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'Outfit'),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          "Mantenha seus documentos organizados para consultas futuras.",
-                          style: TextStyle(color: Colors.grey, fontSize: 14),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  ElevatedButton.icon(
-                    onPressed: simularAnexoExame,
-                    icon: const Icon(Icons.attach_file, color: Colors.black),
-                    label: const Text("Anexar Novo Exame"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xff00d4aa),
-                      foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                    ),
-                  ),
-                ],
-=======
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  "Histórico de Exames",
-                  style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'Outfit'),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  "Mantenha seus documentos organizados para consultas futuras.",
-                  style: TextStyle(color: Colors.grey, fontSize: 14),
-                ),
-              ],
-            ),
-            ElevatedButton.icon(
-              onPressed: simularAnexoExame,
-              icon: const Icon(Icons.attach_file, color: Colors.black),
-              label: const Text("Anexar Novo Exame"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xff00d4aa),
-                foregroundColor: Colors.black,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
->>>>>>> c3ddca26d8b70f1dc0598fe5875b7f961c21046f
-              ),
-        const SizedBox(height: 30),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 350,
-            mainAxisSpacing: 20,
-            crossAxisSpacing: 20,
-            mainAxisExtent: 180,
-          ),
-          itemCount: exames.length,
-          itemBuilder: (context, index) {
-            final exam = exames[index];
-            final bool isNew = exam['data'] == 'Hoje';
-            return Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.03),
-                borderRadius: BorderRadius.circular(32),
-                border: Border.all(
-                  color: isNew ? Color(0xff00f2ff).withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.08),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: Colors.red.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(Icons.picture_as_pdf, color: Colors.redAccent),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              exam['titulo']!,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
-                            ),
-                            Text(
-                              "PDF • ${exam['tamanho']!}",
-                              style: const TextStyle(color: Colors.grey, fontSize: 12),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  const Divider(color: Colors.white10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(exam['data']!, style: const TextStyle(color: Colors.grey, fontSize: 11, fontWeight: FontWeight.bold)),
-                      if (isNew)
-                        const Text(
-                          "ENVIADO ✔",
-                          style: TextStyle(color: Color(0xff34d399), fontSize: 11, fontWeight: FontWeight.bold),
-                        )
-                      else
-                        const Text(
-                          "VER DOCUMENTO",
-                          style: TextStyle(color: Color(0xff00f2ff), fontSize: 11, fontWeight: FontWeight.bold),
-                        ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  // ================= ABA 3: DADOS DO PERFIL (FORMULÁRIO) =================
-  Widget _buildPerfilTab() {
-    return Container(
-      padding: const EdgeInsets.all(40),
-      decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(40),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
       child: Column(
+        children: [
+          Container(
+            width: 90,
+            height: 90,
+            decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: const Color(0xff00f2ff), width: 2), color: const Color(0xff16181b)),
+            child: const Icon(Icons.person, color: Color(0xff00f2ff), size: 48),
+          ),
+          const SizedBox(height: 20),
+          Text(currentName, style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+          const Text("ID: #100", style: TextStyle(color: Colors.grey, fontSize: 13)),
+          const SizedBox(height: 30),
+          _buildSidebarInfoRow("Sanguíneo", currentBloodType, highlight: true),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSidebarInfoRow(String label, String value, {bool highlight = false}) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.3), borderRadius: BorderRadius.circular(16)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: const TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
+          Text(value, style: TextStyle(color: highlight ? const Color(0xff00f2ff) : Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHistoricoTab(bool isMobile) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Expanded(child: Text("Histórico de Exames", style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold))),
+            IconButton(onPressed: simularAnexoExame, icon: const Icon(Icons.add_circle, color: Color(0xff00d4aa), size: 32)),
+          ],
+        ),
+        const SizedBox(height: 30),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 350, mainAxisSpacing: 20, crossAxisSpacing: 20, mainAxisExtent: 180),
+          itemCount: exames.length,
+          itemBuilder: (context, index) => _buildExamCard(exames[index]),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildExamCard(Map<String, String> exam) {
+    final bool isNew = exam['data'] == 'Hoje';
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.03),
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: isNew ? const Color(0xff00f2ff) : Colors.white10),
+      ),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Editar Minhas Informações",
-            style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'Outfit'),
-          ),
-          const SizedBox(height: 35),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final bool localIsMobile = constraints.maxWidth < 650;
-              return Column(
-                children: [
-                  _buildFormRow(
-                    isMobile: localIsMobile,
-                    leftLabel: 'Nome Completo',
-                    leftController: nameController,
-                    rightLabel: 'E-mail de Acesso',
-                    rightController: emailController,
-                  ),
-                  const SizedBox(height: 20),
-                  _buildFormRow(
-                    isMobile: localIsMobile,
-                    leftLabel: 'Peso (kg)',
-                    leftController: weightController,
-                    rightLabel: 'Altura (cm)',
-                    rightController: heightController,
-                  ),
-                  const SizedBox(height: 20),
-                  _buildFormRow(
-                    isMobile: localIsMobile,
-                    leftLabel: 'Tipo Sanguíneo',
-                    leftController: bloodController,
-                    rightLabel: 'Idade',
-                    rightController: TextEditingController(text: currentAge), // apenas leitura na idade
-                    rightReadOnly: true,
-                  ),
-                ],
-              );
-            },
-          ),
-          const SizedBox(height: 40),
-          const Divider(color: Colors.white10),
-          const SizedBox(height: 20),
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    activeTab = 0; // Cancela e volta
-                  });
-                },
-                child: const Text("Cancelar", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
-              ),
-              const SizedBox(width: 20),
-              ElevatedButton(
-                onPressed: salvarPerfil,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xff00f2ff),
-                  foregroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                ),
-                child: const Text("Salvar Alterações", style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
+              const Icon(Icons.picture_as_pdf, color: Colors.redAccent),
+              const SizedBox(width: 16),
+              Expanded(child: Text(exam['titulo']!, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis)),
             ],
+          ),
+          const Spacer(),
+          Text(exam['data']!, style: const TextStyle(color: Colors.grey, fontSize: 11)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPerfilTab(bool isMobile) {
+    return Container(
+      padding: const EdgeInsets.all(40),
+      decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.03), borderRadius: BorderRadius.circular(40), border: Border.all(color: Colors.white10)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text("Dados do Perfil", style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 35),
+          _buildProfileField("Nome", nameController),
+          const SizedBox(height: 20),
+          _buildProfileField("E-mail", emailController),
+          const SizedBox(height: 30),
+          ElevatedButton(
+            onPressed: salvarPerfil,
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xff00f2ff), foregroundColor: Colors.black, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
+            child: const Text("Salvar Alterações"),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildFormRow({
-    required bool isMobile,
-    required String leftLabel,
-    required TextEditingController leftController,
-    required String rightLabel,
-    required TextEditingController rightController,
-    bool rightReadOnly = false,
-  }) {
-    final Widget leftField = Column(
+  Widget _buildProfileField(String label, TextEditingController controller) {
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(leftLabel.toUpperCase(), style: const TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1)),
+        Text(label, style: const TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
-        TextFormField(
-          controller: leftController,
+        TextField(
+          controller: controller,
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.black.withValues(alpha: 0.4),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: Colors.white10)),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: Colors.white10)),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: Color(0xff00f2ff))),
+            fillColor: Colors.black45,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
         ),
       ],
     );
-
-    final Widget rightField = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(rightLabel.toUpperCase(), style: const TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1)),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: rightController,
-          readOnly: rightReadOnly,
-          style: TextStyle(color: rightReadOnly ? Colors.grey : Colors.white),
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.black.withValues(alpha: 0.4),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: Colors.white10)),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: Colors.white10)),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: Color(0xff00f2ff))),
-          ),
-        ),
-      ],
-    );
-
-    if (isMobile) {
-      return Column(
-        children: [
-          leftField,
-          const SizedBox(height: 20),
-          rightField,
-        ],
-      );
-    } else {
-      return Row(
-        children: [
-          Expanded(child: leftField),
-          const SizedBox(width: 20),
-          Expanded(child: rightField),
-        ],
-      );
-    }
   }
 }

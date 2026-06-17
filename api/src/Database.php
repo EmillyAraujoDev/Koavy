@@ -13,13 +13,20 @@ class Database {
     private function __construct() {
         $config = require __DIR__ . '/../config/database.php';
         try {
-            $dsn = "mysql:host={$config['host']};dbname={$config['dbname']};charset={$config['charset']}";
-            $this->conn = new PDO($dsn, $config['user'], $config['pass'], [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES => false,
-                PDO::ATTR_PERSISTENT => true // Otimização: Conexões persistentes
-            ]);
+            if (isset($config['driver']) && $config['driver'] === 'sqlite') {
+                $this->conn = new PDO("sqlite:" . $config['path'], null, null, [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+                ]);
+            } else {
+                $dsn = "mysql:host={$config['host']};dbname={$config['dbname']};charset={$config['charset']}";
+                $this->conn = new PDO($dsn, $config['user'], $config['pass'], [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    PDO::ATTR_EMULATE_PREPARES => false,
+                    PDO::ATTR_PERSISTENT => true
+                ]);
+            }
         } catch (PDOException $e) {
             // Em produção, não exiba detalhes do erro para o usuário final
             error_log("Erro de conexão no banco: " . $e->getMessage());

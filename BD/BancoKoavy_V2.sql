@@ -30,7 +30,6 @@ CREATE TABLE usuarios (
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     senha VARCHAR(255) NOT NULL, -- Hash Argon2id ou Bcrypt
-    idade TINYINT,
     data_nascimento DATE,
     sexo ENUM('M','F','O'),
     telefone VARCHAR(20),

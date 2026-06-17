@@ -352,7 +352,7 @@ class _ContatoPageState extends State<ContatoPage> {
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButtonFormField<String>(
-                  value: assuntoSelecionado,
+                  initialValue: assuntoSelecionado,
                   dropdownColor: const Color(0xff16181b),
                   decoration: const InputDecoration(border: InputBorder.none),
                   style: const TextStyle(color: Colors.white, fontSize: 16),
