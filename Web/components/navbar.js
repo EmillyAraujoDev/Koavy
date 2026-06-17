@@ -41,8 +41,8 @@ const Navbar = {
             <!-- Desktop Links -->
             <div class="hidden lg:flex gap-8 text-[11px] font-bold tracking-[0.1em] uppercase">
                 <a href="${isIndex ? '#inicio' : 'interface.html'}" class="text-gray-400 hover:text-white transition-colors">Início</a>
-                <a href="sobre.html" class="text-gray-400 hover:text-white transition-colors">Sobre</a>
-                <a href="funcionalidades.html" class="text-gray-400 hover:text-white transition-colors">Funcionalidades</a>
+                <a href="${isIndex ? '#sobre' : 'sobre.html'}" class="text-gray-400 hover:text-white transition-colors">Sobre</a>
+                <a href="${isIndex ? '#beneficios' : 'funcionalidades.html'}" class="text-gray-400 hover:text-white transition-colors">Funcionalidades</a>
                 <a href="${dashboardHref}" class="text-gray-400 hover:text-white transition-colors">Monitoramento</a>
                 <a href="contato.html" class="text-gray-400 hover:text-white transition-colors">Suporte</a>
             </div>

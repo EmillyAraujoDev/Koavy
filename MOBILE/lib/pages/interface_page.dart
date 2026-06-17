@@ -216,7 +216,6 @@ class _InterfacePageState extends State<InterfacePage> {
               ],
             ),
           ),
-          Image.asset("assets/images/koala1.png", width: 320),
         ],
       ),
     );

@@ -53,10 +53,14 @@ const Auth = {
     check(requiredRole = null) {
         const user = this.getUser();
         const token = this.getToken();
+        
         if (!user || !token) {
-            this.logout();
+            if (!window.location.pathname.endsWith('login.html')) {
+                this.logout();
+            }
             return null;
         }
+
         if (requiredRole !== null) {
             const role = parseInt(user.perfil_id || user.perfilId);
             if (role !== requiredRole) {

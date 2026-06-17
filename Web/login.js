@@ -5,19 +5,40 @@ const submitBtn = form?.querySelector('button[type="submit"]');
 window.onload = function () {
     if (typeof google !== 'undefined') {
         google.accounts.id.initialize({
-            client_id: "564333524566-cq8tcbvlhadhnrqtncp7rb9qpdo1iftf.apps.googleusercontent.com", // Substitua pelo seu Client ID real
-            callback: handleGoogleResponse
+            client_id: "564333524566-cq8tcbvlhadhnrqtncp7rb9qpdo1iftf.apps.googleusercontent.com",
+            callback: handleGoogleResponse,
+            auto_select: false,
+            cancel_on_tap_outside: true
         });
-        google.accounts.id.prompt();
-        
+
+        // Renderiza o botão oficial do Google para melhor feedback visual
+        const googleBtnWrapper = document.getElementById("googleBtnWrapper");
+        if (googleBtnWrapper) {
+            google.accounts.id.renderButton(googleBtnWrapper, {
+                theme: "outline",
+                size: "large",
+                width: "100%",
+                text: "continue_with",
+                shape: "pill"
+            });
+        }
     }
 };
 
-async function handleGoogleResponse(response) {v
-    // Decodifica o payload para pegar e-mail e nome (apenas para exibição/cadastro rápido)
-    const payload = JSON.parse(atob(response.credential.split('.')[1]));
-    
+async function handleGoogleResponse(response) {
+    if (!response || !response.credential) {
+        showError("Falha ao obter credenciais do Google.");
+        return;
+    }
+
+    setLoading(true);
+
     try {
+        // Decodifica o payload localmente para fins de UI (opcional)
+        const base64Url = response.credential.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const payload = JSON.parse(window.atob(base64));
+
         const res = await fetch(`${CONFIG.API_BASE_URL}/google-login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -28,15 +49,19 @@ async function handleGoogleResponse(response) {v
             })
         });
 
-        const data = await res.json();
-        if (res.ok) {
-            Auth.save(data.token, data.user);
-            window.location.href = "dashboard.html";
+        const result = await res.json();
+
+        if (res.ok && result.token) {
+            Auth.save(result.token, result.user);
+            Auth.redirectByRole(result.user);
         } else {
-            showError(data.message || "Erro ao entrar com Google.");
+            showError(result.message || "Erro na autenticação com o servidor.");
         }
     } catch (e) {
-        showError("Falha na conexão com o servidor Google Login.");
+        console.error("Google Login Error:", e);
+        showError("Falha na conexão com o servidor de autenticação.");
+    } finally {
+        setLoading(false);
     }
 }
 
@@ -52,7 +77,7 @@ function loginWithGoogle() {
 document.addEventListener("DOMContentLoaded", () => {
     const currentUser = Auth.check();
     if (currentUser) {
-        window.location.href = "dashboard.html";
+        Auth.redirectByRole(currentUser);
     }
 });
 
@@ -83,7 +108,7 @@ if (form) {
 
             if (response.ok) {
                 Auth.save(result.token, result.user);
-                window.location.href = "dashboard.html";
+                Auth.redirectByRole(result.user);
             } else {
                 showError(result.message || "E-mail ou senha incorretos.");
             }
