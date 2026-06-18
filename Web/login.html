@@ -25,23 +25,6 @@
 
 <body class="bg-dark2 text-gray-300 font-inter min-h-screen flex flex-col">
 
-<!-- NAVBAR -->
-<nav class="fixed top-0 left-0 w-full z-50 backdrop-blur-xl bg-black/40 border-b border-white/5">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-    <div class="flex items-center gap-2">
-      <a href="interface.html" class="flex items-center gap-2">
-        <div class="w-8 h-8 bg-gradient-to-br from-neon1 to-neon2 rounded-lg flex items-center justify-center">
-          <span class="text-black font-black text-xl">K</span>
-        </div>
-        <h1 class="text-2xl font-black bg-gradient-to-r from-neon1 to-neon2 bg-clip-text text-transparent logo">Koavy</h1>
-      </a>
-    </div>
-
-    <a href="cadastro.html" class="border border-white/10 px-8 py-2 rounded-full font-bold hover:bg-white/5 transition">
-      Criar Conta
-    </a>
-  </div>
-</nav>
 
 <main class="flex-1 flex items-center justify-center p-4 pt-24">
   <div class="w-full max-w-md bg-white/5 border border-white/10 rounded-[40px] p-8 lg:p-12 backdrop-blur-md shadow-2xl relative overflow-hidden">
@@ -63,8 +46,8 @@
 
       <div class="space-y-2">
         <div class="flex justify-between items-center px-2">
-          <label class="text-[10px] font-black uppercase tracking-widest text-gray-500">Senha</label>
-          <button type="button" onclick="openForgotModal()" class="text-[10px] font-bold text-neon1 hover:underline focus:outline-none">Esqueci a senha</button>
+          <button type="button" class="text-[10px] font-black uppercase tracking-widest text-gray-500">Senha</button>
+          <a href="esqueci-senha.html" class="text-[10px] font-bold text-neon1 hover:underline">Esqueci a senha</a>
         </div>
         <input type="password" id="password" name="senha" placeholder="••••••••" required
           class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-neon1 focus:ring-4 focus:ring-neon1/10 transition-all duration-300 placeholder:text-gray-700">
@@ -79,8 +62,17 @@
 
     <div class="mt-12 pt-8 border-t border-white/5 text-center relative z-10">
       <p class="text-xs text-gray-600 mb-6 font-black uppercase tracking-widest">Ou entre com</p>
-      <div class="flex justify-center gap-4">
+      <div class="flex flex-col gap-3">
         <div id="googleBtnWrapper" class="w-full flex justify-center"></div>
+        <button type="button" onclick="openGoogleMockModal()" class="w-full py-4 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center gap-3 text-white text-xs font-black uppercase tracking-wider hover:bg-white/10 hover:border-neon1/30 transition-all duration-300">
+          <svg class="w-4 h-4" viewBox="0 0 24 24">
+            <path fill="#EA4335" d="M12 5.04c1.66 0 3.2.57 4.38 1.69l3.27-3.27C17.68 1.54 14.98 1 12 1 7.35 1 3.4 3.65 1.5 7.5l3.9 3.03C6.33 7.8 8.94 5.04 12 5.04z"/>
+            <path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.34H12v4.44h6.44c-.28 1.48-1.12 2.73-2.38 3.58l3.7 2.87c2.16-2 3.73-4.94 3.73-8.55z"/>
+            <path fill="#FBBC05" d="M5.4 14.53c-.24-.72-.38-1.5-.38-2.3s.14-1.58.38-2.3L1.5 6.9C.54 8.82 0 10.96 0 13.2s.54 4.38 1.5 6.3l3.9-3.03c-.24-.72-.38-1.5-.38-2.3z"/>
+            <path fill="#34A853" d="M12 23c3.24 0 5.97-1.07 7.96-2.92l-3.7-2.87c-1.11.75-2.52 1.19-4.26 1.19-3.06 0-5.67-2.76-6.6-5.49L1.5 15.94C3.4 19.78 7.35 23 12 23z"/>
+          </svg>
+          Google Login (Apresentação TCC)
+        </button>
       </div>
     </div>
   </div>
@@ -113,8 +105,38 @@
   </div>
 </div>
 
+<!-- MODAL GOOGLE MOCK -->
+<div id="googleMockModal" class="fixed inset-0 bg-black/90 backdrop-blur-md hidden items-center justify-center z-[100] p-4">
+  <div class="bg-[#1a1c1e] p-8 lg:p-10 rounded-[40px] w-full max-w-md border border-white/10 shadow-2xl relative overflow-hidden">
+    <div class="absolute -top-20 -right-20 w-48 h-48 bg-neon1/10 rounded-full blur-[60px]"></div>
+    
+    <div class="relative z-10 text-center">
+      <div class="w-16 h-16 bg-neon1/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+        <svg class="w-8 h-8 text-neon1" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M21.35 11.1H12v2.7h5.35C16.7 15.65 14.7 17 12 17c-3.3 0-6-2.7-6-6s2.7-6 6-6c1.55 0 2.95.6 4.05 1.65l2.05-2.05C16.4 2.8 14.35 2 12 2 6.5 2 2 6.5 2 12s4.5 10 10 10c5.5 0 10-4.5 10-10 0-.6-.05-1.2-.15-1.9z"/>
+        </svg>
+      </div>
+      <h2 class="text-3xl font-black text-white mb-2">Google Sign-In</h2>
+      <p class="text-gray-500 text-sm mb-8">Selecione um perfil simulado para a banca do TCC:</p>
+      
+      <div class="space-y-4">
+        <button type="button" onclick="loginWithGoogleMock('paciente')" class="w-full py-4 bg-gradient-to-r from-neon1 to-neon2 text-black font-black rounded-2xl hover:shadow-[0_0_20px_rgba(0,242,255,0.3)] hover:scale-102 transition-all">
+          Entrar como Paciente Google
+        </button>
+        <button type="button" onclick="loginWithGoogleMock('tutor')" class="w-full py-4 bg-white/5 hover:bg-white/10 text-white font-extrabold border border-white/10 rounded-2xl hover:scale-102 transition-all">
+          Entrar como Tutor Google
+        </button>
+        <button type="button" onclick="closeGoogleMockModal()" class="w-full py-3 text-sm font-bold text-gray-500 hover:text-white transition-colors">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="config.js"></script>
 <script src="auth.js"></script>
+<script src="components/navbar.js"></script>
 <script src="login.js"></script>
 </body>
 </html>

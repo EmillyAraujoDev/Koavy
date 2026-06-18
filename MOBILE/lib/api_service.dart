@@ -4,11 +4,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
   final Dio _dio = Dio(BaseOptions(
-    // Em produção, a URL deve apontar para o host do servidor REST.
-    // Usamos 10.0.2.2 como padrão para emuladores Android (que mapeia para o localhost da máquina hospedeira).
-    baseUrl: "http://10.0.2.2:8080/koavy/api/public", 
-    connectTimeout: const Duration(seconds: 5),
-    receiveTimeout: const Duration(seconds: 3),
+    // URL de produção / Apresentação TCC (compatível com emulador e dispositivos reais como Moto G20)
+    baseUrl: "http://143.106.241.4/koavy/api/public", 
+    connectTimeout: const Duration(seconds: 8),
+    receiveTimeout: const Duration(seconds: 5),
   ));
 
   static final ApiService _instance = ApiService._internal();
@@ -109,7 +108,7 @@ class ApiService {
   }
 
   Future<Response> registrarEmergencia(double bpm, double sat, String desc) async {
-    return _dio.post('/emergencia', data: {
+    return _dio.post('/emergencias', data: {
       'batMomento': bpm,
       'satMomento': sat,
       'tipo': 'CRITICO',
@@ -117,5 +116,10 @@ class ApiService {
       'latitude': 0.0,
       'longitude': 0.0,
     });
+  }
+
+  /// Solicita redefinição de senha na API PHP do Koavy.
+  Future<Response> recuperarSenha(String email) async {
+    return _dio.post('/recuperar-senha', data: {'email': email});
   }
 }

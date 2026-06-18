@@ -86,13 +86,13 @@
       <div class="bg-white/5 border border-white/10 rounded-[32px] p-6">
         <h3 class="text-sm font-black uppercase tracking-widest text-neon2 mb-6">Exportar</h3>
         <div class="flex flex-col gap-3">
-          <button class="flex items-center justify-between px-4 py-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition">
+          <button onclick="gerarRelatorioPDF()" class="flex items-center justify-between px-4 py-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition">
             <span class="text-sm font-bold">PDF Report</span>
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
           </button>
-          <button class="flex items-center justify-between px-4 py-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition">
+          <button onclick="gerarDadosCSV()" class="flex items-center justify-between px-4 py-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition">
             <span class="text-sm font-bold">CSV Data</span>
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -151,21 +151,36 @@
     const user = Auth.check();
     if (!user) window.location.href = "login.html";
 
+    let batimentosLocais = [];
+
     async function loadReportData() {
-        if (user.id === "DEMO") {
+        if (user.id === "DEMO" || user.id == 888 || user.id == 999 || user.id == 777) {
+            const mockData = [
+                { timestamp: '2026-06-12 08:00:00', bpm: 72, saturacao: 98 },
+                { timestamp: '2026-06-13 09:30:00', bpm: 75, saturacao: 97 },
+                { timestamp: '2026-06-14 10:15:00', bpm: 71, saturacao: 98 },
+                { timestamp: '2026-06-15 14:00:00', bpm: 82, saturacao: 96 },
+                { timestamp: '2026-06-16 11:20:00', bpm: 74, saturacao: 98 },
+                { timestamp: '2026-06-17 16:45:00', bpm: 68, saturacao: 99 },
+                { timestamp: '2026-06-18 12:00:00', bpm: 70, saturacao: 98 }
+            ];
+            batimentosLocais = mockData;
             renderChart(['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'], [72, 75, 71, 82, 74, 68, 70]);
             document.getElementById("avg-bpm").innerText = `MÉDIA: 74 BPM`;
             return;
         }
 
         try {
-            const response = await fetch(`${CONFIG.API_BASE_URL}/api/batimentos/usuario/${user.id}`);
+            const response = await fetch(`${CONFIG.API_BASE_URL}/batimentos/usuario/${user.id}`, {
+                headers: Auth.getAuthHeader()
+            });
             if (response.ok) {
                 const history = await response.json();
                 if (history.length > 0) {
+                    batimentosLocais = history;
                     const data = history.slice(0, 7).reverse(); // Últimos 7 registros
-                    const labels = data.map(h => new Date(h.dataHora).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-                    const values = data.map(h => h.frequenciaCard);
+                    const labels = data.map(h => new Date(h.dataHora || h.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+                    const values = data.map(h => h.bpm || h.frequenciaCard || h.bpm_momento || 70);
                     renderChart(labels, values);
                     
                     const avg = Math.round(values.reduce((a, b) => Number(a) + Number(b), 0) / values.length);
@@ -217,6 +232,148 @@
                 }
             }
         });
+    }
+
+    async function gerarRelatorioPDF() {
+        let stats = {
+            media_bpm: 74,
+            max_bpm: 82,
+            min_bpm: 68,
+            media_sat: 98,
+            total_leituras: batimentosLocais.length || 7
+        };
+        let insight = "Seu padrão cardíaco está estável.";
+        let score = 100;
+
+        if (batimentosLocais.length > 0) {
+            const bpms = batimentosLocais.map(b => b.bpm || b.frequenciaCard || b.bpm_momento || 70);
+            const sats = batimentosLocais.map(b => b.saturacao || 98);
+            stats.media_bpm = Math.round(bpms.reduce((a,b)=>a+b, 0) / bpms.length);
+            stats.max_bpm = Math.max(...bpms);
+            stats.min_bpm = Math.min(...bpms);
+            stats.media_sat = Math.round(sats.reduce((a,b)=>a+b, 0) / sats.length);
+            
+            score = 100;
+            if (stats.media_bpm > 100 || stats.media_bpm < 60) score -= 20;
+            if (stats.max_bpm > 140) score -= 15;
+            if (stats.media_sat < 95) score -= 25;
+            score = Math.max(0, score);
+            
+            if (score < 70) insight = "Atenção: Foram detectadas variações fora do padrão ideal neste período.";
+            if (score < 50) insight = "Risco: Procure um médico para avaliação detalhada dos alertas registrados.";
+        }
+
+        const printWindow = window.open("", "_blank");
+        printWindow.document.write(`
+            <html>
+            <head>
+                <title>Relatório Clínico - Koavy Health</title>
+                <style>
+                    body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #111; padding: 40px; line-height: 1.6; }
+                    .header { text-align: center; border-bottom: 2px solid #00f2ff; padding-bottom: 20px; margin-bottom: 30px; }
+                    .header h1 { margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -1px; }
+                    .header p { margin: 5px 0 0 0; color: #666; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; }
+                    .meta-grid { display: grid; grid-template-cols: 1fr 1fr; gap: 20px; margin-bottom: 40px; background: #f9f9f9; padding: 20px; border-radius: 12px; }
+                    .meta-item { font-size: 14px; }
+                    .meta-item strong { display: block; color: #666; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+                    .stats-table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+                    .stats-table th, .stats-table td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+                    .stats-table th { background: #f4f4f4; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #666; }
+                    .stats-table td { font-size: 15px; font-weight: bold; }
+                    .insight-box { background: rgba(0, 242, 255, 0.05); border-left: 4px solid #00f2ff; padding: 20px; border-radius: 8px; margin-bottom: 50px; }
+                    .insight-box h3 { margin: 0 0 10px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #00d4aa; }
+                    .signature-box { display: flex; justify-content: space-between; margin-top: 80px; font-size: 14px; }
+                    .signature-line { width: 45%; border-top: 1px solid #aaa; text-align: center; padding-top: 10px; }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>KOAVY HEALTH</h1>
+                    <p>Relatório de Acompanhamento Cardíaco Inteligente</p>
+                </div>
+                
+                <div class="meta-grid">
+                    <div class="meta-item">
+                        <strong>Nome do Paciente</strong>
+                        ${user.nome}
+                    </div>
+                    <div class="meta-item">
+                        <strong>E-mail</strong>
+                        ${user.email}
+                    </div>
+                    <div class="meta-item">
+                        <strong>Identificação do Paciente</strong>
+                        ID: #${user.id || 'DEMO'}
+                    </div>
+                    <div class="meta-item">
+                        <strong>Data de Geração</strong>
+                        ${new Date().toLocaleString('pt-BR')}
+                    </div>
+                </div>
+
+                <h2>Telemetria Cardíaca</h2>
+                <table class="stats-table">
+                    <thead>
+                        <tr>
+                            <th>Média BPM</th>
+                            <th>MÁXIMO BPM</th>
+                            <th>MÍNIMO BPM</th>
+                            <th>Média Saturação</th>
+                            <th>Escore de Saúde</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>${stats.media_bpm} BPM</td>
+                            <td>${stats.max_bpm} BPM</td>
+                            <td>${stats.min_bpm} BPM</td>
+                            <td>${stats.media_sat}%</td>
+                            <td>${score} / 100</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="insight-box">
+                    <h3>Análise de Condição Cardíaca (IA)</h3>
+                    <p>${insight}</p>
+                </div>
+
+                <div class="signature-box">
+                    <div class="signature-line">Assinatura do Paciente / Responsável</div>
+                    <div class="signature-line">Assinatura Médica (CRM/Validação)</div>
+                </div>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+        setTimeout(() => {
+            printWindow.print();
+        }, 500);
+    }
+
+    function gerarDadosCSV() {
+        if (batimentosLocais.length === 0) {
+            alert("Nenhum dado disponível para exportação em CSV.");
+            return;
+        }
+
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "Data/Hora,BPM,Saturacao\n";
+
+        batimentosLocais.forEach(b => {
+            const time = b.dataHora || b.timestamp || new Date().toISOString();
+            const bpmVal = b.bpm || b.frequenciaCard || b.bpm_momento || 70;
+            const satVal = b.saturacao || 98;
+            csvContent += `${time},${bpmVal},${satVal}\n`;
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `koavy_health_report_${user.id || 'demo'}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     loadReportData();

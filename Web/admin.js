@@ -17,7 +17,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function carregarUsuarios() {
     try {
-        const response = await fetch(`${CONFIG.API_BASE_URL}/api/usuarios`);
+        const response = await fetch(`${CONFIG.API_BASE_URL}/usuarios`, {
+            headers: Auth.getAuthHeader()
+        });
         if (!response.ok) throw new Error("API Indisponível");
         usuariosMemoria = await response.json();
         renderizarTabela(usuariosMemoria);
@@ -217,7 +219,9 @@ async function updateLiveGrid() {
     // Atualiza dados de cada paciente
     pacientes.forEach(async p => {
         try {
-            const res = await fetch(`${CONFIG.API_BASE_URL}/api/batimentos/usuario/${p.id}`);
+            const res = await fetch(`${CONFIG.API_BASE_URL}/batimentos/usuario/${p.id}`, {
+                headers: Auth.getAuthHeader()
+            });
             if (res.ok) {
                 const history = await res.json();
                 if (history.length > 0) {
@@ -275,14 +279,19 @@ async function salvarEdicao() {
     };
 
     try {
-        const resOrig = await fetch(`${CONFIG.API_BASE_URL}/api/usuarios/${usuarioEditandoId}`);
+        const resOrig = await fetch(`${CONFIG.API_BASE_URL}/usuarios/${usuarioEditandoId}`, {
+            headers: Auth.getAuthHeader()
+        });
         const userOrig = await resOrig.json();
         
         const payload = { ...userOrig, ...dados };
 
-        const response = await fetch(`${CONFIG.API_BASE_URL}/api/usuarios/${usuarioEditandoId}`, {
+        const response = await fetch(`${CONFIG.API_BASE_URL}/usuarios/${usuarioEditandoId}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+                "Content-Type": "application/json",
+                ...Auth.getAuthHeader()
+            },
             body: JSON.stringify(payload)
         });
 
@@ -306,14 +315,19 @@ async function banirUsuario() {
     if (!usuarioEditandoId || !confirm("Deseja realmente desativar este usuário?")) return;
 
     try {
-        const resOrig = await fetch(`${CONFIG.API_BASE_URL}/api/usuarios/${usuarioEditandoId}`);
+        const resOrig = await fetch(`${CONFIG.API_BASE_URL}/usuarios/${usuarioEditandoId}`, {
+            headers: Auth.getAuthHeader()
+        });
         const userOrig = await resOrig.json();
         
         const payload = { ...userOrig, ativo: false };
 
-        const response = await fetch(`${CONFIG.API_BASE_URL}/api/usuarios/${usuarioEditandoId}`, {
+        const response = await fetch(`${CONFIG.API_BASE_URL}/usuarios/${usuarioEditandoId}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+                "Content-Type": "application/json",
+                ...Auth.getAuthHeader()
+            },
             body: JSON.stringify(payload)
         });
 

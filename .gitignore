@@ -1,0 +1,10 @@
+target/
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+node_modules/
+dist/
+coverage/
+*.log
+*.tmp

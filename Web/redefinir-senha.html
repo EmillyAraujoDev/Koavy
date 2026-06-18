@@ -43,22 +43,55 @@
         </div>
     </div>
 
+    <script src="config.js"></script>
     <script>
-        document.getElementById("reset_form").addEventListener("submit", (e) => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const form = document.getElementById("reset_form");
+        const msg = document.getElementById("resetMessage");
+
+        if (!token) {
+            msg.innerHTML = '<span class="text-red-500">Token de redefinição ausente ou inválido. Solicite um novo link.</span>';
+            form.querySelectorAll("input, button").forEach(el => el.disabled = true);
+        }
+
+        form.addEventListener("submit", async (e) => {
             e.preventDefault();
             const p1 = document.getElementById("new_password").value;
             const p2 = document.getElementById("confirm_password").value;
-            const msg = document.getElementById("resetMessage");
 
             if (p1 !== p2) {
                 msg.innerHTML = '<span class="text-red-500">As senhas não coincidem.</span>';
+                msg.className = "text-center text-sm font-bold text-red-500 min-h-[1.25rem] mt-4";
                 return;
             }
 
-            msg.innerHTML = '<span class="text-emerald-500">Senha atualizada com sucesso! Redirecionando...</span>';
-            setTimeout(() => {
-                window.location.href = "login.html";
-            }, 2000);
+            msg.innerHTML = '<span class="text-neon1">Processando redefinição...</span>';
+            msg.className = "text-center text-sm font-bold text-neon1 min-h-[1.25rem] mt-4";
+
+            try {
+                const res = await fetch(`${CONFIG.API_BASE_URL}/redefinir-senha`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ token, senha: p1 })
+                });
+
+                const result = await res.json();
+
+                if (res.ok) {
+                    msg.innerHTML = '<span class="text-emerald-500">Senha atualizada com sucesso! Redirecionando...</span>';
+                    msg.className = "text-center text-sm font-bold text-emerald-500 min-h-[1.25rem] mt-4";
+                    setTimeout(() => {
+                        window.location.href = "login.html";
+                    }, 2500);
+                } else {
+                    msg.innerHTML = `<span class="text-red-500">${result.message || "Ocorreu um erro."}</span>`;
+                    msg.className = "text-center text-sm font-bold text-red-500 min-h-[1.25rem] mt-4";
+                }
+            } catch (err) {
+                msg.innerHTML = '<span class="text-red-500">Erro de conexão com o servidor.</span>';
+                msg.className = "text-center text-sm font-bold text-red-500 min-h-[1.25rem] mt-4";
+            }
         });
     </script>
 </body>

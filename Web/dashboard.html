@@ -268,7 +268,7 @@
 
             if (user && user.id !== "DEMO") {
                 try {
-                    const response = await fetch(`${CONFIG.API_BASE_URL}/api/batimentos/usuario/${user.id}`);
+                    const response = await fetch(`${CONFIG.API_BASE_URL}/batimentos/usuario/${user.id}`);
                     if (response.ok) {
                         const history = await response.json();
                         if (history.length > 0) {
@@ -309,7 +309,7 @@
                     longitude: -46.6398
                 };
 
-                const response = await fetch(`${CONFIG.API_BASE_URL}/api/emergencias`, {
+                const response = await fetch(`${CONFIG.API_BASE_URL}/emergencias`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(alertData)
@@ -401,7 +401,7 @@
         if (!user || user.id === "DEMO") return;
 
         try {
-            const response = await fetch(`${CONFIG.API_BASE_URL}/api/emergencias/usuario/${user.id}`);
+            const response = await fetch(`${CONFIG.API_BASE_URL}/emergencias/usuario/${user.id}`);
             if (response.ok) {
                 const alerts = await response.json();
                 renderAlerts(alerts);
@@ -477,7 +477,7 @@
 
         try {
             // 1. Envia batimento
-            const resBpm = await fetch(`${CONFIG.API_BASE_URL}/api/batimentos`, {
+            const resBpm = await fetch(`${CONFIG.API_BASE_URL}/batimentos`, {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",

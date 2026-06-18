@@ -18,7 +18,15 @@ const Auth = {
 
     getUser() {
         const user = localStorage.getItem(this.USER_KEY);
-        return user ? JSON.parse(user) : null;
+        if (!user) return null;
+
+        try {
+            return JSON.parse(user);
+        } catch (error) {
+            localStorage.removeItem(this.USER_KEY);
+            localStorage.removeItem(this.TOKEN_KEY);
+            return null;
+        }
     },
 
     getToken() {
@@ -28,6 +36,29 @@ const Auth = {
     getAuthHeader() {
         const token = this.getToken();
         return token ? { 'Authorization': `Bearer ${token}` } : {};
+    },
+
+    isAdult(userData = null) {
+        const user = userData || this.getUser();
+        if (!user) return false;
+
+        if (Number.isFinite(Number(user.idade))) {
+            return Number(user.idade) >= 18;
+        }
+
+        const birthDate = user.dataNascimento || user.data_nascimento;
+        if (!birthDate) return false;
+
+        const parsed = new Date(birthDate);
+        if (Number.isNaN(parsed.getTime())) return false;
+
+        const today = new Date();
+        let age = today.getFullYear() - parsed.getFullYear();
+        const monthDelta = today.getMonth() - parsed.getMonth();
+        if (monthDelta < 0 || (monthDelta === 0 && today.getDate() < parsed.getDate())) {
+            age -= 1;
+        }
+        return age >= 18;
     },
 
     redirectByRole(user) {

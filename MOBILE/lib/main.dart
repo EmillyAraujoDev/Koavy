@@ -10,6 +10,7 @@ import 'package:flutter_application_loginkoavy/pages/dashboard_tutor_page.dart';
 import 'package:flutter_application_loginkoavy/pages/admin_page.dart';
 import 'package:flutter_application_loginkoavy/pages/cadastro_tutor_page.dart';
 import 'package:flutter_application_loginkoavy/pages/contato_page.dart';
+import 'package:flutter_application_loginkoavy/pages/recuperar_senha_page.dart';
 
 // Novas importações de páginas para arquitetura profissional
 import 'package:flutter_application_loginkoavy/pages/home_page.dart';
@@ -18,11 +19,14 @@ import 'package:flutter_application_loginkoavy/pages/perfil_page.dart';
 import 'package:flutter_application_loginkoavy/pages/historico_page.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_application_loginkoavy/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   } catch (e) {
     debugPrint("Firebase initialization error: $e");
     // Em alguns casos (como web ou sem google-services.json) pode falhar.
@@ -79,7 +83,7 @@ class KoavyApp extends StatelessWidget {
       ),
 
 
-      // ================= NAVEGAÇÃO PROFISSIONAL =================
+      // ================= NAVEGAÇÃO =================
       // SOLUÇÃO: Usamos initialRoute '/' mapeado diretamente para InterfacePage (Welcome)
       initialRoute: '/',
       
@@ -96,6 +100,7 @@ class KoavyApp extends StatelessWidget {
         '/cadastro-tutor': (context) => const CadastroTutorPage(),
         '/contato': (context) => const ContatoPage(),
         '/admin': (context) => const AdminPage(),
+        '/recuperar-senha': (context) => const RecuperarSenhaPage(),
       },
 
       // Gerenciador de rotas dinâmicas (com argumentos complexos)

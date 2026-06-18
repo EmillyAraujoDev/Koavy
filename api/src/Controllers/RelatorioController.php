@@ -14,13 +14,53 @@ class RelatorioController {
     }
 
     public function gerar($userId, $tipo = 'DIARIO') {
+        // Garantir que a tabela relatorios existe no SQLite/MySQL
+        try {
+            $config = require __DIR__ . '/../../config/database.php';
+            $isSqlite = isset($config['driver']) && $config['driver'] === 'sqlite';
+
+            if ($isSqlite) {
+                $this->db->exec("CREATE TABLE IF NOT EXISTS relatorios (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    usuario_id INTEGER NOT NULL,
+                    tipo TEXT NOT NULL,
+                    media_bpm REAL,
+                    bpm_max REAL,
+                    bpm_min REAL,
+                    obs_ia TEXT,
+                    data_geracao TEXT DEFAULT CURRENT_TIMESTAMP
+                )");
+            } else {
+                $this->db->exec("CREATE TABLE IF NOT EXISTS relatorios (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    usuario_id INT NOT NULL,
+                    tipo VARCHAR(20) NOT NULL,
+                    media_bpm DECIMAL(5,2),
+                    bpm_max DECIMAL(5,2),
+                    bpm_min DECIMAL(5,2),
+                    obs_ia TEXT,
+                    data_geracao DATETIME DEFAULT CURRENT_TIMESTAMP
+                )");
+            }
+        } catch (\Exception $e) {}
+
         // 1. Coletar dados baseados no tipo
         $dias = ($tipo === 'SEMANAL') ? 7 : (($tipo === 'MENSAL') ? 30 : 1);
         
-        $sql = "SELECT AVG(bpm) as media_bpm, MAX(bpm) as max_bpm, MIN(bpm) as min_bpm, 
-                       AVG(saturacao) as media_sat, COUNT(*) as total_leituras
-                FROM batimentos 
-                WHERE usuario_id = :uid AND timestamp >= DATE_SUB(NOW(), INTERVAL :dias DAY)";
+        $config = require __DIR__ . '/../../config/database.php';
+        $isSqlite = isset($config['driver']) && $config['driver'] === 'sqlite';
+
+        if ($isSqlite) {
+            $sql = "SELECT AVG(bpm) as media_bpm, MAX(bpm) as max_bpm, MIN(bpm) as min_bpm, 
+                           AVG(saturacao) as media_sat, COUNT(*) as total_leituras
+                    FROM batimentos 
+                    WHERE usuario_id = :uid AND timestamp >= datetime('now', '-' || :dias || ' day')";
+        } else {
+            $sql = "SELECT AVG(bpm) as media_bpm, MAX(bpm) as max_bpm, MIN(bpm) as min_bpm, 
+                           AVG(saturacao) as media_sat, COUNT(*) as total_leituras
+                    FROM batimentos 
+                    WHERE usuario_id = :uid AND timestamp >= DATE_SUB(NOW(), INTERVAL :dias DAY)";
+        }
         
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':uid', $userId, PDO::PARAM_INT);
@@ -67,6 +107,35 @@ class RelatorioController {
     }
 
     public function getLista($userId) {
+        try {
+            $config = require __DIR__ . '/../../config/database.php';
+            $isSqlite = isset($config['driver']) && $config['driver'] === 'sqlite';
+
+            if ($isSqlite) {
+                $this->db->exec("CREATE TABLE IF NOT EXISTS relatorios (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    usuario_id INTEGER NOT NULL,
+                    tipo TEXT NOT NULL,
+                    media_bpm REAL,
+                    bpm_max REAL,
+                    bpm_min REAL,
+                    obs_ia TEXT,
+                    data_geracao TEXT DEFAULT CURRENT_TIMESTAMP
+                )");
+            } else {
+                $this->db->exec("CREATE TABLE IF NOT EXISTS relatorios (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    usuario_id INT NOT NULL,
+                    tipo VARCHAR(20) NOT NULL,
+                    media_bpm DECIMAL(5,2),
+                    bpm_max DECIMAL(5,2),
+                    bpm_min DECIMAL(5,2),
+                    obs_ia TEXT,
+                    data_geracao DATETIME DEFAULT CURRENT_TIMESTAMP
+                )");
+            }
+        } catch (\Exception $e) {}
+
         $stmt = $this->db->prepare("SELECT * FROM relatorios WHERE usuario_id = :uid ORDER BY data_geracao DESC");
         $stmt->execute(['uid' => $userId]);
         return ["status" => 200, "data" => $stmt->fetchAll()];

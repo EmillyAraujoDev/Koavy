@@ -184,7 +184,14 @@ class _LoginPageState extends State<LoginPage> {
                     CustomTextField(controller: emailController, hintText: "Email"),
                     const SizedBox(height: 16),
                     CustomTextField(controller: senhaController, hintText: "Senha", obscureText: true),
-                    const SizedBox(height: 32),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () => Navigator.pushNamed(context, '/recuperar-senha'),
+                        child: const Text("Esqueceu a senha?", style: TextStyle(color: Color(0xff00f2ff))),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
                     SizedBox(
                       width: double.infinity,
                       height: 55,

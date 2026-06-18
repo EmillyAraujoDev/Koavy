@@ -62,7 +62,8 @@ class VinculoController {
                 ]);
                 $tutorId = $this->db->lastInsertId();
             } catch (\PDOException $e) {
-                return ["status" => 500, "data" => ["message" => "Erro ao cadastrar tutor: " . $e->getMessage()]];
+                error_log("Erro ao cadastrar tutor: " . $e->getMessage());
+                return ["status" => 500, "data" => ["message" => "Erro interno ao cadastrar tutor."]];
             }
         }
 
@@ -79,7 +80,69 @@ class VinculoController {
             $stmtLink->execute(['pid' => $pacienteId, 'tid' => $tutorId]);
             return ["status" => 201, "data" => ["message" => "Tutor vinculado com sucesso", "tutorId" => $tutorId]];
         } catch (\PDOException $e) {
-            return ["status" => 500, "data" => ["message" => "Erro ao vincular tutor: " . $e->getMessage()]];
+            error_log("Erro ao vincular tutor: " . $e->getMessage());
+            return ["status" => 500, "data" => ["message" => "Erro interno ao vincular tutor."]];
+        }
+    }
+
+    public function getTutoresPaciente($pacienteId) {
+        $sql = "SELECT tp.id, tp.principal, tp.data_vinculo, u.id as tutor_id, u.nome, u.email, u.telefone
+                FROM tutor_paciente tp
+                INNER JOIN usuarios u ON u.id = tp.tutor_id
+                WHERE tp.paciente_id = :paciente_id AND u.ativo = 1
+                ORDER BY tp.principal DESC, u.nome ASC";
+
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['paciente_id' => $pacienteId]);
+            $rows = $stmt->fetchAll();
+
+            $mapped = array_map(function($row) {
+                return [
+                    'id' => $row['id'],
+                    'tutorId' => $row['tutor_id'],
+                    'nome' => $row['nome'],
+                    'email' => $row['email'],
+                    'telefone' => $row['telefone'],
+                    'principal' => (bool)$row['principal'],
+                    'dataVinculo' => $row['data_vinculo'] ?? null
+                ];
+            }, $rows);
+
+            return ["status" => 200, "data" => $mapped];
+        } catch (\PDOException $e) {
+            error_log("Erro ao buscar tutores do paciente: " . $e->getMessage());
+            return ["status" => 500, "data" => ["message" => "Erro interno ao buscar tutores."]];
+        }
+    }
+
+    public function remover($vinculoId, $auth) {
+        if (!$auth) {
+            return ["status" => 401, "data" => ["message" => "Não autorizado"]];
+        }
+
+        try {
+            $stmt = $this->db->prepare("SELECT tutor_id, paciente_id FROM tutor_paciente WHERE id = :id");
+            $stmt->execute(['id' => $vinculoId]);
+            $vinculo = $stmt->fetch();
+
+            if (!$vinculo) {
+                return ["status" => 404, "data" => ["message" => "Vínculo não encontrado"]];
+            }
+
+            $perfil = $auth['perfilId'] ?? null;
+            $canRemove = $perfil == 3 || $auth['id'] == $vinculo['tutor_id'] || $auth['id'] == $vinculo['paciente_id'];
+            if (!$canRemove) {
+                return ["status" => 403, "data" => ["message" => "Acesso proibido"]];
+            }
+
+            $stmtDelete = $this->db->prepare("DELETE FROM tutor_paciente WHERE id = :id");
+            $stmtDelete->execute(['id' => $vinculoId]);
+
+            return ["status" => 200, "data" => ["message" => "Vínculo removido com sucesso"]];
+        } catch (\PDOException $e) {
+            error_log("Erro ao remover vinculo: " . $e->getMessage());
+            return ["status" => 500, "data" => ["message" => "Erro interno ao remover vínculo."]];
         }
     }
 

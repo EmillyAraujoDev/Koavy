@@ -41,7 +41,7 @@ async function loadTutors(userId) {
 
     try {
         // Tentamos buscar da API. Se falhar, usamos um mock para demonstração
-        const response = await fetch(`${CONFIG.API_BASE_URL}/api/vinculos/paciente/${userId}`);
+        const response = await fetch(`${CONFIG.API_BASE_URL}/vinculos/paciente/${userId}`);
         let tutors = [];
         
         if (response.ok) {
@@ -148,7 +148,7 @@ function setupModal() {
         submitBtn.innerText = "Salvando...";
 
         try {
-            const response = await fetch(`${CONFIG.API_BASE_URL}/api/vinculos`, {
+            const response = await fetch(`${CONFIG.API_BASE_URL}/vinculos`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -181,7 +181,7 @@ async function removeTutor(id) {
     if (!confirm("Deseja realmente remover este tutor?")) return;
 
     try {
-        const response = await fetch(`${CONFIG.API_BASE_URL}/api/vinculos/${id}`, {
+        const response = await fetch(`${CONFIG.API_BASE_URL}/vinculos/${id}`, {
             method: "DELETE"
         });
 

@@ -14,18 +14,21 @@ void main() {
     // Set a larger surface size to avoid overflows in the test environment.
     tester.view.physicalSize = const Size(1200, 800);
     tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
 
     // Build our app and trigger a frame.
     await tester.pumpWidget(const KoavyApp());
+    await tester.pumpAndSettle();
 
     // Verify that the initial screen (InterfacePage) is shown by checking for its main text.
     expect(find.text('Monitore seu coração em tempo real'), findsOneWidget);
 
-    // Verify that the "Cadastre-se" button is present.
-    expect(find.text('Cadastre-se'), findsOneWidget);
+    // Verify that the primary call-to-action is present.
+    expect(find.byKey(const ValueKey('landing-primary-cta')), findsOneWidget);
 
-    // Reset the size after the test.
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
+    // Dispose animated widgets before test teardown.
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpAndSettle();
   });
 }

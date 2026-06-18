@@ -1,0 +1,33 @@
+{
+  "project_info": {
+    "project_number": "564333524566",
+    "project_id": "koavy-health",
+    "storage_bucket": "koavy-health.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:564333524566:android:da3709b82bf9d29c882855",
+        "android_client_info": {
+          "package_name": "com.koavy.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "564333524566-cq8tcbvlhadhnrqtncp7rb9qpdo1iftf.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "564333524566-6rdtj7cv3dcid25saevvh1oh37tkoijr.apps.googleusercontent.com",
+          "client_type": 1
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

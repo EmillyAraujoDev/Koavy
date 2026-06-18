@@ -5,6 +5,11 @@ namespace App;
 
 class JWTHelper {
     private static function getSecret() {
+        $envSecret = getenv('KOAVY_JWT_SECRET');
+        if ($envSecret) {
+            return $envSecret;
+        }
+
         $config = require __DIR__ . '/../config/database.php';
         return $config['jwt_secret'] ?? 'FALLBACK_SECRET_DO_NOT_USE_IN_PROD';
     }

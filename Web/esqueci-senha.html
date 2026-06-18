@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Esqueci minha senha - Koavy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            neon1: '#00f2ff',
+            neon2: '#00d4aa',
+            dark1: '#121212',
+            dark2: '#0f1011',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-dark2 text-gray-300 font-inter min-h-screen flex flex-col">
+
+
+<main class="flex-1 flex items-center justify-center p-4 pt-24">
+  <div class="w-full max-w-md bg-white/5 border border-white/10 rounded-[40px] p-8 lg:p-12 backdrop-blur-md shadow-2xl relative overflow-hidden">
+    
+    <div class="absolute -top-20 -right-20 w-64 h-64 bg-neon1/10 rounded-full blur-[80px] pointer-events-none"></div>
+    <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-neon2/10 rounded-full blur-[80px] pointer-events-none"></div>
+
+    <div class="text-center mb-10 relative z-10">
+      <div class="w-16 h-16 bg-neon1/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+        <svg class="w-8 h-8 text-neon1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+        </svg>
+      </div>
+      <h1 class="text-4xl font-black text-white mb-2">Recuperar Acesso</h1>
+      <p class="text-gray-500 font-medium">Enviaremos um link de redefinição para o seu e-mail cadastrado.</p>
+    </div>
+
+    <form id="forgot_form" class="space-y-6 relative z-10">
+      <div class="space-y-2">
+        <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">E-mail Cadastrado</label>
+        <input type="email" id="forgotEmail" placeholder="seu@email.com" required
+          class="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-neon1 focus:ring-4 focus:ring-neon1/10 transition-all duration-300 placeholder:text-gray-700">
+      </div>
+
+      <button type="submit" id="submit_button" class="w-full py-5 bg-gradient-to-r from-neon1 to-neon2 text-black font-black text-lg rounded-2xl shadow-xl shadow-neon1/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300">
+        Enviar Link de Recuperação
+      </button>
+
+      <div id="forgotMessage" class="text-center text-sm font-bold mt-4 min-h-[1.25rem]"></div>
+    </form>
+
+    <div class="mt-8 text-center relative z-10 border-t border-white/5 pt-6">
+      <a href="login.html" class="text-sm font-bold text-gray-500 hover:text-white transition-colors">Voltar ao Login</a>
+    </div>
+  </div>
+</main>
+
+<script src="config.js"></script>
+<script src="auth.js"></script>
+<script src="components/navbar.js"></script>
+<script>
+  const form = document.getElementById("forgot_form");
+  const submitBtn = document.getElementById("submit_button");
+  const msgEl = document.getElementById("forgotMessage");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("forgotEmail").value.trim();
+    
+    msgEl.innerText = "Processando solicitação...";
+    msgEl.className = "text-center text-sm font-bold text-neon1 mt-4";
+    submitBtn.disabled = true;
+
+    try {
+      const res = await fetch(`${CONFIG.API_BASE_URL}/recuperar-senha`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      
+      if (res.ok) {
+        let successMsg = `<div class="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl text-emerald-400 text-xs font-medium space-y-3">
+            <p>${data.message || 'Link de recuperação enviado com sucesso!'}</p>`;
+        if (data.link) {
+          successMsg += `<div class="mt-4 pt-4 border-t border-emerald-500/10">
+            <p class="text-[10px] uppercase tracking-widest text-gray-400 font-extrabold mb-2">Link de Redefinição (Apresentação / Teste):</p>
+            <a href="${data.link}" class="inline-block bg-gradient-to-r from-neon1 to-neon2 text-black font-black text-xs px-4 py-2.5 rounded-xl hover:scale-105 transition-all">Redefinir Senha Agora</a>
+          </div>`;
+        }
+        successMsg += `</div>`;
+        msgEl.innerHTML = successMsg;
+      } else {
+        msgEl.innerText = data.message || "Erro ao solicitar recuperação.";
+        msgEl.className = "text-center text-sm font-bold text-red-500 mt-4";
+      }
+    } catch (e) {
+      msgEl.innerText = "Erro de conexão com o servidor.";
+      msgEl.className = "text-center text-sm font-bold text-red-500 mt-4";
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>

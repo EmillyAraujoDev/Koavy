@@ -1,8 +1,9 @@
 <?php
 // api/public/index.php
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+$isDebug = filter_var(getenv('KOAVY_DEBUG') ?: false, FILTER_VALIDATE_BOOLEAN);
+ini_set('display_errors', $isDebug ? '1' : '0');
+ini_set('display_startup_errors', $isDebug ? '1' : '0');
 error_reporting(E_ALL);
 
 header("Access-Control-Allow-Origin: *");
@@ -75,7 +76,7 @@ $vinculoController = new VinculoController();
 
 // Middleware de Autenticação
 $auth = null;
-$isPublicRoute = in_array($resource, ['login', 'cadastro', 'google-login', 'recuperar-senha']);
+$isPublicRoute = in_array($resource, ['login', 'cadastro', 'google-login', 'recuperar-senha', 'redefinir-senha']);
 $headers = getallheaders();
 $token = $headers['Authorization'] ?? $headers['authorization'] ?? null;
 
@@ -147,6 +148,12 @@ switch ($resource) {
         }
         break;
 
+    case 'redefinir-senha':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $res = $usuarioController->redefinirSenha($input);
+        }
+        break;
+
     case 'usuarios':
         if ($_SERVER['REQUEST_METHOD'] === 'GET' && empty($id)) {
             $perfil = $auth['perfilId'] ?? null;
@@ -212,6 +219,15 @@ switch ($resource) {
             } else {
                 $res = $vinculoController->getPacientesTutor($auth['id']);
             }
+        } elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && $action === 'paciente' && isset($segments[2])) {
+            $patientId = $segments[2];
+            if (!checkAccessToPatient($auth, $patientId)) {
+                $res = ["status" => 403, "data" => ["message" => "Acesso proibido"]];
+            } else {
+                $res = $vinculoController->getTutoresPaciente($patientId);
+            }
+        } elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE' && !empty($id)) {
+            $res = $vinculoController->remover($id, $auth);
         }
         break;
 

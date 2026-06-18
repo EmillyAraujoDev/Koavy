@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_loginkoavy/widgets/custom_navbar.dart';
 import 'package:flutter_application_loginkoavy/widgets/responsive_helper.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 /// Página Inicial (Landing Page) da aplicação Koavy.
 class InterfacePage extends StatefulWidget {
@@ -11,6 +12,22 @@ class InterfacePage extends StatefulWidget {
 }
 
 class _InterfacePageState extends State<InterfacePage> {
+  final GlobalKey _inicioKey = GlobalKey();
+  final GlobalKey _beneficiosKey = GlobalKey();
+  final GlobalKey _sobreKey = GlobalKey();
+  String _activeTab = 'Início';
+
+  void _scrollToSection(GlobalKey key) {
+    final context = key.currentContext;
+    if (context != null) {
+      Scrollable.ensureVisible(
+        context,
+        duration: const Duration(milliseconds: 800),
+        curve: Curves.easeInOutCubic,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool isMobile = ResponsiveHelper.isMobile(context);
@@ -22,14 +39,37 @@ class _InterfacePageState extends State<InterfacePage> {
           children: [
             // ================= NAVBAR =================
             CustomNavBar(
-              activeTab: 'Início',
-              onEntrarTap: () {
-                Navigator.pushReplacementNamed(context, '/login');
+              activeTab: _activeTab,
+              onTabTap: (tabName) {
+                setState(() {
+                  _activeTab = tabName;
+                });
+                if (tabName == 'Início') {
+                  _scrollToSection(_inicioKey);
+                } else if (tabName == 'Sobre') {
+                  _scrollToSection(_sobreKey);
+                } else if (tabName == 'Funcionalidades') {
+                  _scrollToSection(_beneficiosKey);
+                } else if (tabName == 'Monitoramento') {
+                  Navigator.pushNamed(context, '/login');
+                } else if (tabName == 'Suporte') {
+                  Navigator.pushNamed(context, '/contato');
+                }
               },
-            ),
+              onEntrarTap: () {
+                Navigator.pushNamed(context, '/login');
+              },
+              onCadastroTap: () {
+                Navigator.pushNamed(context, '/cadastro-paciente');
+              },
+              onComecarTap: () {
+                Navigator.pushNamed(context, '/cadastro-paciente');
+              },
+            ).animate().fadeIn(duration: 500.ms).slideY(begin: -0.2, end: 0),
 
             // ================= HERO =================
             Container(
+              key: _inicioKey,
               width: double.infinity,
               padding: EdgeInsets.symmetric(
                 vertical: isMobile ? 40 : 100,
@@ -53,8 +93,9 @@ class _InterfacePageState extends State<InterfacePage> {
                     ),
             ),
 
-            // ================= BENEFÍCIOS =================
+            // ================= BENEFÍCIOS / FUNCIONALIDADES =================
             Container(
+              key: _beneficiosKey,
               padding: EdgeInsets.symmetric(
                 horizontal: isMobile ? 24 : 50,
                 vertical: isMobile ? 50 : 80,
@@ -69,7 +110,7 @@ class _InterfacePageState extends State<InterfacePage> {
                       fontSize: isMobile ? 32 : 40,
                       fontWeight: FontWeight.bold,
                     ),
-                  ),
+                  ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1, end: 0),
                   SizedBox(height: isMobile ? 40 : 60),
                   Wrap(
                     spacing: 30,
@@ -80,16 +121,19 @@ class _InterfacePageState extends State<InterfacePage> {
                         "assets/images/heartKoavy.png",
                         "Monitoramento 24h",
                         "Acompanhamento contínuo com precisão.",
+                        1,
                       ),
                       _buildBeneficioCard(
                         "assets/images/alertKoavy.png",
                         "Alertas Reais",
                         "Notificações automáticas em tempo real.",
+                        2,
                       ),
                       _buildBeneficioCard(
                         "assets/images/celular.png",
                         "App Intuitivo",
                         "Relatórios simples e acessíveis.",
+                        3,
                       ),
                     ],
                   ),
@@ -99,6 +143,7 @@ class _InterfacePageState extends State<InterfacePage> {
 
             // ================= HISTÓRIA =================
             Container(
+              key: _sobreKey,
               padding: EdgeInsets.symmetric(
                 horizontal: isMobile ? 24 : 60,
                 vertical: isMobile ? 50 : 80,
@@ -113,14 +158,14 @@ class _InterfacePageState extends State<InterfacePage> {
                       fontSize: isMobile ? 34 : 42,
                       fontWeight: FontWeight.bold,
                     ),
-                  ),
+                  ).animate().fadeIn(duration: 600.ms),
                   SizedBox(height: isMobile ? 30 : 50),
                   isMobile
                       ? Column(
                           children: [
                             _buildHistoriaText(),
                             const SizedBox(height: 30),
-                            _buildHeroImage(), // Usando imagem hero como placeholder
+                            _buildHeroImage(),
                           ],
                         )
                       : Row(
@@ -155,7 +200,7 @@ class _InterfacePageState extends State<InterfacePage> {
             fontWeight: FontWeight.w800,
             height: 1.1,
           ),
-        ),
+        ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.2, end: 0, curve: Curves.easeOutQuad),
         const SizedBox(height: 25),
         Text(
           "Monitoramento inteligente com alertas e acompanhamento contínuo.",
@@ -165,11 +210,12 @@ class _InterfacePageState extends State<InterfacePage> {
             fontSize: isMobile ? 18 : 20,
             height: 1.6,
           ),
-        ),
+        ).animate().fadeIn(delay: 200.ms, duration: 600.ms),
         const SizedBox(height: 35),
         InkWell(
+          key: const ValueKey('landing-primary-cta'),
           onTap: () {
-            Navigator.pushReplacementNamed(context, '/cadastro-paciente');
+            Navigator.pushNamed(context, '/cadastro-paciente');
           },
           borderRadius: BorderRadius.circular(999),
           child: Container(
@@ -182,6 +228,13 @@ class _InterfacePageState extends State<InterfacePage> {
               gradient: const LinearGradient(
                 colors: [Color(0xff22d3ee), Color(0xff34d399)],
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xff22d3ee).withValues(alpha: 0.3),
+                  blurRadius: 15,
+                  offset: const Offset(0, 5),
+                ),
+              ],
             ),
             child: const Text(
               "Começar agora",
@@ -192,7 +245,7 @@ class _InterfacePageState extends State<InterfacePage> {
               ),
             ),
           ),
-        ),
+        ).animate().fadeIn(delay: 400.ms, duration: 600.ms).scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1)),
       ],
     );
   }
@@ -203,43 +256,69 @@ class _InterfacePageState extends State<InterfacePage> {
         alignment: Alignment.center,
         children: [
           Container(
-            width: 350,
-            height: 350,
+            width: 320,
+            height: 320,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.cyan.withValues(alpha: 0.4),
+                  color: const Color(0xff00f2ff).withValues(alpha: 0.25),
                   blurRadius: 120,
                   spreadRadius: 30,
                 ),
               ],
             ),
           ),
+          Image.asset(
+            "assets/images/koala1.png",
+            width: 260,
+            height: 260,
+            fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) {
+              return const Icon(
+                Icons.favorite,
+                size: 150,
+                color: Color(0xff00f2ff),
+              );
+            },
+          ).animate().fadeIn(duration: 800.ms).scale(begin: const Offset(0.85, 0.85), end: const Offset(1.0, 1.0)),
         ],
       ),
     );
   }
 
-  Widget _buildBeneficioCard(String imagem, String titulo, String descricao) {
+  Widget _buildBeneficioCard(String imagem, String titulo, String descricao, int index) {
     return Container(
       width: 300,
       padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
         color: const Color(0xff111418),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.cyanAccent.withValues(alpha: 0.2)),
+        border: Border.all(color: const Color(0xff00f2ff).withValues(alpha: 0.2)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
       ),
       child: Column(
         children: [
-          Image.asset(imagem, width: 60),
+          Image.asset(
+            imagem, 
+            width: 60,
+            errorBuilder: (context, error, stackTrace) {
+              return const Icon(Icons.star, size: 50, color: Color(0xff00f2ff));
+            },
+          ),
           const SizedBox(height: 25),
           Text(
             titulo,
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 24,
+              fontSize: 22,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -249,13 +328,13 @@ class _InterfacePageState extends State<InterfacePage> {
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: Colors.white70,
-              fontSize: 16,
+              fontSize: 15,
               height: 1.5,
             ),
           ),
         ],
       ),
-    );
+    ).animate().fadeIn(delay: (index * 150).ms, duration: 600.ms).slideY(begin: 0.15, end: 0);
   }
 
   Widget _buildHistoriaText() {
@@ -270,10 +349,10 @@ class _InterfacePageState extends State<InterfacePage> {
         "Tudo começou com o irmão mais velho de uma dos integrantes que tem 23 anos e, desde que nasceu, sofre com uma desregulação cardíaca. Ele sempre foi uma pessoa muito ativa e é professor de beach tennis, um esporte bastante intenso. Recentemente, após perceber que ele vinha apresentando alterações cardíacas mais frequentes, a médica recomendou que ele evitasse esforços físicos intensos, devido à sua condição. Pensando nisso, surgiu a ideia de desenvolver uma pulseira inteligente que possa auxiliá-lo no monitoramento da saúde cardíaca.",
         style: TextStyle(
           color: Colors.white70,
-          fontSize: 17,
+          fontSize: 16,
           height: 1.8,
         ),
       ),
-    );
+    ).animate().fadeIn(delay: 300.ms, duration: 600.ms).slideX(begin: -0.1, end: 0);
   }
 }

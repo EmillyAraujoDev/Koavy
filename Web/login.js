@@ -184,3 +184,59 @@ function setLoading(isLoading) {
         submitBtn.innerText = submitBtn.dataset.originalText || "Entrar no Sistema";
     }
 }
+
+// ================= MOCK GOOGLE LOGIN PARA APRESENTAÇÃO =================
+function openGoogleMockModal() {
+    const modal = document.getElementById("googleMockModal");
+    if (modal) {
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+    }
+}
+
+function closeGoogleMockModal() {
+    const modal = document.getElementById("googleMockModal");
+    if (modal) {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+    }
+}
+
+async function loginWithGoogleMock(perfil) {
+    closeGoogleMockModal();
+    setLoading(true);
+
+    let email = "google_demo_paciente@koavy.com";
+    let nome = "Paciente Google Demo";
+    
+    if (perfil === 'tutor') {
+        email = "google_demo_tutor@koavy.com";
+        nome = "Tutor Google Demo";
+    }
+
+    try {
+        const res = await fetch(`${CONFIG.API_BASE_URL}/google-login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                credential: "mock_presentation_google_" + perfil,
+                email: email,
+                nome: nome
+            })
+        });
+
+        const result = await res.json();
+
+        if (res.ok && result.token) {
+            Auth.save(result.token, result.user);
+            Auth.redirectByRole(result.user);
+        } else {
+            showError(result.message || "Erro na autenticação de demonstração.");
+        }
+    } catch (e) {
+        console.error("Google Login Error:", e);
+        showError("Falha na conexão com o servidor.");
+    } finally {
+        setLoading(false);
+    }
+}

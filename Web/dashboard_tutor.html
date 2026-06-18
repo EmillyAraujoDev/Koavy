@@ -18,26 +18,7 @@
 </head>
 <body class="bg-[#050505] text-gray-300 font-inter min-h-screen">
 
-<nav class="fixed top-0 left-0 w-full z-50 backdrop-blur-xl bg-black/40 border-b border-white/5">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-    <div class="flex items-center gap-2">
-      <div class="w-8 h-8 bg-neon2 rounded-lg flex items-center justify-center">
-        <span class="text-black font-black text-xl">K</span>
-      </div>
-      <h1 class="text-2xl font-black bg-gradient-to-r from-neon1 to-neon2 bg-clip-text text-transparent logo">Koavy</h1>
-    </div>
 
-    <div class="flex items-center gap-6">
-      <div class="hidden md:flex flex-col items-end">
-        <span class="text-sm font-bold text-white" id="user-name">Carregando...</span>
-        <span class="text-[10px] uppercase tracking-widest text-neon2 font-black">Tutor Responsável</span>
-      </div>
-      <button onclick="Auth.logout()" class="p-2 hover:bg-red-500/10 text-red-500 rounded-xl transition">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-      </button>
-    </div>
-  </div>
-</nav>
 
 <main class="pt-32 pb-20 px-4 max-w-7xl mx-auto">
     
@@ -122,6 +103,7 @@
 
 <script src="config.js"></script>
 <script src="auth.js"></script>
+<script src="components/navbar.js"></script>
 <script>
     const user = Auth.check(2);
     if (user) {
