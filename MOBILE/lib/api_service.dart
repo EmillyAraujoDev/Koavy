@@ -103,6 +103,14 @@ class ApiService {
     });
   }
 
+  Future<Response> getResumoCardiaco() async {
+    return _dio.get('/batimentos/resumo');
+  }
+
+  Future<Response> simularBatimento(String tipo) async {
+    return _dio.post('/batimentos/simular', data: {'tipo': tipo});
+  }
+
   Future<Response> getRelatorios() async {
     return _dio.get('/relatorios');
   }
@@ -121,5 +129,12 @@ class ApiService {
   /// Solicita redefinição de senha na API PHP do Koavy.
   Future<Response> recuperarSenha(String email) async {
     return _dio.post('/recuperar-senha', data: {'email': email});
+  }
+
+  Future<Response> redefinirSenha(String token, String senha) async {
+    return _dio.post('/redefinir-senha', data: {
+      'token': token,
+      'senha': senha,
+    });
   }
 }

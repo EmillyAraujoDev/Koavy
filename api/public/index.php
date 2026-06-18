@@ -182,6 +182,10 @@ switch ($resource) {
             $res = $batimentoController->getHistorico($auth['id']);
         } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($action)) {
             $res = $batimentoController->registrar($input, $auth['id']);
+        } elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && $action === 'resumo') {
+            $res = $batimentoController->getResumo($auth['id']);
+        } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'simular') {
+            $res = $batimentoController->simular($input['tipo'] ?? 'normal', $auth['id']);
         } elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && $action === 'usuario' && isset($segments[2])) {
             $patientId = $segments[2];
             if (!checkAccessToPatient($auth, $patientId)) {

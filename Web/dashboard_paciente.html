@@ -59,12 +59,19 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div class="bg-white/5 p-4 rounded-2xl text-center">
                                 <span class="text-[10px] font-black text-gray-600 uppercase">Mínima</span>
-                                <p class="text-2xl font-black text-white">65</p>
+                                <p class="text-2xl font-black text-white" id="daily-min">--</p>
                             </div>
                             <div class="bg-white/5 p-4 rounded-2xl text-center">
                                 <span class="text-[10px] font-black text-gray-600 uppercase">Máxima</span>
-                                <p class="text-2xl font-black text-white">110</p>
+                                <p class="text-2xl font-black text-white" id="daily-max">--</p>
                             </div>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                            <button onclick="simulateReading('normal')" class="px-3 py-3 rounded-2xl bg-emerald-400/10 border border-emerald-400/20 text-emerald-300 text-[10px] font-black uppercase">Normal</button>
+                            <button onclick="simulateReading('atencao')" class="px-3 py-3 rounded-2xl bg-yellow-400/10 border border-yellow-400/20 text-yellow-300 text-[10px] font-black uppercase">Atenção</button>
+                            <button onclick="simulateReading('taquicardia')" class="px-3 py-3 rounded-2xl bg-orange-400/10 border border-orange-400/20 text-orange-300 text-[10px] font-black uppercase">Taquicardia</button>
+                            <button onclick="simulateReading('emergencia')" class="px-3 py-3 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-300 text-[10px] font-black uppercase">Emergência</button>
+                            <button onclick="simulateReading('falha-sensor')" class="px-3 py-3 rounded-2xl bg-white/5 border border-white/10 text-gray-300 text-[10px] font-black uppercase">Falha</button>
                         </div>
                     </div>
                 </div>
@@ -166,7 +173,18 @@
 
 <style>
     .form-input {
-        @apply w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-neon1 transition-all;
+        width: 100%;
+        background: rgb(0 0 0 / 0.4);
+        border: 1px solid rgb(255 255 255 / 0.1);
+        border-radius: 1rem;
+        padding: 1rem 1.5rem;
+        color: #fff;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .form-input:focus {
+        border-color: #00f2ff;
+        box-shadow: 0 0 0 4px rgb(0 242 255 / 0.08);
     }
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(10px); }
@@ -202,7 +220,7 @@
         const savedPhoto = localStorage.getItem(`photo_${user.id}`);
         if (savedPhoto) document.getElementById("profile-img-preview").src = savedPhoto;
 
-        updateBPM();
+        loadCardiacSummary();
     }
 
     function switchTab(tabId) {
@@ -216,13 +234,49 @@
         document.getElementById(`tab-${tabId}`).className = "px-8 py-3 rounded-2xl bg-neon1 text-black font-black text-sm uppercase tracking-widest transition-all shadow-lg shadow-neon1/20";
     }
 
-    function updateBPM() {
-        const bpm = Math.floor(65 + Math.random() * 15);
-        document.getElementById("bpm-value").innerText = bpm;
+    function applyBpm(bpm) {
+        document.getElementById("bpm-value").innerText = bpm || "--";
         const circle = document.getElementById("bpm-circle");
-        const percentage = Math.min(Math.max((bpm - 40) / (160 - 40), 0), 1);
+        const percentage = bpm ? Math.min(Math.max((bpm - 40) / (160 - 40), 0), 1) : 0;
         circle.setAttribute("stroke-dashoffset", 628.3 * (1 - percentage));
-        setTimeout(updateBPM, 3000);
+    }
+
+    async function loadCardiacSummary() {
+        try {
+            const res = await fetch(`${CONFIG.API_BASE_URL}/batimentos/resumo`, {
+                headers: Auth.getAuthHeader()
+            });
+            if (!res.ok) throw new Error("summary_failed");
+            const data = await res.json();
+            applyBpm(data.atual?.frequenciaCard || data.atual?.bpm);
+            document.getElementById("daily-min").innerText = data.medias?.diaria?.minimo ?? "--";
+            document.getElementById("daily-max").innerText = data.medias?.diaria?.maximo ?? "--";
+            const statusText = document.querySelector("#content-resumo .bg-black\\/40 .text-emerald-400");
+            if (statusText) statusText.innerText = data.insight || "Monitoramento atualizado.";
+        } catch (err) {
+            applyBpm(null);
+        }
+    }
+
+    async function simulateReading(tipo) {
+        try {
+            const res = await fetch(`${CONFIG.API_BASE_URL}/batimentos/simular`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    ...Auth.getAuthHeader()
+                },
+                body: JSON.stringify({ tipo })
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                alert(data.message || "Não foi possível simular a leitura.");
+                return;
+            }
+            await loadCardiacSummary();
+        } catch (err) {
+            alert("Erro de conexão ao simular leitura.");
+        }
     }
 
     function uploadPhoto(event) {
