@@ -15,8 +15,11 @@ public class Batimento {
     @Column(name = "usuario_id", nullable = false)
     private Long usuarioId;
 
-    @Column(name = "frequencia_card", precision = 5, scale = 2)
-    private BigDecimal frequenciaCard;
+    @Column(name = "dispositivo_id")
+    private Long dispositivoId;
+
+    @Column(nullable = false, precision = 5, scale = 2)
+    private BigDecimal bpm;
 
     @Column(precision = 5, scale = 2)
     private BigDecimal saturacao;
@@ -27,13 +30,17 @@ public class Batimento {
     @Column(name = "pressao_diastolica")
     private Integer pressaoDiastolica;
 
-    @Column(name = "nivel_estresse")
-    private Integer nivelEstresse;
+    @Column(precision = 4, scale = 1)
+    private BigDecimal temperatura;
 
-    private Boolean movimento;
+    @Column(length = 20)
+    private String classificacao = "NORMAL";
 
-    @Column(name = "data_hora", updatable = false)
-    private LocalDateTime dataHora = LocalDateTime.now();
+    @Column(length = 20)
+    private String origem = "MANUAL";
+
+    @Column(updatable = false)
+    private LocalDateTime timestamp = LocalDateTime.now();
 
     // --- CONSTRUTOR ---
     public Batimento() {}
@@ -45,8 +52,14 @@ public class Batimento {
     public Long getUsuarioId() { return usuarioId; }
     public void setUsuarioId(Long usuarioId) { this.usuarioId = usuarioId; }
 
-    public BigDecimal getFrequenciaCard() { return frequenciaCard; }
-    public void setFrequenciaCard(BigDecimal frequenciaCard) { this.frequenciaCard = frequenciaCard; }
+    public Long getDispositivoId() { return dispositivoId; }
+    public void setDispositivoId(Long dispositivoId) { this.dispositivoId = dispositivoId; }
+
+    public BigDecimal getBpm() { return bpm; }
+    public void setBpm(BigDecimal bpm) { this.bpm = bpm; }
+
+    public BigDecimal getFrequenciaCard() { return bpm; }
+    public void setFrequenciaCard(BigDecimal frequenciaCard) { this.bpm = frequenciaCard; }
 
     public BigDecimal getSaturacao() { return saturacao; }
     public void setSaturacao(BigDecimal saturacao) { this.saturacao = saturacao; }
@@ -57,12 +70,18 @@ public class Batimento {
     public Integer getPressaoDiastolica() { return pressaoDiastolica; }
     public void setPressaoDiastolica(Integer pressaoDiastolica) { this.pressaoDiastolica = pressaoDiastolica; }
 
-    public Integer getNivelEstresse() { return nivelEstresse; }
-    public void setNivelEstresse(Integer nivelEstresse) { this.nivelEstresse = nivelEstresse; }
+    public BigDecimal getTemperatura() { return temperatura; }
+    public void setTemperatura(BigDecimal temperatura) { this.temperatura = temperatura; }
 
-    public Boolean getMovimento() { return movimento; }
-    public void setMovimento(Boolean movimento) { this.movimento = movimento; }
+    public String getClassificacao() { return classificacao; }
+    public void setClassificacao(String classificacao) { this.classificacao = classificacao; }
 
-    public LocalDateTime getDataHora() { return dataHora; }
-    public void setDataHora(LocalDateTime dataHora) { this.dataHora = dataHora; }
+    public String getOrigem() { return origem; }
+    public void setOrigem(String origem) { this.origem = origem; }
+
+    public LocalDateTime getTimestamp() { return timestamp; }
+    public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
+
+    public LocalDateTime getDataHora() { return timestamp; }
+    public void setDataHora(LocalDateTime dataHora) { this.timestamp = dataHora; }
 }

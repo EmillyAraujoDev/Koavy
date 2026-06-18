@@ -1,5 +1,6 @@
 package com.example.demoApi.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ public class Usuario {
     private String email;
 
     @Column(nullable = false, length = 255)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String senha;
 
     private Integer idade;
@@ -53,8 +55,17 @@ public class Usuario {
     @Column(length = 10)
     private String cep;
 
+    @Column(name = "avatar_url")
+    private String avatarUrl;
+
+    @Column(name = "fcm_token")
+    private String fcmToken;
+
     @Column(name = "cadastro", updatable = false)
     private LocalDateTime dataCadastro = LocalDateTime.now();
+
+    @Column(name = "ultimo_login")
+    private LocalDateTime ultimoLogin;
 
     private Boolean ativo = true;
 
@@ -109,8 +120,17 @@ public class Usuario {
     public String getCep() { return cep; }
     public void setCep(String cep) { this.cep = cep; }
 
+    public String getAvatarUrl() { return avatarUrl; }
+    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
+
+    public String getFcmToken() { return fcmToken; }
+    public void setFcmToken(String fcmToken) { this.fcmToken = fcmToken; }
+
     public LocalDateTime getDataCadastro() { return dataCadastro; }
     public void setDataCadastro(LocalDateTime dataCadastro) { this.dataCadastro = dataCadastro; }
+
+    public LocalDateTime getUltimoLogin() { return ultimoLogin; }
+    public void setUltimoLogin(LocalDateTime ultimoLogin) { this.ultimoLogin = ultimoLogin; }
 
     public Boolean getAtivo() { return ativo; }
     public void setAtivo(Boolean ativo) { this.ativo = ativo; }

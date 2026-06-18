@@ -1,30 +1,37 @@
 package com.example.demoApi.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "tutor_paciente")
+@Table(name = "tutor_paciente", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"paciente_id", "tutor_id"})
+})
 public class TutorPaciente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-    @Column(name = "nome", nullable = false)
-    private String nome;
-
     @Column(name = "paciente_id", nullable = false)
     private Long pacienteId;
 
-    private Boolean principal = false;
-
-    @Column(name = "tutor_id", nullable = true)
+    @Column(name = "tutor_id", nullable = false)
     private Long tutorId;
+
+    private Boolean principal = false;
 
     @Column(name = "data_vinculo", updatable = false)
     private LocalDateTime dataVinculo;
+
     public TutorPaciente() {}
 
     @PrePersist
@@ -34,15 +41,14 @@ public class TutorPaciente {
         }
     }
 
-    // GETTERS E SETTERS
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
-
     public Long getPacienteId() { return pacienteId; }
     public void setPacienteId(Long pacienteId) { this.pacienteId = pacienteId; }
+
+    public Long getTutorId() { return tutorId; }
+    public void setTutorId(Long tutorId) { this.tutorId = tutorId; }
 
     public Boolean getPrincipal() { return principal; }
     public void setPrincipal(Boolean principal) { this.principal = principal; }
